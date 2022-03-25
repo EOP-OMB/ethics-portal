@@ -1,0 +1,114 @@
+<div class="filter-container">
+    <div class="filter-row">
+        <mat-form-field appearance="outline" style="flex: 2;" class="inline-form-field">
+            <mat-label>Filter by Name</mat-label>
+            <input [(ngModel)]="filter.displayName" matInput placeholder="Filter by Name">
+        </mat-form-field>
+        <mat-form-field appearance="outline" class="inline-form-field">
+            <mat-label>Filter by Filer Type</mat-label>
+            <mat-select [(ngModel)]="filter.filerType">
+                <mat-option value="">
+                    All
+                </mat-option>
+                <mat-option *ngFor="let ft of filerTypes" [value]="ft.value">
+                    {{ ft.text }}
+                </mat-option>
+            </mat-select>
+        </mat-form-field>
+        <mat-form-field appearance="outline" class="inline-form-field">
+            <mat-label>Filter by Detailee Type</mat-label>
+            <mat-select [(ngModel)]="filter.employeeStatus">
+                <mat-option value="">
+                    All
+                </mat-option>
+                <mat-option *ngFor="let status of employeeStatuses" [value]="status.value">
+                    {{ status.text }}
+                </mat-option>
+            </mat-select>
+        </mat-form-field>
+        <mat-form-field appearance="outline" class="inline-form-field">
+            <mat-label>Filter by Reporting</mat-label>
+            <mat-select [(ngModel)]="filter.reportingStatus">
+                <mat-option value="">
+                    All
+                </mat-option>
+                <mat-option *ngFor="let rs of reportingStatuses" [value]="rs.value">
+                    {{ rs.text }}
+                </mat-option>
+            </mat-select>
+        </mat-form-field>
+        <mat-form-field appearance="outline" class="inline-form-field">
+            <mat-label>Filter by Form Status</mat-label>
+            <mat-select [(ngModel)]="filter.currentFormStatus">
+                <mat-option value="">
+                    All
+                </mat-option>
+                <mat-option *ngFor="let fs of formStatuses" [value]="fs.value">
+                    {{ fs.text }}
+                </mat-option>
+            </mat-select>
+        </mat-form-field>
+        <mat-form-field appearance="outline" class="inline-form-field">
+            <mat-label>Filter by Last File Date</mat-label>
+            <mat-select [(ngModel)]="filter.last450Date">
+                <mat-option value="">
+                    All
+                </mat-option>
+                <mat-option value="never">
+                    Never
+                </mat-option>
+                <mat-option value="lessThanOneYear">
+                    <= 1 year
+                </mat-option>
+                <mat-option value="oneToTwoYears">
+                    > 1 year
+                </mat-option>
+                <mat-option value="moreThanTwoYears">
+                    > 2 years
+                </mat-option>
+            </mat-select>
+        </mat-form-field>
+    </div>
+    <button mat-flat-button aria-label="Reset Filters" (click)="resetFilters()" [color]="isFiltered() ? 'accent' : ''" class="filter-button" matTooltip="Reset Filters">
+        RESET
+    </button>
+</div>
+<button mat-button (click)="exportToExcel('ethics-employees')">
+    <i class="fa fa-file-excel-o excel-button" title="Download (xlsx)"></i>
+</button>
+<mat-paginator [pageSizeOptions]="[15, 30, 45, 60]" pageSize="15" style="margin-top: -45px;"></mat-paginator>
+<table mat-table [dataSource]="dataSource" matSort matTableFilter [exampleEntity]="filter" [debounceTime]="100" [propertyOptions]="propertyOptions" matTableExporter (exportStarted)="exporting(true)" (exportCompleted)="exporting(false)" #exporter="matTableExporter" [hidden]="this.isExporting">
+    <ng-container matColumnDef="displayName">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header> Name </th>
+        <td mat-cell *matCellDef="let employee"> {{ employee.displayName }} </td>
+    </ng-container>
+    <ng-container matColumnDef="filerType">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header> Filer Type </th>
+        <td mat-cell *matCellDef="let employee"> {{ employee.filerType }} </td>
+    </ng-container>
+    <ng-container matColumnDef="employeeStatus">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>Status</th>
+        <td mat-cell *matCellDef="let employee">
+            {{ employee.statusText }}
+        </td>
+    </ng-container>
+    <ng-container matColumnDef="reportingStatus">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header> Reporting Status</th>
+        <td mat-cell *matCellDef="let employee">
+            {{ employee.reportingStatus }}
+        </td>
+    </ng-container>
+    <ng-container matColumnDef="currentFormStatus">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header> Form Status</th>
+        <td mat-cell *matCellDef="let employee">
+            {{ employee.currentFormStatus }}
+        </td>
+    </ng-container>
+    <ng-container matColumnDef="last450Date">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>Last File Date</th>
+        <td mat-cell *matCellDef="let employee"> {{ employee.last450Date | date:'MM/dd/yyyy' }} </td>
+    </ng-container>
+
+    <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+    <tr mat-row *matRowDef="let row; columns: displayedColumns;" (click)="rowSelected(row)"></tr>
+</table>

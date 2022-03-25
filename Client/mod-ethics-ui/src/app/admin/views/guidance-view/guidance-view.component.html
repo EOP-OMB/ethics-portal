@@ -1,0 +1,24 @@
+<mat-drawer-container>
+    <mat-drawer #drawer mode="over" position="end" class="details-drawer" (closedStart)="drawerClosing()" [opened]="false">
+        <div class="drawer-container" *ngIf="selectedGuidance">
+            <div *ngIf="selectedGuidance.id == 0">
+                <app-guidance-edit [employee]="selectedGuidance.employee" [allowEmployeeSelect]="true" (save)="saveGuidance($event)" (employeeClick)="gotoEmployee($event)"></app-guidance-edit>
+            </div>
+            <div *ngIf="selectedGuidance && selectedGuidance.id > 0">
+                <app-guidance-detail *ngIf="!canEdit" [guidance]="selectedGuidance" (employeeClick)="gotoEmployee($event)"></app-guidance-detail>
+                <app-guidance-edit *ngIf="canEdit" [guidance]="selectedGuidance" [employee]="employee" [allowEmployeeSelect]="false" (employeeClick)="gotoEmployee($event)" (save)="saveGuidance($event)" (delete)="deleteGuidance($event)"></app-guidance-edit>
+            </div>
+
+            <button mat-stroked-button type="button" (click)="drawer.close()" class="drawer-close">Close</button>
+        </div>
+    </mat-drawer>
+    <mat-drawer-content>
+        <div class="guidance-view" fxLayoutAlign="start start">
+            <mat-card>
+                <div style="margin-top: 20px;">
+                    <app-guidance-table #dtGuidances key="guidance" [data]="guidance" [canAdd]="true" (addClicked)="addGuidance()" (rowSelect)="onGuidanceSelect($event)" [hiddenCols]="hiddenCols"></app-guidance-table>
+                </div>
+            </mat-card>
+        </div>
+    </mat-drawer-content>
+</mat-drawer-container>

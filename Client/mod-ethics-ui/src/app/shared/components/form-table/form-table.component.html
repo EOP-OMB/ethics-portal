@@ -1,0 +1,167 @@
+<div class="filter-container">
+    <div class="filter-row">
+        <mat-form-field appearance="outline" style="flex: 2;" class="inline-form-field">
+            <mat-label>Filter by Name</mat-label>
+            <input [(ngModel)]="filter.employeesName" matInput placeholder="Filter by Name">
+        </mat-form-field>
+        <mat-form-field appearance="outline" class="inline-form-field" *ngIf="showColumn('year')">
+            <mat-label>Filter by Year</mat-label>
+            <mat-select [(ngModel)]="filter.year">
+                <mat-option [value]="0">
+                    All
+                </mat-option>
+                <mat-option *ngFor="let year of years" [value]="year.value">
+                    {{ year.text }}
+                </mat-option>
+            </mat-select>
+        </mat-form-field>
+        <mat-form-field appearance="outline" class="inline-form-field">
+            <mat-label>Filter by Reporting Status</mat-label>
+            <mat-select [(ngModel)]="filter.reportingStatus">
+                <mat-option value="">
+                    All
+                </mat-option>
+                <mat-option *ngFor="let rs of reportingStatuses" [value]="rs.value">
+                    {{ rs.text }}
+                </mat-option>
+            </mat-select>
+        </mat-form-field>
+        <mat-form-field appearance="outline" class="inline-form-field">
+            <mat-label>Filter by Status</mat-label>
+            <mat-select [(ngModel)]="filter.formStatus">
+                <mat-option value="">
+                    All
+                </mat-option>
+                <mat-option *ngFor="let stat of statuses" [value]="stat.value">
+                    {{ stat.text }}
+                </mat-option>
+            </mat-select>
+        </mat-form-field>
+        <mat-form-field appearance="outline" class="inline-form-field" *ngIf="showColumn('dateOfEmployeeSignature')">
+            <mat-label>Filter by Days Submitted</mat-label>
+            <mat-select [(ngModel)]="filter.dateOfEmployeeSignature">
+                <mat-option value="">
+                    All
+                </mat-option>
+                <mat-option value="lessThan30">
+                    <= 30
+                </mat-option>
+                <mat-option value="moreThan30">
+                    > 30
+                </mat-option>
+            </mat-select>
+        </mat-form-field>
+        <mat-form-field appearance="outline" class="inline-form-field">
+            <mat-label>Filter by Flags</mat-label>
+            <mat-select [(ngModel)]="filter.formFlags">
+                <mat-option value="">
+                    All
+                </mat-option>
+                <mat-option *ngFor="let flag of flags" [value]="flag.value">
+                    {{ flag.text }}
+                </mat-option>
+            </mat-select>
+        </mat-form-field>
+        <mat-form-field appearance="outline" class="inline-form-field" *ngIf="showColumn('assignedTo')">
+            <mat-label>Filter by Assigned To</mat-label>
+            <mat-select [(ngModel)]="filter.assignedTo">
+                <mat-option value="">
+                    All
+                </mat-option>
+                <mat-option *ngFor="let reviewer of reviewers" [value]="reviewer.text">
+                    {{ reviewer.text }}
+                </mat-option>
+            </mat-select>
+        </mat-form-field>
+    </div>
+    <button mat-flat-button aria-label="Reset Filters" (click)="resetFilters()" [color]="isFiltered() ? 'accent' : ''" class="filter-button" matTooltip="Reset Filters">
+        RESET
+    </button>
+</div>
+<button mat-button (click)="exportToExcel('ethics-forms')">
+    <i class="fa fa-file-excel-o excel-button" title="Download (xlsx)"></i>
+</button>
+<button *ngIf="showSelect" mat-stroked-button type="button" (click)="assignSelected()" class="action-button" [disabled]="selection.selected.length == 0">Assign Selected</button>
+<button *ngIf="numberOfUnchangedForms > 0" mat-flat-button type="button" color="primary" (click)="certify('unchanged')" class="action-button">Certify Unchanged</button>
+<button *ngIf="numberOfBlankForms > 0" mat-flat-button type="button" color="primary" (click)="certify('blank')" class="action-button">Certify Blank</button>
+<mat-paginator [pageSizeOptions]="[15, 30, 45, 60]" pageSize="15" style="margin-top: -45px"></mat-paginator>
+<table mat-table [dataSource]="dataSource" matSort matTableFilter [exampleEntity]="filter" [debounceTime]="100" [propertyOptions]="propertyOptions" matTableExporter [hiddenColumns]="getHiddenExportCols()" (exportStarted)="exporting(true)" (exportCompleted)="exporting(false)" #exporter="matTableExporter" [hidden]="isExporting">
+    <ng-container matColumnDef="select" *ngIf="showSelect">
+        <th mat-header-cell *matHeaderCellDef>
+            <mat-checkbox (change)="$event ? masterToggle() : null"
+                          [checked]="selection.hasValue() && isAllSelected()"
+                          [indeterminate]="selection.hasValue() && !isAllSelected()"
+                          [aria-label]="checkboxLabel()">
+            </mat-checkbox>
+        </th>
+        <td mat-cell *matCellDef="let form">
+            <mat-checkbox (click)="$event.stopPropagation()"
+                          (change)="$event ? selection.toggle(form) : null"
+                          [checked]="selection.isSelected(form)"
+                          [aria-label]="checkboxLabel(form)">
+            </mat-checkbox>
+        </td>
+    </ng-container>
+    <ng-container matColumnDef="employeesName">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header> Name </th>
+        <td mat-cell *matCellDef="let form"> {{ form.employeesName }} </td>
+    </ng-container>
+    <ng-container matColumnDef="year">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header> Year </th>
+        <td mat-cell *matCellDef="let form"> {{ form.year }} </td>
+    </ng-container>
+    <ng-container matColumnDef="reportingStatus">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header> Reporting Status</th>
+        <td mat-cell *matCellDef="let form">
+            {{ form.reportingStatus }}
+        </td>
+    </ng-container>
+    <ng-container matColumnDef="formStatus">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>Status</th>
+        <td mat-cell *matCellDef="let form">
+            {{ form.formStatus }}
+        </td>
+    </ng-container>
+    <ng-container matColumnDef="dateSubmitted">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>Submitted</th>
+        <td mat-cell *matCellDef="let form"> {{ form.dateSubmitted | date:'MM/dd/yyyy' }} </td>
+    </ng-container>
+    <ng-container matColumnDef="dateOfEmployeeSignature">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header> # of Days </th>
+        <td mat-cell *matCellDef="let form"> {{ form.daysSinceSubmission }} </td>
+    </ng-container>
+    <ng-container matColumnDef="formFlags">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header> Flags </th>
+        <td mat-cell *matCellDef="let form">
+            <span *ngIf="!isExporting">
+                <span *ngIf="form.daysExtended > 0" class="fa-stack" title="Due date has been extended">
+                    <!-- The icon that will wrap the number -->
+                    <span class="fa fa-calendar-o fa-stack-2x"></span>
+                    <!-- a strong element with the custom content, in this case a number -->
+                    <strong class="fa-stack-1x" style="padding-top: 3px; color: #222222;">
+                        {{ form.daysExtended }}
+                    </strong>
+                </span>
+                <span *ngIf="form.submittedPaperCopy" class="fa fa-file-text-o" style="font-size: 1.6em; color: #222222; vertical-align: middle; padding-left: 3px;" title="Submitted Paper Copy"></span>
+                <span *ngIf="form.isBlank" class="fa fa-info-circl
+                      e text-primary" style="font-size: 1.6em; vertical-align: middle; padding-left: 3px;" title="Blank submissions answered 'no' to all 5 questions"></span>
+                <span *ngIf="form.isUnchanged" class="fa fa-files-o text-primary" style="font-size: 1.6em; vertical-align: middle; padding-left: 3px;" title="Submission is unchanged from previous year's certified form"></span>
+                <span *ngIf="form.isOverdue" class='fa fa-exclamation-triangle text-danger' style="font-size: 1.6em; vertical-align: middle;" title="Form is overdue"></span>
+            </span>
+            <span *ngIf="isExporting">
+                {{ formatFlags(form.formFlags) }}
+            </span>
+        </td>
+    </ng-container>
+    <ng-container matColumnDef="dueDate">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>Due Date</th>
+        <td mat-cell *matCellDef="let form"> {{ form.dueDate | date:'MM/dd/yyyy' }} </td>
+    </ng-container>
+    <ng-container matColumnDef="assignedTo">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header> Assigned To </th>
+        <td mat-cell *matCellDef="let form"> {{ form.assignedTo }} </td>
+    </ng-container>
+
+    <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+    <tr mat-row *matRowDef="let row; columns: displayedColumns;" (click)="rowSelected(row)"></tr>
+</table>

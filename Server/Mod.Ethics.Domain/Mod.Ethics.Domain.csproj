@@ -1,0 +1,18 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net5.0</TargetFramework>
+    <Configurations>Debug;Release;Prod;Stage</Configurations>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Folder Include="Services\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\Framework\Server\Mod.Framework.Attachments\Mod.Framework.Attachments.csproj" />
+    <ProjectReference Include="..\..\Framework\Server\Mod.Framework.User\Mod.Framework.User.csproj" />
+    <ProjectReference Include="..\..\Framework\Server\Mod.Framework\Mod.Framework.csproj" />
+  </ItemGroup>
+
+</Project>

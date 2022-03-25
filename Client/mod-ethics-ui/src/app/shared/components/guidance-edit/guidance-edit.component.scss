@@ -1,0 +1,18 @@
+.mat-form-field {
+    width: 100%;
+}
+
+.guidance-form {
+    display: flex;
+    flex-direction: column;
+}
+
+app-employee-card {
+    margin-bottom: 15px;
+}
+
+ngx-editor.ng-invalid > div {
+    //border: 1px solid red;
+    background-color: red;
+    padding-top: 300px;
+}

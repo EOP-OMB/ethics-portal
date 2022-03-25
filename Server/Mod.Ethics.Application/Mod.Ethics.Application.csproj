@@ -1,0 +1,22 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net5.0</TargetFramework>
+	<PublishWithAspNetCoreTargetManifest>false</PublishWithAspNetCoreTargetManifest>
+    <Configurations>Debug;Release;Prod;Stage</Configurations>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="AutoMapper" Version="10.1.1" />
+    <PackageReference Include="AutoMapper.Collection" Version="7.0.1" />
+    <PackageReference Include="Microsoft.Extensions.Logging" Version="5.0.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\Framework\Server\Mod.Framework.Notifications\Mod.Framework.Notifications.csproj" />
+    <ProjectReference Include="..\..\Framework\Server\Mod.Framework.User\Mod.Framework.User.csproj" />
+    <ProjectReference Include="..\..\Framework\Server\Mod.Framework\Mod.Framework.csproj" />
+    <ProjectReference Include="..\Mod.Ethics.Domain\Mod.Ethics.Domain.csproj" />
+  </ItemGroup>
+
+</Project>

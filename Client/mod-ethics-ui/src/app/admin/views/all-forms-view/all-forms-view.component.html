@@ -1,0 +1,37 @@
+<mat-drawer-container>
+    <mat-drawer #drawer mode="over" position="end" class="details-drawer" (closedStart)="drawerClosing()" [opened]="false">
+        <div class="drawer-container">
+            <div *ngIf="selectedForm">
+                <app-form-details [form]="selectedForm" [reviewers]="reviewers" [accessLevel]="formAccessLevel" (save)="saveForm($event)" (view)="viewForm($event)" (cancel)="cancelForm($event)"></app-form-details>
+            </div>
+            <div *ngIf="selectedForms">
+                <app-form-multiple-edit [forms]="selectedForms" [reviewers]="reviewers" (save)="assignMultiple(selectedForms, $event)"></app-form-multiple-edit>
+            </div>
+            <button mat-stroked-button type="button" (click)="drawer.close()" class="drawer-close" style="margin-top: 15px;">Close</button>
+        </div>
+    </mat-drawer>
+    <mat-drawer-content>
+        <div class="view-container" fxLayoutAlign="start start">
+            <mat-card>
+                <div class="year-filter-row">
+                    <mat-form-field appearance="outline" class="inline-form-field">
+                        <mat-label>View All Forms by Year</mat-label>
+                        <mat-select [(ngModel)]="yearFilter">
+                            <mat-option *ngFor="let year of years" [value]="year.value">
+                                {{ year.text + (settings.currentFilingYear == year.value ? " (Current)" : "")}}
+                            </mat-option>
+                        </mat-select>
+                    </mat-form-field>
+                    <button mat-stroked-button type="button" (click)="loadForms()" class="search-button">
+                        <span class="material-icons-outlined">
+                            search
+                        </span>
+                    </button>
+                </div>
+                <div>
+                    <app-form-table #dtForms key="allforms" [data]="forms" [selectable]="selectable" [hiddenCols]="hiddenCols" [reviewers]="reviewers" (rowSelect)="onFormSelect($event)" (certifyClicked)="certifyForms($event)" (assignClicked)="assignForms($event)"></app-form-table>
+                </div>
+            </mat-card>
+        </div>
+    </mat-drawer-content>
+</mat-drawer-container>

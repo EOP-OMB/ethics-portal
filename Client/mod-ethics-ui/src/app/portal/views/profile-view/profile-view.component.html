@@ -1,0 +1,119 @@
+<mat-drawer-container>
+    <mat-drawer #drawer mode="over" position="end" class="details-drawer" (closedStart)="drawerClosing()" [opened]="false">
+        <div class="drawer-container">
+            <div *ngIf="selectedExtension">
+                <app-extension-request [extension]="selectedExtension" (save)="saveExtension($event)" (approve)="approveExtension($event)" (reject)="rejectExtension($event)"></app-extension-request>
+            </div>
+            <div *ngIf="selectedGuidance && selectedGuidance.id == 0">
+                <app-guidance-edit [employee]="employee" [allowEmployeeSelect]="false" (employeeClick)="gotoEmployee($event)" (save)="saveGuidance($event)"></app-guidance-edit>
+            </div>
+            <div *ngIf="selectedGuidance && selectedGuidance.id > 0">
+                <app-guidance-detail *ngIf="!canEdit" [guidance]="selectedGuidance" (employeeClick)="gotoEmployee($event)"></app-guidance-detail>
+                <app-guidance-edit *ngIf="canEdit" [guidance]="selectedGuidance" [employee]="employee" [allowEmployeeSelect]="false" (employeeClick)="gotoEmployee($event)" (save)="saveGuidance($event)" (delete)="deleteGuidance($event)"></app-guidance-edit>
+            </div>
+            <div *ngIf="selectedForm">
+                <app-form-details [form]="selectedForm" [reviewers]="reviewers" [accessLevel]="formAccessLevel" [canExtend]="canExtend" (save)="saveForm($event)" (view)="viewForm($event)" (cancel)="cancelForm($event)" (extend)="addExtension($event)"></app-form-details>
+            </div>
+            <div *ngIf="selectedEmployee">
+                <app-employee-edit [employee]="selectedEmployee" (viewForm)="viewForm($event)" (save)="saveEmployee($event)"></app-employee-edit>
+            </div>
+            <button mat-stroked-button type="button" (click)="drawer.close()" class="drawer-close">Close</button>
+        </div>
+    </mat-drawer>
+    <mat-drawer-content>
+        <div class="home-view" fxLayoutAlign="start start" *ngIf="employee">
+            <div class="right">
+                <div class="employee">
+                    <div class="flex-row" style="justify-content: space-between;">
+                        <div style="flex: 1;">
+                            <app-employee-card [employee]="employee" [showClose]="false" [showDetails]="false" (select)="gotoEmployee($event)"></app-employee-card>
+                        </div>
+                        <div class="details">
+                            <p style="margin-top: 12px; margin-right: 16px;" *ngIf="employee.bio">
+                                {{ employee.bio }}
+                            </p>
+                            <div class="label-over" *ngIf="employee.filerType">
+                                <strong>Filer Type:</strong>
+                                <span>{{ employee.filerType }}</span>
+                            </div>
+                            <div class="label-over" *ngIf="employeeType">
+                                <strong>Employee Type:</strong>
+                                <span>
+                                    {{ employeeType }}
+                                </span>
+                            </div>
+                            
+                            <a class="link" (click)="gotoPortfolio()">View Portfolio</a>
+                        </div>
+                    </div>
+                    <div class="profile">
+                        <mat-expansion-panel class="app-expansion-panel" [expanded]="true">
+                            <mat-expansion-panel-header class="border-{{ formPanel.color }}">
+                                <mat-panel-title class="vertical-align">
+                                    <mat-icon class="mat-icon-left">feed</mat-icon>
+                                    OGE Form 450
+                                </mat-panel-title>
+                                <div class="vertical-align mat-icon-left text-{{ formPanel.color }}">
+                                    {{ formPanel.text }}
+                                    <mat-icon class="mat-icon-right">{{ formPanel.icon }}</mat-icon>
+                                </div>
+                            </mat-expansion-panel-header>
+                            <app-form-table key="profile-forms" [data]="forms" [hiddenCols]="['dateOfEmployeeSignature', 'select']" [reviewers]="reviewers" (rowSelect)="onFormSelect($event)"></app-form-table>
+                        </mat-expansion-panel>
+
+                        <!--<mat-expansion-panel class="app-expansion-panel">
+                            <mat-expansion-panel-header class="border-{{ trainingPanel.color }}">
+                                <mat-panel-title class="vertical-align">
+                                    <mat-icon class="mat-icon-left">school</mat-icon>
+                                    Training
+                                    <button *ngIf="trainingPanel.showAdd" mat-icon-button (click)="addTraining($event)" matTooltip="Certify Training"><mat-icon>add</mat-icon></button>
+                                </mat-panel-title>
+                                <div class="vertical-align mat-icon-left text-{{ trainingPanel.color }}">
+                                    {{ trainingPanel.text }}
+                                    <mat-icon class="mat-icon-right">{{ trainingPanel.icon }}</mat-icon>
+                                </div>
+                            </mat-expansion-panel-header>
+                        </mat-expansion-panel>
+
+                        <mat-expansion-panel class="app-expansion-panel">
+                            <mat-expansion-panel-header class="border-{{ eventPanel.color }}">
+                                <mat-panel-title class="vertical-align">
+                                    <mat-icon class="mat-icon-left">event_available</mat-icon>
+                                    Event Clearance
+                                    <button *ngIf="eventPanel.showAdd" mat-icon-button (click)="addTraining($event)" matTooltip="New EventRequest"><mat-icon>add</mat-icon></button>
+                                </mat-panel-title>
+                                <div class="vertical-align mat-icon-left text-{{ eventPanel.color }}">
+                                    {{ eventPanel.text }}
+                                    <mat-icon class="mat-icon-right">{{ eventPanel.icon }}</mat-icon>
+                                </div>
+                            </mat-expansion-panel-header>
+                        </mat-expansion-panel>-->
+
+                        <mat-expansion-panel class="app-expansion-panel" [expanded]="true">
+                            <mat-expansion-panel-header class="border-{{ guidancePanel.color }}">
+                                <mat-panel-title class="vertical-align">
+                                    <mat-icon class="mat-icon-left">contact_support</mat-icon>
+                                    Guidance History
+                                </mat-panel-title>
+                                <div class="vertical-align mat-icon-left text-{{ guidancePanel.color }}">
+                                    {{ guidancePanel.text }}
+                                    <mat-icon class="mat-icon-right">{{ guidancePanel.icon }}</mat-icon>
+                                </div>
+                            </mat-expansion-panel-header>
+                            <app-guidance-table #dtGuidances key="profile-guidance" [data]="guidance" [canAdd]="canEdit" [hiddenCols]="hiddenCols" (addClicked)="addGuidance()" (rowSelect)="onGuidanceSelect($event)"></app-guidance-table>
+                        </mat-expansion-panel>
+
+                    </div>
+                </div>
+                <!--<div class="reports">
+                    <div class="report-section">
+                        <div class="section-header">
+                            <app-card title="My Timeline" [records]="timeline" totalRecords="11" [options]="options" [showRecordDate]="true" style="flex: 1"></app-card>
+                        </div>
+                    </div>
+                </div>-->
+            </div>
+
+        </div>
+    </mat-drawer-content>
+</mat-drawer-container>

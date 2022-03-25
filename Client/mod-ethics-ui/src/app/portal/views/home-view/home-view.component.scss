@@ -1,0 +1,23 @@
+:host {
+    flex: 1;
+    display: flex;
+    align-content: stretch;
+    flex-direction: column;
+}
+
+.widget-container {
+    flex: 0;
+    display: flex;
+}
+
+.card-container {
+    flex: 0;
+    display: flex;
+}
+
+.column {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    margin: 10px;
+}

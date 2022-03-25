@@ -1,0 +1,28 @@
+:host {
+    flex: 1;
+    display: flex;
+    align-content: stretch;
+    flex-direction: column;
+}
+
+table tbody tr td a {
+    cursor: pointer !important;
+}
+
+.home-view {
+    padding: 15px;
+    display: flex;
+    justify-content: center;
+}
+
+.home-card {
+    max-width: 1170px;
+    min-width: 1024px;
+}
+
+.details-drawer {
+    width: 425px;
+    padding: 15px;
+    margin: 15px 15px 15px 15px;
+}
+

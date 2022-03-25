@@ -1,0 +1,113 @@
+<div>
+    <div class="drawer-header-row">
+        <h1>
+            {{ extension.form.employeesName }}
+        </h1>
+        <div>
+            {{ extension.form.reportingStatus }} OGE Form 450 ({{ extension.form.year }})
+        </div>
+    </div>
+    <div class="drawer-row">
+        <div class="label-over">
+            <strong>Status:</strong>
+            <span>
+                {{ extension.form.formStatus }}
+            </span>
+        </div>
+        <div>
+            <span *ngIf="extension.form.daysExtended > 0" class="fa-stack" title="Due date has been extended">
+                <!-- The icon that will wrap the number -->
+                <span class="fa fa-calendar-o fa-stack-2x"></span>
+                <!-- a strong element with the custom content, in this case a number -->
+                <strong class="fa-stack-1x" style="padding-top: 3px; color: #222222;">
+                    {{ extension.form.daysExtended }}
+                </strong>
+            </span>
+            <span *ngIf="extension.form.submittedPaperCopy" class="fa fa-file-text-o" style="font-size: 1.6em; color: #222222; vertical-align: middle; padding-left: 3px;" title="Submitted Paper Copy"></span>
+            <span *ngIf="extension.form.isBlank" class="fa fa-info-circle text-primary" style="font-size: 1.6em; vertical-align: middle; padding-left: 3px;" title="Blank submissions answered 'no' to all 5 questions"></span>
+            <span *ngIf="extension.form.isUnchanged" class="fa fa-files-o text-primary" style="font-size: 1.6em; vertical-align: middle; padding-left: 3px;" title="Submission is unchanged from previous year's certified form"></span>
+            <span *ngIf="extension.form.isOverdue" class='fa fa-exclamation-triangle text-danger' style="font-size: 1.6em; vertical-align: middle;" title="Form is overdue"></span>
+        </div>
+    </div>
+    <div class="drawer-row" *ngIf="this.message">
+        <div innerHtml="{{ this.message }}" class="message-info">
+
+        </div>
+    </div>
+    <div class="drawer-row">
+        <div class="label-over">
+            <strong>Extension days remaining:</strong>
+            {{ 90 - extension.form.daysExtended }}
+        </div>
+    </div>
+    <form class="extension-details" *ngIf="extension.id == 0 && daysRemaining > 0">
+        <div class="drawer-row">
+            <div class="label-over">
+                <strong>Due Date:</strong>
+                <span>
+                    {{extension.form.dueDate | date: 'MM/dd/yyyy'}}
+                </span>
+            </div>
+            <div class="label-over" *ngIf="newDueDate != null">
+                <strong>New Due Date (if Approved):</strong>
+                <span style="color: green; font-weight: bold;">{{newDueDate | date: 'MM/dd/yyyy'}}</span>
+            </div>
+        </div>
+
+        <mat-form-field appearance="outline" class="inline-form-field">
+            <mat-label>Number of days Requesting</mat-label>
+            <mat-select [(ngModel)]="extension.daysRequested" (selectionChange)="daysChange()" required name="selectDays">
+                <mat-option *ngFor="let day of days" [value]="day">
+                    {{ day }}
+                </mat-option>
+            </mat-select>
+        </mat-form-field>
+        <mat-form-field appearance="outline" class="inline-form-field">
+            <mat-label>Reason</mat-label>
+            <textarea matInput rows="6" [(ngModel)]="extension.reason" required name="reason"></textarea>
+        </mat-form-field>
+
+
+        <div class="save-buttons">
+            <button mat-flat-button type="submit" color="primary" (click)="saveClick()">Save</button>
+        </div>
+    </form>
+</div>
+
+    
+
+    <div class="extension-details" *ngIf="extension.id > 0">
+        <div>
+            <strong>Number of days requested:</strong> {{ extension.daysRequested }}
+        </div>
+        <div>
+            <strong>Extension days remaining:</strong> {{ 90 - extension.form.daysExtended }}
+        </div>
+
+        <strong>Reason:</strong>
+        <p>
+            {{ extension.reason }}
+        </p>
+
+        <h3 class="drawer-header" *ngIf="newDueDate != null">
+            <strong>New Due Date (if Approved):</strong>
+            <span style="color: green; font-weight: bold;">{{newDueDate | date: 'MM/dd/yyyy'}}</span>
+        </h3>
+
+        <mat-form-field *ngIf="canReview()" appearance="outline" class="inline-form-field">
+            <mat-label>Comments</mat-label>
+            <textarea matInput rows="6" [(ngModel)]="extension.reviewerComments" name="comments"></textarea>
+        </mat-form-field>
+        <div *ngIf="!canReview()">
+            <strong>Comments:</strong>
+            <p>
+                {{ extension.reviewerComments }}
+            </p>
+        </div>
+
+        <div class="workflow-buttons" *ngIf="canReview()">
+            <button mat-flat-button type="button" color="primary" (click)="workflowClick(true)">Approve</button>
+            <button mat-flat-button type="button" color="warn" (click)="workflowClick(false)">Reject</button>
+        </div>
+    </div>
+    

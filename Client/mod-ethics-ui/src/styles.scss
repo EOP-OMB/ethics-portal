@@ -1,0 +1,358 @@
+/* You can add global styles to this file, and also import other style files */
+@import "~bootstrap/dist/css/bootstrap.css";
+@import "~font-awesome/scss/font-awesome.scss";
+
+/* Print Stuff  */
+@media print {
+    app-form-view {
+        display: block !important;
+    }
+
+    .home-view {
+        display: block !important;
+        background-color: white;
+    }
+
+    .banner, .navbar, .alert {
+        display: none;
+    }
+
+    #ogeForm450 {
+        margin-top: 0px !important;
+    }
+
+    .hideprint {
+        display: none !important;
+    }
+
+    .layout-header {
+        display: none !important;
+    }
+
+    .mod-side-menu {
+        display: none !important;
+    }
+
+    .mod-side-menu-content {
+        overflow: visible !important;
+        display: block !important;
+        
+    }
+
+    .app-content {
+        margin-left: -250px;
+        width: auto !important;
+        display: block !important;
+    }
+
+    .showprint {
+        display: block !important;
+    }
+
+    body {
+        width: auto !important;
+        display: block !important;
+        height: auto !important;
+    }
+
+    .form-container {
+        display: block !important;
+        width: auto !important;
+    }
+
+    .home-card {
+        display: block;
+        width: auto !important;
+        height: auto !important;
+        box-shadow: none;
+    }
+
+    .oge-form {
+        margin-top: 0px !important;
+    }
+
+    ::-webkit-scrollbar {
+        display: none;
+    }
+
+    h3 {
+        font-size: 16px !important;
+        margin-top: 5px !important;
+        margin-bottom: 2px !important;
+    }
+}
+
+@page {
+    size: 8.5in 11in;
+    margin: 1cm
+}
+
+/* Master Styles */
+h1 {
+    color: #369;
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 250%;
+}
+
+h2, h3 {
+    color: #444;
+    font-family: Arial, Helvetica, sans-serif;
+    font-weight: lighter;
+}
+
+/* . . . */
+/* everywhere else */
+* {
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+body, html {
+    height: 100%;
+}
+
+body {
+    padding-bottom: 20px;
+    display: block;
+    margin: 0;
+}
+
+html {
+    min-width: 480px;
+    overflow-y: scroll;
+}
+
+.navbar {
+    min-width: 480px;
+}
+
+body {
+    padding-right: 0 !important
+}
+
+/* Wrapping element */
+/* Set some basic padding to keep content from hitting the edges */
+.body-content {
+    padding-left: 15px;
+    padding-right: 15px;
+    margin-top: 145px;
+}
+
+@media(max-width: 767px) {
+    .body-content {
+        margin-top: 75px
+    }
+
+    .modal-dialog {
+        margin: 10px auto;
+    }
+}
+
+.modal-backdrop {
+    /* bug fix - no overlay */
+    display: none;
+}
+
+.popover {
+    max-width: 1024px !important;
+}
+
+.modal-header-danger {
+    color: #fff;
+    padding: 9px 15px;
+    border-bottom: 1px solid #eee;
+    background-color: #d9534f;
+    -webkit-border-top-left-radius: 5px;
+    -webkit-border-top-right-radius: 5px;
+    -moz-border-radius-topleft: 5px;
+    -moz-border-radius-topright: 5px;
+    border-top-left-radius: 5px;
+    border-top-right-radius: 5px;
+}
+
+.modal-header-warning {
+    color: #fff;
+    padding: 9px 15px;
+    border-bottom: 1px solid #eee;
+    background-color: #f0ad4e;
+    -webkit-border-top-left-radius: 5px;
+    -webkit-border-top-right-radius: 5px;
+    -moz-border-radius-topleft: 5px;
+    -moz-border-radius-topright: 5px;
+    border-top-left-radius: 5px;
+    border-top-right-radius: 5px;
+}
+
+.text-warning {
+    color: #f0ad4e;
+}
+
+.text-info {
+    color: #5bc0de;
+}
+
+.text-danger {
+    color: #d9534f;
+}
+
+.text-success {
+    color: #4cae4c;
+}
+
+a {
+    color: #337ab7 !important;
+    text-decoration: none !important;
+}
+
+.alert-fixed {
+    position: fixed;
+    top: 70px;
+    left: 0px;
+    width: 60%;
+    margin-left: 20%;
+    z-index: 9999;
+    border-radius: 0px
+}
+
+.alert-absolute {
+    position: absolute;
+    top: 40px;
+    left: 0px;
+    width: 90%;
+    margin-left: 5%;
+    z-index: 5;
+    border-radius: 0px
+}
+
+.top-label {
+    font-size: 1.1em;
+    display: block;
+}
+
+.pad {
+    padding-top: 6px;
+}
+
+.data-label {
+    font-size: .9em;
+    display: block;
+    padding-top: 2px;
+}
+
+.ui-datepicker {
+    top: 29px !important;
+}
+
+.required:before {
+    content: "* ";
+    color: red;
+}
+
+
+/* Hide HTML5 Up and Down arrows. */
+input[type="number"]::-webkit-outer-spin-button, input[type="number"]::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+input[type="number"] {
+    -moz-appearance: textfield;
+}
+
+.ui-editor-content {
+    background-color: white !important;
+}
+
+.ql-editor > p {
+    line-height: 1.6 !important;
+    margin: 0px 0px 10px 0px !important;
+}
+
+.table-striped > tbody > tr:nth-child(odd) {
+    background-color: white !important;
+}
+
+.download-button {
+    color: green;
+    padding: 0px 5px 5px 0px;
+    font-size: 1.5em;
+}
+
+.download-button > i {
+    cursor: pointer;
+}
+
+.drawer-container {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    padding: 15px;
+    height: 89vh;
+    overflow: auto;
+}
+
+.mat-drawer-container {
+    height: 100%;
+    width: 100%;
+}
+
+.mat-typography {
+    padding-bottom: 0px !important;
+}
+
+/*.mat-form-field-infix {
+    min-width: 75px !important;
+    width: auto !important;
+    max-width: 180px !important;
+    flex: 1 !important;
+}*/
+
+legend {
+    display: block;
+    width: 100%;
+    padding: 0;
+    margin-bottom: 20px;
+    font-size: 21px;
+    line-height: 30px;
+    color: #333333;
+    border: 0;
+    border-bottom: 1px solid #e5e5e5;
+}
+
+.excel-button {
+    color: green;
+    font-size: 2em;
+}
+
+.drawer-container {
+    height: 85vh !important;
+}   
+
+.drawer-header-row {
+    display: flex;
+    flex-direction: column;
+    padding-bottom: 15px;
+}
+
+.drawer-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-bottom: 10px;
+}
+
+.label-over {
+    display: flex;
+    flex-direction: column;
+}
+
+.drawer-close {
+    margin-top: 15px !important;
+}
+
+.link {
+    cursor: pointer;
+}
+
+.link:hover {
+    color: #00AEEF;
+}

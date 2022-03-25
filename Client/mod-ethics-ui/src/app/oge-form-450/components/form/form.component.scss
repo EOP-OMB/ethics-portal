@@ -1,0 +1,375 @@
+:host {
+    flex: 1;
+    background-color: white;
+}
+
+h1, .h1, h2, .h2, h3, .h3 {
+    margin-top: 20px;
+    margin-bottom: 10px;
+    line-height: 1.1;
+}
+
+h3 {
+    font-size: 24px !important;
+    display: block;
+    font-size: 1.17em;
+    margin-inline-start: 0px;
+    margin-inline-end: 0px;
+    font-weight: bold;
+}
+
+h4 {
+    font-size: 18px !important;
+    display: block;
+    margin-inline-start: 0px;
+    margin-inline-end: 0px;
+    font-weight: bold;
+}
+
+h4, .h4, h5, .h5, h6, .h6 {
+    margin-top: 10px;
+    margin-bottom: 10px;
+    font-family: inherit;
+    font-weight: 500;
+    line-height: 1.1;
+    color: inherit;
+}
+
+.divide-right {
+    margin-right: 15%;
+}
+
+.divide-left {
+    margin-left: 15%;
+}
+
+.title-box {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+}
+
+.oge-form {
+    max-width: 1024px;
+    margin-top: 79px;
+}
+
+.navbar {
+    min-width: 480px;
+    align-self: stretch;
+    margin-top: 64px;
+}
+
+.navbar-light {
+    background-color: #f8f8f8;
+    border-bottom: solid 1px #e7e7e7;
+    margin-bottom: 20px;
+}
+
+.navbar-fixed-top {
+    z-index: 1029;
+}
+
+@media(max-width: 767px) {
+    
+
+    .navbar-fixed-top {
+        z-index: 1029;
+    }
+}
+
+input[type="text"], textarea[type="text"], input[type="tel"], input[type="date"] {
+    background-color: #fafcff;
+}
+
+.navbar-nav {
+    float: none;
+    text-align: center;
+    margin-left: 10px;
+    margin-right: 10px;
+}
+
+.navbar-nav > li {
+    float: none;
+}
+
+.nav > li {
+    display: inline;
+}
+
+.nav > li > div {
+    display: inline-block;
+    padding-left: 5px;
+    padding-right: 5px;
+}
+
+.btn-default {
+    border-color: #ccc;
+    background-color: #fff;
+}
+
+.numeral {
+    font-family: 'Times New Roman';
+    font-weight: bold;
+}
+
+.nav-icon {
+    font-size: 1.0em;
+    width: 40px;
+    margin-left: 10px;
+    height: 42px;
+    padding-top: 10px;
+}
+
+.nav-icon > .invert {
+    color: white !important;
+}
+
+
+#oge-form {
+    max-width: 1024px;
+}
+
+.modal-admin {
+    max-width: 70%;
+    margin-left: 25%;
+    margin-top: 5%;
+}
+
+.form-box {
+    border: 1px solid black;
+    padding: 5px;
+    font-size: .85em;
+}
+
+.form-box-sm {
+    border: 1px solid black;
+    padding: 2px;
+    font-size: .8em;
+}
+
+.solo-form-box {
+    border: 2px solid black;
+    margin-bottom: 0 !important;
+}
+
+.intro {
+    font-size: .9em;
+    color: blue;
+}
+
+.control-label {
+    font-weight: bold;
+}
+
+.row {
+    margin-left: 0px !important;
+    margin-right: 0px !important;
+    overflow: hidden;
+}
+
+label {
+    font-weight: normal;
+}
+
+.outer-form-box {
+    display: table;
+    border: 1px solid black;
+    width: 100%;
+}
+
+.collapse {
+    padding-bottom: 10px;
+}
+
+.required.print:before {
+    content: "";
+    color: red;
+}
+
+.break {
+    page-break-before: always;
+    padding-top: 10px;
+}
+
+.section {
+    margin-top: 15px;
+}
+
+.sectionOff {
+    background-color: #eee;
+}
+
+.intro > .row {
+    padding-top: 10px;
+}
+
+.pageNumber > input:after {
+    content: counter(page);
+}
+
+.btn-text > span {
+    padding-right: 10px;
+}
+
+.collapsing {
+    transition: .35s;
+}
+
+.btn-default {
+    color: #777 !important;
+}
+
+.example-row {
+    align-items: center;
+    justify-content: space-between;
+}
+
+#watermark {
+    position: fixed;
+    opacity: 0.25;
+    color: black;
+    font-size: 7em;
+    transform: rotate(-45deg);
+    z-index: 9;
+    text-align: center;
+    width: 100%;
+    left: 0px;
+    top: 55%;
+}
+
+.calendar-inline {
+    display: inline !important;
+}
+
+.question {
+    display: flex;
+}
+
+.question-text {
+    flex: 1;
+}
+
+.yes-no {
+    width: 80px;
+    flex: 0 0 auto;
+}
+
+.information {
+    display: flex;
+}
+
+.information-start {
+    flex: 1;
+    margin-right: auto;
+    display: flex;
+}
+
+.info-item {
+    flex: 1;
+}
+
+.info-number {
+    font-size: .8em;
+    vertical-align: top;
+    flex: 0 1 auto;
+}
+
+.info-3 {
+    width: 25%;
+    flex: 0 0 auto;
+}
+
+.hide-me {
+    display: none;
+}
+
+.page-top-row {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    width: 100%;
+}
+
+.width-25 {
+    width: 25%;
+}
+
+.sig-box {
+    flex: 5;
+}
+
+.page-number {
+    flex: 1;
+}
+
+ul {
+    margin-block-end: 0px !important;
+}
+
+/*
+
+app-form-view {
+    display: block !important;
+}
+
+.home-view {
+    display: block !important;
+}
+
+.banner, .navbar, .alert {
+    display: none;
+}
+
+#ogeForm450 {
+    margin-top: 0px !important;
+}
+
+.hideprint {
+    display: none !important;
+}
+
+.layout-header {
+    display: none !important;
+}
+
+.mod-side-menu {
+    display: none !important;
+}
+
+.mod-side-menu-content {
+    overflow: visible !important;
+    display: block !important;
+}
+
+.app-content {
+    margin-left: -250px;
+    width: auto !important;
+    display: block !important;
+}
+
+.showprint {
+    display: block !important;
+}
+
+body {
+    width: auto !important;
+    display: block !important;
+    height: auto !important;
+}
+
+.form-container {
+    display: block !important;
+    width: auto !important;
+}
+
+.home-card {
+    display: block;
+    width: auto !important;
+    height: auto !important;
+}
+
+.oge-form {
+    margin-top: 0px !important;
+}
+*/

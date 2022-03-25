@@ -1,0 +1,89 @@
+{
+    "id": "portal",
+    "title": "NAVIGATION",
+    "sections": [
+        {
+            "name": "",
+            "shortName": "",
+            "menuItems": [
+                {
+                    "text": "Profile",
+                    "icon": "home",
+                    "route": "profile"
+                },
+                {
+                    "text": "Event Request",
+                    "icon": "event",
+                    "route": "events",
+                    "allowedRoles": [ "Disabled" ]
+                },
+                {
+                    "text": "Current 450",
+                    "icon": "feed",
+                    "route": "oge450/myform"
+                },
+                {
+                    "text": "Ethics Portal",
+                    "icon": "dashboard",
+                    "route": "oge450/portal"
+                }
+            ]
+        },
+        {
+            "name": "ADMIN",
+            "shortName": "",
+            "allowedRoles": [ "Admin", "OGEReviewer", "OGESupport" ],
+            "menuItems": [
+                {
+                    "text": "Employees",
+                    "icon": "groups",
+                    "route": "admin/employees",
+                    "allowedRoles": [ "Admin", "OGESupport" ]
+                },
+                {
+                    "text": "Guidance",
+                    "icon": "contact_support",
+                    "route": "admin/guidance",
+                    "allowedRoles": [ "Admin", "OGESupport" ]
+                },
+                {
+                    "text": "450 Dashboard",
+                    "icon": "verified",
+                    "route": "oge450/dashboard",
+                    "allowedRoles": [ "Admin", "OGEReviewer", "OGESupport" ]
+                },
+                {
+                    "text": "All Forms",
+                    "icon": "library_books",
+                    "route": "admin/forms",
+                    "allowedRoles": [ "Admin", "OGESupport" ]
+                },
+                {
+                    "text": "All Extensions",
+                    "icon": "schedule",
+                    "route": "admin/extensions",
+                    "allowedRoles": [ "Admin", "OGESupport" ]
+                },
+                {
+                    "text": "Event Requests",
+                    "icon": "event_available",
+                    "route": "events/dashboard",
+                    "allowedRoles": [ "Disabled" ]
+                },
+                {
+                    "text": "Settings",
+                    "icon": "settings",
+                    "route": "admin/settings",
+                    "allowedRoles": [ "Admin" ]
+                },
+                {
+                    "text": "Reports",
+                    "icon": "space_dashboard",
+                    "route": "admin/reports",
+                    "allowedRoles": [ "Admin" ]
+                }
+            ]
+        }
+    ]
+
+}

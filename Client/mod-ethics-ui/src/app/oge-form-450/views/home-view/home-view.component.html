@@ -1,0 +1,86 @@
+<mat-drawer-container>
+    <mat-drawer #drawer mode="over" position="end" class="details-drawer" (closedStart)="drawerClosing()" [opened]="false">
+        <div class="drawer-container">
+            <div *ngIf="selectedExtension">
+                <app-extension-request [extension]="selectedExtension" (save)="saveExtension($event)" (approve)="approveExtension($event)" (reject)="rejectExtension($event)"></app-extension-request>
+            </div>
+            <button mat-stroked-button type="button" (click)="drawer.close()" class="drawer-close">Close</button>
+        </div>
+    </mat-drawer>
+    <mat-drawer-content>
+        <div class="home-view" fxLayoutAlign="start start" *ngIf="formData">
+            <mat-card class="home-card">
+                <div class="row">
+
+                    <!-- User does not have an active form -->
+                    <div class="col-sm-4" *ngIf="formData.form.id == 0">
+                        <app-widget *ngIf="settings" [data]="noFilingWidget" [icon]="'fa-file-text-o'" title="You will receive an email if a filing is required for this calendar year.  At which time you may use this application to file your OGE Form 450."></app-widget>
+                    </div>
+                    <div class="col-sm-4" *ngIf="formData.form.id == 0">
+                        &nbsp;
+                    </div>
+
+                    <!-- User DOES have an active form -->
+                    <div class="col-sm-4" *ngIf="formData.form.id > 0">
+                        <app-widget *ngIf="formData.form.id > 0" [data]="formData.currentFilingWidget" [icon]="'fa-file-text-o'" (widgetClick)="onFilingClick()"></app-widget>
+                    </div>
+                    <div class="col-sm-4" *ngIf="formData.form.id > 0">
+                        <app-widget [data]="formData.daysDueWidget" [icon]="'fa-clock-o'" (widgetClick)="onDaysClick()"></app-widget>
+                    </div>
+
+                    <!-- Third column, helpful links -->
+                    <div class="col-sm-4">
+                        <app-helpful-links [links]="helpfulLinks"></app-helpful-links>
+                    </div>
+                </div>
+                <div class="row" style="padding-top: 20px;">
+                    <div class="col-sm-8">
+                        <fieldset>
+                            <legend>My Filings</legend>
+                            <table *ngIf="forms" id="dtForms" class="table table-striped table-bordered">
+                                <thead class="thead thead-default">
+                                    <tr>
+                                        <th>
+                                            Year
+                                        </th>
+                                        <th>
+                                            Reporting Status
+                                        </th>
+                                        <th>
+                                            Status
+                                        </th>
+                                        <th>&nbsp;</th>
+                                    </tr>
+                                </thead>
+                                <tbody *ngIf="forms.length > 0">
+                                    <tr *ngFor="let form of forms">
+                                        <td><a (click)="gotoDetail(form.id)">{{form.year}}</a></td>
+                                        <td><a (click)="gotoDetail(form.id)">{{form.reportingStatus}}</a></td>
+                                        <td><a (click)="gotoDetail(form.id)">{{form.formStatus}}</a></td>
+                                        <td align="center">
+                                            <a title="View" (click)="gotoDetail(form.id)"><i class="fa fa-file-text-o"></i></a>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                                <tbody *ngIf="forms.length == 0 && employee">
+                                    <tr>
+                                        <td colspan="4">You do not have any previous filings on record.</td>
+                                    </tr>
+                                </tbody>
+                                <tbody *ngIf="forms.length == 0 && !employee">
+                                    <tr>
+                                        <td colspan="4">You have no filings on record</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+
+                        </fieldset>
+                    </div>
+                    <div class="col-sm-4">
+                        <app-support-contacts [contacts]="ethicsTeam"></app-support-contacts>
+                    </div>
+                </div>
+            </mat-card>
+        </div>
+    </mat-drawer-content>
+</mat-drawer-container>

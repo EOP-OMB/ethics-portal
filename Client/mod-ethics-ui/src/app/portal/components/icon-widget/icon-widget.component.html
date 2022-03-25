@@ -1,0 +1,21 @@
+<div class="icon-widget">
+    <div class="offset-card offset-card-stats {{ danger }}" style="cursor: pointer;" (click)="widgetClick('Training', id)">
+        <div #iconDiv class="offset-card-header">
+            <mat-icon>{{ icon }}</mat-icon>
+        </div>
+        <div class="offset-card-content">
+            <h3 class="title">
+                {{ title }}
+            </h3>
+            <p class="category">
+                {{ text }} <span class="{{ statusColor }}">{{ status }}</span>
+            </p>
+        </div>
+        <div class="offset-card-footer">
+            <div class="stats">
+                <mat-icon *ngIf="actionIcon">{{actionIcon}}</mat-icon>
+                <span [innerHTML]="actionText"></span>
+            </div>  
+        </div>
+    </div>  
+</div>

@@ -1,0 +1,20 @@
+<div class="widget-container">
+    <app-icon-widget title="OGE Form 450" icon="description" text="" statusColor="text-primary" color="blue" status="SUBMITTED" actionText="click to launch app">
+    </app-icon-widget>
+    <app-icon-widget title="Ethics Training" icon="model_training" text="2021 Annual" statusColor="text-danger" color="orange" status="MISSING" actionIcon="calendar_today" actionText="click to certify training">
+    </app-icon-widget>
+    <app-icon-widget title="Event Clearance" icon="event" text="1 Event" statusColor="text-info" color="green" status="PENDING" actionText="click to launch app">
+    </app-icon-widget>
+</div>
+
+<div class="card-container">
+    <div class="column">
+        <app-card title="My Timeline" [records]="timeline" totalRecords="11" [options]="options" [showRecordDate]="true"></app-card>
+    </div>
+    <div class="column">
+        <app-card title="Guidance" [records]="guidance" totalRecords="1" [options]="options" [showRecordDate]="true"></app-card>
+    </div>
+    <div class="column">
+
+    </div>
+</div>

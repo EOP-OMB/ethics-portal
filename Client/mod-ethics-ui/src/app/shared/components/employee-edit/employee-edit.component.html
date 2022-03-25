@@ -1,0 +1,131 @@
+<div class="user-profile">
+    <!--<div class="header">
+        <h1>{{ editEmployee.displayName }}</h1>
+        <a (click)="profileClick(editEmployee)">Profile Link</a>
+    </div>
+    <div class="body">
+        <div class="left">
+            <img *ngIf="!employee.profileImage" class="img" src="assets/PersonPlaceholder.png" height="120" width="120" style="border-radius: 50%;" />
+            <img *ngIf="employee.profileImage" class="img" src="data:image/jpeg;base64,{{employee.profileImage}}" height="120" width="120" style="border-radius: 50%;" />
+        </div>
+        <div class="right">
+            <h3 class="employee-row">{{editEmployee.position}}</h3>
+            <div class="employee-row">
+                <a href="mailto:{{ editEmployee.emailAddress }}">{{ editEmployee.emailAddress }}</a>
+            </div>
+            <div class="employee-row">
+                <i class="fa fa-phone" style="margin-top: 2px;"></i><span>{{ editEmployee.mobilePhone | phone }}</span>
+            </div>
+            <div class="employee-row"><strong>Agency:</strong><span>{{editEmployee.agency}}</span></div>
+            <div class="employee-row"><strong>Branch:</strong><span>{{editEmployee.office}}</span></div>
+        </div>
+    </div>-->
+    <app-employee-card [employee]="editEmployee" (select)="profileClick($event)"></app-employee-card>
+
+    <mat-form-field appearance="outline" class="inline-form-field">
+        <mat-label>Detailee Type</mat-label>
+        <mat-select [(ngModel)]="editEmployee.employeeStatus">
+            <mat-option value="">
+            </mat-option>
+            <mat-option *ngFor="let es of employeeStatuses" [value]="es.value">
+                {{ es.text }}
+            </mat-option>
+        </mat-select>
+    </mat-form-field>
+    <mat-form-field appearance="outline" class="inline-form-field">
+        <mat-label>Political or Career</mat-label>
+        <mat-select [(ngModel)]="editEmployee.type" (selectionChange)="typeChange($event)">
+            <mat-option value="">
+            </mat-option>
+            <mat-option *ngFor="let val of employeeTypes" [value]="val.value">
+                {{ val.text }}
+            </mat-option>
+        </mat-select>
+    </mat-form-field>
+    <mat-form-field appearance="outline" class="inline-form-field">
+        <mat-label>Type of Employee</mat-label>
+        <mat-select [(ngModel)]="editEmployee.subtype">
+            <mat-option *ngFor="let val of employeeSubtypes" [value]="val.value">
+                {{ val.text }}
+            </mat-option>
+        </mat-select>
+    </mat-form-field>
+    <mat-form-field appearance="outline" class="inline-form-field">
+        <mat-label>Filer Type</mat-label>
+        <mat-select [(ngModel)]="editEmployee.filerType">
+            <mat-option *ngFor="let ft of filingTypes" [value]="ft.value">
+                {{ ft.text }}
+            </mat-option>
+        </mat-select>
+    </mat-form-field>
+
+
+    <div *ngIf="editEmployee.filerType == '450 Filer'" style="display: block; padding-top: 6px;">
+        <mat-form-field appearance="outline" class="inline-form-field">
+            <mat-label>Reporting Status</mat-label>
+            <mat-select [(ngModel)]="editEmployee.reportingStatus" (selectionChange)="reportingStatusChange()">
+                <mat-option value="">
+                    N/A
+                </mat-option>
+                <mat-option *ngFor="let rs of reportingStatuses" [value]="rs.value">
+                    {{ rs.text }}
+                </mat-option>
+            </mat-select>
+        </mat-form-field>
+    </div>
+
+    <mat-form-field appearance="outline">
+        <mat-label>Appointment Date</mat-label>
+        <input matInput [matDatepicker]="picker" [(ngModel)]="tempAppointmentDate">
+        <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+        <mat-datepicker #picker></mat-datepicker>
+    </mat-form-field>
+
+
+    <div *ngIf="editEmployee.currentFormId > 0" class="header">
+        <div class="user-profile">
+            <h4 class="employee-row"><strong>Form Status:</strong><span>{{editEmployee.currentFormStatus}}</span></h4>
+            <h4 class="employee-row"><strong>Due Date:</strong><span>{{ editEmployee.dueDate | date: 'MM/dd/yyyy'}}</span></h4>
+        </div>
+        <button mat-stroked-button type="button" color="primary" (click)="gotoForm(editEmployee)"><mat-icon>description</mat-icon>View Form</button>
+    </div>
+
+    <div *ngIf="editEmployee.currentFormId == 0 && editEmployee.filerType == '450 Filer' && !editEmployee.inactive && editEmployee.reportingStatus != null">
+
+        <h2 id="start-new">Start New OGE Form 450 for Filer?</h2>
+
+        <div class="header">
+            <mat-radio-group aria-labelledby="start-new" [(ngModel)]="editEmployee.generateForm">
+                <mat-radio-button [value]="true" class="radio-button">Yes</mat-radio-button>
+                <mat-radio-button [value]="false" class="radio-button">No</mat-radio-button>
+            </mat-radio-group>
+
+            <mat-form-field appearance="outline" *ngIf="editEmployee.generateForm">
+                <mat-label>Due Date</mat-label>
+                <input matInput [matDatepicker]="dueDatePicker" [(ngModel)]="tempDueDate">
+                <mat-datepicker-toggle matSuffix [for]="dueDatePicker"></mat-datepicker-toggle>
+                <mat-datepicker #dueDatePicker></mat-datepicker>
+            </mat-form-field>
+        </div>
+
+        <div *ngIf="editEmployee.generateForm">
+            <div class="top-label pad">{{editEmployee.reportingStatus}} Email</div>
+
+            <div class="NgxEditor__Wrapper">
+                <!--<ngx-editor-menu [editor]="editor"> </ngx-editor-menu>
+    <ngx-editor [editor]="editor"
+                [(ngModel)]="emailText"
+                [disabled]="false"
+                [placeholder]="'Type here...'"></ngx-editor>-->
+                <kendo-editor [(ngModel)]="emailText" style="height: 300px; width: 475px;"></kendo-editor>
+            </div>
+        </div>
+    </div>
+
+    <button *ngIf="!editEmployee.inactive" mat-flat-button type="button" (click)="saveEmployee(editEmployee)" color="primary" style="margin-top: 15px;">Save</button>
+</div>
+
+
+
+
+

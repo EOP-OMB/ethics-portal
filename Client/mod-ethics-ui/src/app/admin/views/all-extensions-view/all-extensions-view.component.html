@@ -1,0 +1,34 @@
+<mat-drawer-container>
+    <mat-drawer #drawer mode="over" position="end" class="details-drawer" (closedStart)="drawerClosing()" [opened]="false">
+        <div class="drawer-container">
+            <div *ngIf="selectedExtension">
+                <app-extension-request [extension]="selectedExtension" (approve)="approveExtension($event)" (reject)="rejectExtension($event)"></app-extension-request>
+            </div>
+            <button mat-stroked-button type="button" (click)="drawer.close()" class="drawer-close">Close</button>
+        </div>
+    </mat-drawer>
+    <mat-drawer-content>
+        <div class="view-container" fxLayoutAlign="start start">
+            <mat-card>
+                <!--<div class="year-filter-row">
+                    <mat-form-field appearance="outline" class="inline-form-field">
+                        <mat-label>View All Extensions by Year</mat-label>
+                        <mat-select [(ngModel)]="yearFilter">
+                            <mat-option *ngFor="let year of years" [value]="year.value">
+                                {{ year.label + (settings.currentFilingYear == year.value ? " (Current)" : "")}}
+                            </mat-option>
+                        </mat-select>
+                    </mat-form-field>
+                    <button mat-stroked-button type="button" (click)="loadForms()" class="search-button">
+                        <span class="material-icons-outlined">
+                            search
+                        </span>
+                    </button>
+                </div>-->
+                <div>
+                    <app-extension-table key="all-extensions" [data]="extensions" (rowSelect)="onExtensionSelect($event)"></app-extension-table>
+                </div>
+            </mat-card>
+        </div>
+    </mat-drawer-content>
+</mat-drawer-container>

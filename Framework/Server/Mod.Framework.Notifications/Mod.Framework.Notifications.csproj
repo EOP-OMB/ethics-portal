@@ -1,0 +1,13 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net5.0</TargetFramework>
+    <Configurations>Debug;Release;Prod;Stage</Configurations>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Mod.Framework.User\Mod.Framework.User.csproj" />
+    <ProjectReference Include="..\Mod.Framework\Mod.Framework.csproj" />
+  </ItemGroup>
+
+</Project>

@@ -1,0 +1,10 @@
+:host {
+    flex: 1;
+    display: flex;
+    align-content: stretch;
+    flex-direction: column;
+}
+
+.settings-view {
+    padding: 15px;
+}

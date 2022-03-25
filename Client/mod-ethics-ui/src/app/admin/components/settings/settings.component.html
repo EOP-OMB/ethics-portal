@@ -1,0 +1,101 @@
+<div *ngIf="settings" class="card bg-light mb-3">
+    <div class="card-header">
+        <h3 class="card-title">Application Settings</h3>
+    </div>
+    <div class="card-body">
+        <div class="alert alert-success alert-absolute" id="settings-success" style="display: none;">
+            <div type="button" class="close" data-dismiss="alert">x</div>
+            <strong>Success! </strong>
+            Settings saved successfully.
+        </div>
+        <div class="alert alert-success alert-absolute" id="annual-success" style="display: none;">
+            <div type="button" class="close" data-dismiss="alert">x</div>
+            <strong>Success! </strong>
+            A new annual filing has begun.  All applicable filers have been assigned a form.
+        </div>
+        <div class="row form-group">
+            <div class="col-md-12">
+                <div class="top-label">
+                    Site Url
+                </div>
+                <input name="siteUrl" type="text" class="form-control" [(ngModel)]="settings.siteUrl" />
+            </div>
+        </div>
+        <!--<div class="row form-group">
+            <div class="col-md-12">
+                <div class="top-label">Current Filing Year</div>
+                <input name="currentFilingYear" type="number" class="form-control" [(ngModel)]="settings.currentFilingYear" />
+            </div>
+        </div>-->
+        <div class="row form-group">
+            <div class="col-md-12">
+                <div class="top-label">OGC Email</div>
+                <input name="ogcEmail" type="text" class="form-control" [(ngModel)]="settings.ogcEmail" />
+            </div>
+        </div>
+        <div class="row form-group">
+            <div class="col-md-12">
+                <div class="top-label">CC Email</div>
+                <input name="ccEmail" type="text" class="form-control" [(ngModel)]="settings.ccEmail" />
+            </div>
+        </div>
+        <div class="row form-group">
+            <div class="col-md-12">
+                <div class="top-label">Form Version</div>
+                <input name="formVersion" type="text" class="form-control" [(ngModel)]="settings.formVersion" />
+            </div>
+        </div>
+        <div class="row form-group">
+            <div class="col-md-12">
+                <div class="top-label">
+                    Replaces Version
+                </div>
+                <input name="replacesVersion" type="text" class="form-control" [(ngModel)]="settings.replacesVersion" />
+            </div>
+        </div>
+        <div class="row form-group">
+            <div class="col-md-12">
+                <div class="top-label">Minimum Gift Value</div>
+                <input name="minimumGiftValue" type="number" class="form-control" [(ngModel)]="settings.minimumGiftValue" />
+            </div>
+        </div>
+        <div class="row form-group">
+            <div class="col-md-12">
+                <div class="top-label">Total Gift Value</div>
+                <input name="totalGiftValue" type="number" class="form-control" [(ngModel)]="settings.totalGiftValue" />
+            </div>
+        </div>
+        <div class="row form-group">
+            <div class="col-md-6">
+                <div class="btn btn-success" data-toggle="modal" data-target="#confirm-annual">Initiate Annual Filing</div>
+            </div>
+            <div class="col-md-6">
+                <button mat-raised-button id="btnSave" class="btn btn-primary pull-right" (click)="saveSettings()" [disabled]="!isDirty()">Save</button>
+            </div>
+        </div>
+    </div>
+    <div class="modal fade" id="confirm-annual" tabindex="-1" role="dialog" aria-hidden="true" *ngIf="settings">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header modal-header-danger">
+                    <div class="modal-title" style="font-size: 1.5em;"><i class="fa fa-exclamation-triangle" style="padding-right: 20px;"></i>WARNING!</div>
+                </div>
+                <div class="modal-body">
+                    <p>Performing this action will trigger a new filing year.</p>
+                    <ul>
+                        <li>Any incomplete filing for <strong>{{ settings.currentFilingYear }}</strong> will remain and the filer will not be assigned a new Annual form</li>
+                        <li>The filing year will move to <strong>{{ settings.currentFilingYear + 1 }}</strong></li>
+                        <li>All employees with a filer type of '450 Filer' who have not filed within 60 days of the new filing period and who do not have a currently active form, will be assigned a new 'Annual' OGE Form 450</li>
+                        <li>All employees who are assigned a new 450 Form whose previous Reporting Status was 'New Entrant' will be set to 'Annual'</li>
+                        <li>New forms will be a copy of the previous filing year's form if applicable</li>
+                    </ul>
+                    <p>Only run this process if you are <strong>certain</strong> you wish to start a new filing year as this cannot be undone.  Are you sure you wish to continue?</p>
+                </div>
+                <div class="modal-footer" style="text-align: center;">
+                    <div type="button" class="btn btn-success" style="margin-right: 20px;" data-dismiss="modal" (click)="triggerAnnualFiling()">Yes</div>
+                    <div type="button" class="btn btn-default" data-dismiss="modal">No</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,75 @@
+
+.control-label {
+    font-weight: bold;
+}
+
+.required:before {
+    content: "* ";
+    color: red;
+}
+
+
+.has-error .help-block,
+.has-error .control-label,
+.has-error .radio,
+.has-error .checkbox,
+.has-error .radio-inline,
+.has-error .checkbox-inline,
+.has-error.radio label,
+.has-error.checkbox label,
+.has-error.radio-inline label,
+.has-error.checkbox-inline label {
+    color: #a94442;
+}
+
+.has-error .form-control {
+    border-color: #a94442;
+    -webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
+    box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
+}
+
+.has-error .form-control:focus {
+    border-color: #843534;
+    -webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 6px #ce8483;
+    box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 6px #ce8483;
+}
+
+.has-error .input-group-addon {
+    color: #a94442;
+    background-color: #f2dede;
+    border-color: #a94442;
+}
+
+.has-error .form-control-feedback {
+    color: #a94442;
+}
+
+.value-new {
+    background-color: #d4edda !important;
+}
+
+.value-deleted {
+    background-color: #f8d7da !important;
+}
+
+.value-updated {
+    background-color: #fff3cd !important;
+}
+
+.indicator-new::after {
+    float: right;
+    content: "(+)";
+    font-weight: bold;
+}
+
+.indicator-deleted::after {
+    float: right;
+    content: "(-)";
+    font-weight: bold;
+}
+
+.indicator-updated::after {
+    float: right;
+    content: "(#)";
+    font-weight: bold;
+}

@@ -1,0 +1,38 @@
+/* To learn more about this file see: https://angular.io/config/tsconfig. */
+{
+    "compileOnSave": false,
+    "compilerOptions": {
+        "baseUrl": "./",
+        "declaration": false,
+        "downlevelIteration": true,
+        "experimentalDecorators": true,
+        "forceConsistentCasingInFileNames": true,
+        "importHelpers": true,
+        "lib": [
+            "es2018",
+            "dom"
+        ],
+        "module": "es2020",
+        "moduleResolution": "node",
+        "noImplicitReturns": true,
+        "noFallthroughCasesInSwitch": true,
+        "outDir": "./dist/out-tsc",
+        "paths": {
+            "@app/*": [ "src/app/*" ],
+            "@src/*": [ "src/*" ],
+            "@oge450/*": [ "src/app/oge-form-450/*" ],
+            "@events/*": [ "src/app/events/*" ],
+            "@shared/*": [ "src/app/shared/*" ],
+            "@portal/*": [ "src/app/portal/*" ],
+            "@admin/*": [ "src/app/admin/*" ]
+        },
+        "resolveJsonModule": true,
+        "sourceMap": true,
+        "strict": true,
+        "target": "es2015"
+    },
+    "angularCompilerOptions": {
+        "enableI18nLegacyMessageIdFormat": false,
+        "strictInjectionParameters": true
+    }
+}

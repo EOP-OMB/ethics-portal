@@ -1,0 +1,117 @@
+<div class="filter-container">
+    <div class="filter-row">
+        <mat-form-field appearance="outline" style="flex: 2;" class="inline-form-field" *ngIf="showColumn('employeeName')">
+            <mat-label>Filter by Name</mat-label>
+            <input [(ngModel)]="filter.employeeName" matInput placeholder="Filter by Name">
+        </mat-form-field>
+        <mat-form-field appearance="outline" class="inline-form-field" *ngIf="showColumn('filerType')">
+            <mat-label>Filter by Filer Type</mat-label>
+            <mat-select [(ngModel)]="filter.filerType">
+                <mat-option [value]="0">
+                    All
+                </mat-option>
+                <mat-option *ngFor="let ft of filerTypes" [value]="ft.value">
+                    {{ ft.text }}
+                </mat-option>
+            </mat-select>
+        </mat-form-field>
+        <mat-form-field appearance="outline" style="flex: 2;" class="inline-form-field" *ngIf="showColumn('summary')">
+            <mat-label>Filter by Summary</mat-label>
+            <input [(ngModel)]="filter.summary" matInput placeholder="Filter by Summary">
+        </mat-form-field>
+        <mat-form-field appearance="outline" class="inline-form-field" *ngIf="showColumn('guidanceType')" style="flex: 2;">
+            <mat-label>Filter by Guidance Type</mat-label>
+            <mat-select [(ngModel)]="filter.guidanceType">
+                <mat-option [value]="0">
+                    All
+                </mat-option>
+                <mat-option *ngFor="let gt of guidanceTypes" [value]="gt.value">
+                    {{ gt.text }}
+                </mat-option>
+            </mat-select>
+        </mat-form-field>
+        <mat-form-field appearance="outline" class="inline-form-field">
+            <mat-label>Filter by Subject</mat-label>
+            <mat-select [(ngModel)]="filter.subject">
+                <mat-option value="">
+                    All
+                </mat-option>
+                <mat-option *ngFor="let sub of subjects" [value]="sub.value">
+                    {{ sub.text }}
+                </mat-option>
+            </mat-select>
+        </mat-form-field>
+        <mat-form-field appearance="outline" class="inline-form-field" *ngIf="showColumn('dateOfGuidance')">
+            <mat-label>Filter by Date of Guidance</mat-label>
+            <mat-select [(ngModel)]="filter.dateOfGuidance">
+                <mat-option value="">
+                    All
+                </mat-option>
+                <mat-option value="week">
+                    Past 7 Days
+                </mat-option>
+                <mat-option value="month">
+                    Past Month
+                </mat-option>
+                <mat-option value="year">
+                    Past Year
+                </mat-option>
+            </mat-select>
+        </mat-form-field>
+    </div>
+    <button mat-flat-button aria-label="Reset Filters" (click)="resetFilters()" [color]="isFiltered() ? 'accent' : ''" class="filter-button" matTooltip="Reset Filters">
+        RESET
+    </button>
+</div>
+<button mat-button (click)="exportToExcel('ethics-guidance')">
+    <i class="fa fa-file-excel-o excel-button" title="Download (xlsx)"></i>
+</button>
+<button mat-button (click)="addGuidance($event)" matTooltip="Add Guidance" *ngIf="canAdd"><mat-icon>add</mat-icon> Add Guidance</button>
+<mat-paginator [pageSizeOptions]="[15, 30, 45, 60]" pageSize="15" style="margin-top: -45px"></mat-paginator>
+<table mat-table [dataSource]="dataSource" matSort matTableFilter [exampleEntity]="filter" [debounceTime]="100" [propertyOptions]="propertyOptions" matTableExporter [hiddenColumns]="getHiddenExportCols()" (exportStarted)="exporting(true)" (exportCompleted)="exporting(false)" #exporter="matTableExporter" [hidden]="isExporting">
+    <ng-container matColumnDef="select" *ngIf="showSelect">
+        <th mat-header-cell *matHeaderCellDef>
+            <mat-checkbox (change)="$event ? masterToggle() : null"
+                          [checked]="selection.hasValue() && isAllSelected()"
+                          [indeterminate]="selection.hasValue() && !isAllSelected()"
+                          [aria-label]="checkboxLabel()">
+            </mat-checkbox>
+        </th>
+        <td mat-cell *matCellDef="let guidance">
+            <mat-checkbox (click)="$event.stopPropagation()"
+                          (change)="$event ? selection.toggle(guidance) : null"
+                          [checked]="selection.isSelected(guidance)"
+                          [aria-label]="checkboxLabel(guidance)">
+            </mat-checkbox>
+        </td>
+    </ng-container>
+    <ng-container matColumnDef="employeeName">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header> Name </th>
+        <td mat-cell *matCellDef="let guidance"> {{ guidance.employeeName }} </td>
+    </ng-container>
+    <ng-container matColumnDef="summary">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header> Summary </th>
+        <td mat-cell *matCellDef="let guidance"> {{ guidance.summary }} </td>
+    </ng-container>
+    <ng-container matColumnDef="filerType">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header> Filer Type </th>
+        <td mat-cell *matCellDef="let guidance"> {{ guidance.filerType }} </td>
+    </ng-container>
+    <ng-container matColumnDef="guidanceType">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header> Guidance Type </th>
+        <td mat-cell *matCellDef="let guidance"> {{ guidance.guidanceType }} </td>
+    </ng-container>
+    <ng-container matColumnDef="subject">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header> Subject </th>
+        <td mat-cell *matCellDef="let guidance">
+            {{ guidance.subject }}
+        </td>
+    </ng-container>
+    <ng-container matColumnDef="createdTime">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>Date of Guidance</th>
+        <td mat-cell *matCellDef="let guidance"> {{ guidance.dateOfGuidance | date:'MM/dd/yyyy' }} </td>
+    </ng-container>
+
+    <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+    <tr mat-row *matRowDef="let row; columns: displayedColumns;" (click)="rowSelected(row)"></tr>
+</table>

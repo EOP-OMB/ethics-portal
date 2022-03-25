@@ -1,0 +1,26 @@
+<div *ngIf="guidance">
+    <app-employee-card [employee]="guidance.employee" [showClose]="false" [showDetails]="true" (select)="employeeClicked($event)"></app-employee-card>
+    <div class="drawer-row">
+        <div class="label-over">
+            <strong>Type of Guidance:</strong>
+            <span class="overflow-wrap">{{ guidance.guidanceType }}</span>
+        </div>
+    </div>
+    <div class="drawer-row">
+        <div class="label-over">
+            <strong>Subject:</strong>
+            <span class="overflow-wrap">{{ guidance.subject }}</span>
+        </div>
+    </div>
+    <div class="drawer-row">
+        <div class="label-over" style="width: 100%;">
+            <strong>Text:</strong>
+            <div [innerHtml]="html"></div>
+        </div>
+    </div>
+    <div *ngIf="files && files.length > 0">
+        <h3><strong>Attachment(s)</strong></h3>
+        <p *ngFor="let file of files"><a class="link" (click)="downloadFile(file)">{{ file.name }}</a></p>
+    </div>
+</div>
+

@@ -1,0 +1,57 @@
+<form [formGroup]="guidanceForm" (ngSubmit)="onSubmit(guidanceForm)" class="guidance-form">
+
+    <app-people-picker *ngIf="!selectedEmployee || selectedEmployee.id == 0; else hasValue" (onPeoplePicked)="employeeSelected($event)" formControlName="employee"></app-people-picker>
+    <ng-template #hasValue>
+        <app-employee-card [employee]="selectedEmployee" [showClose]="allowEmployeeSelect" [showDetails]="!allowEmployeeSelect" (select)="employeeClicked($event)" (close)="clearEmployee()"></app-employee-card>
+    </ng-template>
+    <input type="hidden" name="id" />
+    <mat-form-field appearance="outline" class="inline-form-field">
+        <mat-label>Date of Guidance</mat-label>
+        <input matInput [matDatepicker]="picker" formControlName="dateOfGuidance">
+        <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+        <mat-datepicker #picker></mat-datepicker>
+    </mat-form-field>
+    <mat-form-field appearance="outline" class="inline-form-field">
+        <mat-label>Summary</mat-label>
+        <input matInput formControlName="summary">
+    </mat-form-field>
+    <mat-form-field appearance="outline" class="inline-form-field">
+        <mat-label>Type of Guidance</mat-label>
+        <mat-select name="guidanceType" formControlName="guidanceType">
+            <mat-option *ngFor="let val of guidanceTypes" [value]="val.text">
+                {{ val.text }}
+            </mat-option>
+        </mat-select>
+    </mat-form-field>
+    <mat-form-field appearance="outline" class="inline-form-field">
+        <mat-label>Subject Matter</mat-label>
+        <mat-select name="subjectMatters" multiple formControlName="subject">
+            <mat-option *ngFor="let val of subjects" [value]="val.text">
+                {{ val.text }}
+            </mat-option>
+        </mat-select>
+    </mat-form-field>
+    <div>
+        <!--<ngx-editor-menu [editor]="editor"> </ngx-editor-menu>
+        <ngx-editor [editor]="editor"
+                    [placeholder]="'Type here...'"
+                    minHeight="250px"
+                    height="250px"
+                    formControlName="text"></ngx-editor>-->
+
+        <kendo-editor formControlName="text" style="height: 300px; width: 475px;"></kendo-editor>
+        <div *ngIf="guidanceText?.invalid && (guidanceText?.dirty || guidanceText?.touched || submitted)" class="alert alert-danger">
+            <div *ngIf="guidanceText?.errors?.required">
+                Guidance Text is required.
+            </div>
+        </div>
+    </div>
+
+    <mat-checkbox formControlName="notifyEmployee">Send Email to Employee?</mat-checkbox>
+    <mat-checkbox formControlName="isShared">Share Guidance with Employee?</mat-checkbox>
+
+    <app-upload [saveUrl]="saveUrl" [removeUrl]="removeUrl" [guid]="newGuid" [files]="files" (download)="downloadFile($event)" [restrictions]="restrictions"></app-upload>
+
+    <button mat-flat-button type="submit" color="primary" style="margin-top: 15px;">Save</button>
+    <button *ngIf="guidance.id > 0" mat-flat-button type="button" (click)="deleteGuidance()" color="warn" style="margin-top: 15px;">Delete</button>
+</form>

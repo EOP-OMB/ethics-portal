@@ -1,0 +1,71 @@
+<div class="filter-container">
+    <div class="filter-row">
+        <mat-form-field appearance="outline" style="flex: 2;" class="inline-form-field">
+            <mat-label>Filter by Name</mat-label>
+            <input [(ngModel)]="filter.filerName" matInput placeholder="Filter by Name">
+        </mat-form-field>
+        <mat-form-field appearance="outline" class="inline-form-field" *ngIf="showColumn('year')">
+            <mat-label>Filter by Year</mat-label>
+            <mat-select [(ngModel)]="filter.year">
+                <mat-option [value]="0">
+                    All
+                </mat-option>
+                <mat-option *ngFor="let year of years" [value]="year.value">
+                    {{ year.text }}
+                </mat-option>
+            </mat-select>
+        </mat-form-field>
+        <mat-form-field appearance="outline" class="inline-form-field">
+            <mat-label>Filter by Days</mat-label>
+            <input [(ngModel)]="filter.daysRequested" matInput placeholder="Filter by Days">
+        </mat-form-field>
+        <mat-form-field appearance="outline" class="inline-form-field">
+            <mat-label>Filter by Status</mat-label>
+            <mat-select [(ngModel)]="filter.status">
+                <mat-option value="">
+                    All
+                </mat-option>
+                <mat-option *ngFor="let stat of statuses" [value]="stat.value">
+                    {{ stat.text }}
+                </mat-option>
+            </mat-select>
+        </mat-form-field>
+    </div>
+    <button mat-flat-button aria-label="Reset Filters" (click)="resetFilters()" [color]="isFiltered() ? 'accent' : ''" class="filter-button" matTooltip="Reset Filters">
+        RESET
+    </button>
+</div>
+<mat-paginator [pageSizeOptions]="[15, 30, 45, 60]" pageSize="15"></mat-paginator>
+<table mat-table [dataSource]="dataSource" matSort matTableFilter [exampleEntity]="filter" [debounceTime]="100" [propertyOptions]="propertyOptions">
+    <ng-container matColumnDef="filerName">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header> Name </th>
+        <td mat-cell *matCellDef="let extension"> {{ extension.filerName }} </td>
+    </ng-container>
+    <ng-container matColumnDef="year">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header> Year </th>
+        <td mat-cell *matCellDef="let extension"> {{ extension.year }} </td>
+    </ng-container>
+    <ng-container matColumnDef="daysRequested">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>Days</th>
+        <td mat-cell *matCellDef="let extension">
+            {{ extension.daysRequested }}
+        </td>
+    </ng-container>
+    <ng-container matColumnDef="status">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>Status</th>
+        <td mat-cell *matCellDef="let extension">
+            {{ extension.status }}
+        </td>
+    </ng-container>
+    <ng-container matColumnDef="createdTime">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>Date Requested</th>
+        <td mat-cell *matCellDef="let extension"> {{ extension.createdTime | date:'MM/dd/yyyy' }} </td>
+    </ng-container>
+    <ng-container matColumnDef="dueDate">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header> Due Date </th>
+        <td mat-cell *matCellDef="let extension"> {{ extension.dueDate | date:'MM/dd/yyyy'  }} </td>
+    </ng-container>
+
+    <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+    <tr mat-row *matRowDef="let row; columns: displayedColumns;" (click)="rowSelected(row)"></tr>
+</table>

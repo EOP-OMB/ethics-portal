@@ -1,0 +1,78 @@
+<div>
+    <div class="drawer-header-row">
+        <h1 (click)="employeeSelect(form.filer)">
+            {{ form.employeesName }}
+        </h1>
+        <div>
+            {{ form.reportingStatus }} OGE Form 450 ({{ form.year }})
+        </div>
+    </div>
+    <div class="drawer-row">
+        <div class="label-over">
+            <strong>Status:</strong>
+            <span>
+                {{ form.formStatus }}
+            </span>
+        </div>
+        <div>
+            <span *ngIf="form.daysExtended > 0" class="fa-stack" title="Due date has been extended">
+                <!-- The icon that will wrap the number -->
+                <span class="fa fa-calendar-o fa-stack-2x"></span>
+                <!-- a strong element with the custom content, in this case a number -->
+                <strong class="fa-stack-1x" style="padding-top: 3px; color: #222222;">
+                    {{ form.daysExtended }}
+                </strong>
+            </span>
+            <span *ngIf="form.submittedPaperCopy" class="fa fa-file-text-o" style="font-size: 1.6em; color: #222222; vertical-align: middle; padding-left: 3px;" title="Submitted Paper Copy"></span>
+            <span *ngIf="form.isBlank" class="fa fa-info-circle text-primary" style="font-size: 1.6em; vertical-align: middle; padding-left: 3px;" title="Blank submissions answered 'no' to all 5 questions"></span>
+            <span *ngIf="form.isUnchanged" class="fa fa-files-o text-primary" style="font-size: 1.6em; vertical-align: middle; padding-left: 3px;" title="Submission is unchanged from previous year's certified form"></span>
+            <span *ngIf="form.isOverdue" class='fa fa-exclamation-triangle text-danger' style="font-size: 1.6em; vertical-align: middle;" title="Form is overdue"></span>
+        </div>
+    </div>
+
+    <div class="drawer-row" *ngIf="form.dateSubmitted">
+        <div class="label-over">
+            <strong>Date Submitted:</strong>
+            <span>
+                {{ form.dateSubmitted | date : 'MM/dd/yyyy' }}
+            </span>
+        </div>
+        <div>
+            <strong>{{ form.daysSinceSubmission }}</strong> days submitted
+        </div>
+    </div>
+
+    <div class="drawer-row">
+        <div *ngIf="canEdit">
+            <mat-form-field appearance="outline">
+                <mat-label>Due Date</mat-label>
+                <input matInput [matDatepicker]="dueDatePicker" [(ngModel)]="tempDueDate">
+                <mat-datepicker-toggle matSuffix [for]="dueDatePicker"></mat-datepicker-toggle>
+                <mat-datepicker #dueDatePicker></mat-datepicker>
+            </mat-form-field>
+        </div>
+        <div *ngIf="!canEdit" class="label-over">
+            <strong>Due Date:</strong>
+            <span>
+                {{form.dueDate | date: 'MM/dd/yyyy'}}
+            </span>
+        </div>
+        <div *ngIf="canAssign">
+            <mat-form-field appearance="outline" class="inline-form-field" style="margin-left: 15px;">
+                <mat-label>Assigned To</mat-label>
+                <mat-select [(ngModel)]="form.assignedToEmployeeId">
+                    <mat-option *ngFor="let reviewer of reviewers" [value]="reviewer.value">
+                        {{ reviewer.text }}
+                    </mat-option>
+                </mat-select>
+            </mat-form-field>
+        </div>
+    </div>
+    <div class="drawer-row">
+        <button mat-stroked-button type="button" color="primary" (click)="viewForm(form)"><mat-icon>description</mat-icon>View Form</button>
+        <button *ngIf="canExtend" mat-stroked-button type="button" color="warn" (click)="extendForm(form)"><mat-icon>schedule</mat-icon>Extend</button>
+        <button *ngIf="canEdit && canAssign && !isCertified(form)" mat-flat-button type="button" color="warn" (click)="cancelClick()">Cancel Form</button>
+    </div>
+</div>
+
+<button *ngIf="canEdit || canAssign" mat-flat-button type="button" color="primary" (click)="saveClick()">Save</button>

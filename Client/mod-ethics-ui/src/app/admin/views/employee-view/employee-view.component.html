@@ -1,0 +1,26 @@
+<mat-drawer-container>
+    <mat-drawer #drawer mode="over" position="end" class="details-drawer" (closedStart)="drawerClosing()" [opened]="false">
+        <div class="drawer-container" *ngIf="selectedEmployee">
+            <app-employee-edit [employee]="selectedEmployee" (viewForm)="onViewForm($event)" (save)="onSave($event)" (gotoProfile)="gotoProfile($event)"></app-employee-edit>
+            
+            <button mat-stroked-button type="button" (click)="drawer.close()" class="drawer-close">Close</button>
+        </div>
+    </mat-drawer>
+    <mat-drawer-content>
+        <div class="employee-view" fxLayoutAlign="start start">
+            <mat-card>
+                <div class="widget-row">
+                    <div class="widget">
+                        <app-widget [data]="filersWidget" icon="fa-user-o" (widgetClick)="onFilersClick()"></app-widget>
+                    </div>
+                </div>
+                <div style="margin-top: 20px;">
+                    <app-employee-table #dtEmployees key="employees" [data]="employees" (rowSelect)="onEmployeeSelect($event)" [hiddenCols]="hiddenCols"></app-employee-table>
+                </div>
+                <div style="margin-top: 20px;">
+                    <mat-checkbox (change)="includeInactive($event)">Include Inactive?</mat-checkbox>
+                </div>
+            </mat-card>
+        </div>
+    </mat-drawer-content>
+</mat-drawer-container>

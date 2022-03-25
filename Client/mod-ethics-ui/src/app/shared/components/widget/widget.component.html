@@ -1,0 +1,10 @@
+<div class="dashboard-block btn btn-{{ data.color }}" (click)="onClick()" [hidden]="data.visible == false">
+    <div class="widget-left">
+        <h3>{{ data.title }}</h3>
+        <h4>{{ data.text }}</h4>
+        <p>{{ data.actionText}}</p>
+    </div>
+    <div class="widget-icon">
+        <i class="fa {{ icon }} text-{{ data.color }}"></i>
+    </div>
+</div>

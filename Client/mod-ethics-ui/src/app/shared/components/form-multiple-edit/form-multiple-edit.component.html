@@ -1,0 +1,15 @@
+<h1>({{ forms.length }}) Forms Selected</h1>
+<p>
+    Change the reviewer for all selected forms.  Select the new reviewer below and click Save.
+</p>
+<div class="drawer-header">
+    <mat-form-field appearance="outline" class="inline-form-field">
+        <mat-label>Assigned To</mat-label>
+        <mat-select [(ngModel)]="assignedToEmployeeId">
+            <mat-option *ngFor="let reviewer of reviewers" [value]="reviewer.value">
+                {{ reviewer.text }}
+            </mat-option>
+        </mat-select>
+    </mat-form-field>
+</div>
+<button mat-flat-button type="button" color="primary" (click)="saveClick()">Save</button>

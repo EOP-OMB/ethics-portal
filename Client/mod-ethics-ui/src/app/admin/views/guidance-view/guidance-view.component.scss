@@ -1,0 +1,27 @@
+:host {
+    flex: 1;
+    display: flex;
+    align-content: stretch;
+    flex-direction: column;
+    min-width: 1024px;
+}
+
+.guidance-view {
+    padding: 15px;
+}
+
+.details-drawer {
+    padding: 15px;
+    margin: 15px 15px 15px 15px;
+}
+
+.drawer-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.mat-form-field {
+    flex: 1;
+    padding-right: 15px;
+}

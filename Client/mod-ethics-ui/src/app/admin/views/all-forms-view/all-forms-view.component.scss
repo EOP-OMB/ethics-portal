@@ -1,0 +1,48 @@
+:host {
+    flex: 1;
+    display: flex;
+    align-content: stretch;
+    flex-direction: column;
+    min-width: 1024px;
+}
+
+.view-container {
+    padding: 15px;
+}
+
+.year-filter-row {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.search-button {
+    margin-left: 20px;
+    border-radius: 20px;
+    height: 50px;
+    width: 50px;
+    margin-bottom: 20px;
+}
+
+.inline-form-field {
+    flex: 1;
+    max-width: 450px;
+}
+
+.details-drawer {
+    width: 425px;
+    padding: 15px;
+    margin: 15px 15px 15px 15px;
+}
+
+body {
+    margin: 0;
+    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+    font-size: 25px;
+    line-height: 18px;
+    color: #333333;
+    background-color: #ffffff;
+    /* changes for better demo */
+    margin: 20px 0 0;
+    text-align: center;
+}

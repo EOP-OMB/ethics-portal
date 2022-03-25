@@ -1,0 +1,19 @@
+
+.app-content {
+    //margin-left: 15px;
+    display: flex;
+    flex: 1;
+}
+
+div:focus {
+    outline: none !important;
+}
+
+
+::ng-deep .mat-drawer-backdrop.mat-drawer-shown {
+    background-color: transparent;
+}
+
+::ng-deep .mat-drawer-inner-container {
+    border-left: none !important;
+}

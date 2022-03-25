@@ -1,0 +1,48 @@
+<div class="body">
+    <div class="left">
+        <img *ngIf="!employee.profileImage" class="img link" (click)="employeeClick(employee)" src="assets/PersonPlaceholder.png" height="120" width="120" style="border-radius: 50%;" />
+        <img *ngIf="employee.profileImage" class="img link" (click)="employeeClick(employee)" src="data:image/jpeg;base64,{{ employee.profileImage }}" height="120" width="120" style="border-radius: 50%;" />
+        <div class="employee-row"><strong>{{ employee.statusText }}</strong></div>
+    </div>
+    <div class="right">
+        <h2>
+            <a class="link" (click)="employeeClick(employee)">{{ employee.displayName }}</a>
+            <button *ngIf="showClose" mat-icon-button aria-label="Close" color="warn" (click)="onClose()"><mat-icon>close</mat-icon></button>
+        </h2>
+        <h3>{{ employee.position }}</h3>
+
+        <div *ngIf="!employee.departmentOverride" class="employee-row">{{ employee.division }}</div>
+        <div *ngIf="!employee.departmentOverride" class="employee-row">{{ employee.office }}</div>
+
+        <div *ngIf="employee.departmentOverride" class="employee-row">{{ employee.departmentOverride }}</div>
+
+        <div class="employee-row">
+            <a href="mailto:{{ employee.emailAddress }}">{{ employee.emailAddress }}</a>
+        </div>
+        <div class="employee-row">{{ employee.mobilePhone | phone }}</div>
+        <div class="employee-row">
+            <strong>Manager:</strong>
+            <span class="link" *ngIf="employee.reportsTo; else notAssigned">
+                <a (click)="employeeClick(employee.reportsTo)">{{ employee.reportsTo?.displayName}}</a>
+            </span>
+            <ng-template #notAssigned>
+                <span>Not Assigned</span>
+            </ng-template>
+        </div>
+    </div>
+</div>
+<div class="details" *ngIf="showDetails">
+    <div class="details-row">
+        <div class="label-over" *ngIf="employee.filerType">
+            <strong>Filer Type:</strong>
+            <span>{{ employee.filerType }}</span>
+        </div>
+        <div class="label-over" *ngIf="employeeType">
+            <strong>Employee Type:</strong>
+            <span>
+                {{ employeeType }}
+            </span>
+        </div>
+    </div>
+</div>
+
