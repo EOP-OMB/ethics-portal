@@ -45,3 +45,4 @@ msbuild.wrn
 /dist/client
 /dist/migration
 /.vs
+/Client/mod-ethics-ui/.vs

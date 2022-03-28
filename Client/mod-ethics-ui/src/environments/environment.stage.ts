@@ -1,8 +1,8 @@
 export const environment = {
     production: true,
-    apiUrl: "/api",
+    apiUrl: "/oge450-api",
     debug: false,
-    portalUrl: "<staging url>",
-    eventsUrl: "<staging url for events>",
-    portfolioUrl: "<staging url for portfolio>"
+    portalUrl: "https://ethics.staging.omb.gov/",
+    eventsUrl: "https://ethics.staging.omb.gov/events",
+    portfolioUrl: "https://portfolio.staging.omb.gov/portfolio/"
 }

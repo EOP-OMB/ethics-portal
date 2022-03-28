@@ -2,7 +2,7 @@ import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { OgeForm450 } from '@shared/models/oge-form-450.model';
 import { SelectItem } from '@shared/models/select-item.interface';
 import { Helper } from '@shared/static/helper.funcs';
-import { FormStatus } from '@shared/static/form-status.const';
+import { FormStatus } from '../../static/form-status.const';
 
 export const AccessLevels =
 {
@@ -42,9 +42,6 @@ export class FormDetailsComponent implements OnInit {
 
     @Output()
     extend = new EventEmitter<OgeForm450>();
-
-    @Output()
-    selectEmployee = new EventEmitter<string>();
 
     tempDueDate: Date | null = null;
 
@@ -90,9 +87,5 @@ export class FormDetailsComponent implements OnInit {
 
     isCanceled(form: OgeForm450) {
         return form.formStatus.includes(FormStatus.CANCELED);
-    }
-
-    public employeeSelect(filer: string) {
-        this.selectEmployee.emit(filer);
     }
 }

@@ -2,7 +2,7 @@
     <mat-drawer #drawer mode="over" position="end" class="details-drawer" (closedStart)="drawerClosing()" [opened]="false">
         <div class="drawer-container">
             <div *ngIf="selectedForm">
-                <app-form-details [form]="selectedForm" [reviewers]="reviewers" [accessLevel]="formAccessLevel" (save)="saveForm($event)" (view)="viewForm($event)" (cancel)="cancelForm($event)" (select)="gotoProfile($event)"></app-form-details>
+                <app-form-details [form]="selectedForm" [reviewers]="reviewers" [accessLevel]="formAccessLevel" (save)="saveForm($event)" (view)="viewForm($event)" (cancel)="cancelForm($event)"></app-form-details>
             </div>
             <div *ngIf="selectedForms">
                 <app-form-multiple-edit [forms]="selectedForms" [reviewers]="reviewers" (save)="assignMultiple(selectedForms, $event)"></app-form-multiple-edit>

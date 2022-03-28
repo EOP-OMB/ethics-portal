@@ -1,13 +1,22 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { OgeForm450 } from '@shared/models/oge-form-450.model';
+import { ReviewerDashboard } from '@oge450/models/reviewer-dashboard.model';
+import { Widget } from '@shared/models/widget.model';
+import { SelectItem } from '@shared/models/select-item.interface';
 
+import { ExtensionRequest } from '@shared/models/extension-request.model';
 import { OGEForm450Service } from '@shared/services/oge-form-450.service';
 import { Router } from '@angular/router';
 import { ExtensionRequestService } from '@shared/services/extension-request.service';
 import { FormStatus } from '@shared/static/form-status.const';
+import { MatDrawer } from '@angular/material/sidenav';
+import { FormTableComponent } from '@shared/components/form-table/form-table.component';
 import { EmployeeListService } from '@shared/services/employee-list.service';
+import { ExtensionStatus } from '@shared/static/extension-status.const';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { CurrentUserService } from 'mod-framework';
+import { Roles } from '@shared/static/roles.const';
+import { AccessLevels } from '@shared/components/form-details/form-details.component';
 import { FormViewBaseComponent } from '@shared/views/form-view-base/form-view-base.component';
 import { SettingsService } from '@shared/services/settings.service';
 
@@ -73,9 +82,5 @@ export class ReviewerViewComponent extends FormViewBaseComponent implements OnIn
 
     reloadForms(): void {
         this.loadReviewableForms();
-    }
-
-    gotoProfile(filer: string): void {
-        //this.router.navigate(['/profile', filer]);
     }
 }

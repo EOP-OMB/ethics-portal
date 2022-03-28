@@ -111,9 +111,9 @@
           "options": {
             "browserTarget": "mod-ethics-ui:build",
             "ssl": true,
-            "sslKey": "Certificates/cert.key",
-            "sslCert": "Certificates/cert.pem",
-            "host": "localhost"
+            "sslKey": "Certificates/localhost.login.omb.gov.key",
+            "sslCert": "Certificates/localhost.login.omb.gov.pem",
+            "host": "localhost.login.omb.gov"
           },
           "configurations": {
             "production": {
