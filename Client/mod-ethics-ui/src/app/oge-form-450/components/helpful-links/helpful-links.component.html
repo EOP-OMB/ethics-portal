@@ -2,7 +2,7 @@
     <legend>Helpful Links</legend>
     <ul>
         <li *ngFor="let link of links">
-            <a href="{{ link.url }}" target="_blank">{{ link.description }}</a>
+            <a href="{{ link.url }}" target="_blank" rel="noopener noreferrer">{{ link.description }}</a>
         </li>
     </ul>
 </fieldset>
