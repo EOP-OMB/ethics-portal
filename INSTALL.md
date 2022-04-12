@@ -36,10 +36,10 @@ Employee Database has 3 tables:
   - ReportsToEmployeeId
   - DepartmentId
 -	EmployeeAttribute
-  -	Columns:
-  - Id
-  - Attribute
-  - Value
+    - Columns:
+    - Id
+    - Attribute
+    - Value
 - EmployeeGroup
   -	Columns:
   - ID
