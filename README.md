@@ -10,3 +10,4 @@ The OMB Ethics Portal provides several automated functions to augment the Genera
 
 **Guidance Tracker**:  The GC can utilize this app for tracking any guidance supplied to an employee.  It ties the guidance directly to the employee and allows reusable responses and full history.
 
+Framework dependancy:  https://github.com/EOP-OMB/mod-framework
