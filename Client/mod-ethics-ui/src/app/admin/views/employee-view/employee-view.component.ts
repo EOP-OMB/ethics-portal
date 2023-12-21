@@ -7,6 +7,7 @@ import { EmployeeListService } from '@shared/services/employee-list.service';
 import { EmployeeTableComponent } from '@admin/components/employee-table/employee-table.component';
 import { Employee } from '@shared/models/employee.model';
 import { MatCheckboxChange } from '@angular/material/checkbox';
+import { EmployeeFilter } from '../../../shared/models/employee-filter.model';
 
 @Component({
     selector: 'app-employee-view',
@@ -72,8 +73,11 @@ export class EmployeeViewComponent implements OnInit {
     }
 
     onFilersClick() {
-        this.dtEmployees.resetFilters();
-        this.dtEmployees.filter.filerType = "Not Assigned";
+        var filter = new EmployeeFilter();
+
+        filter.filerType = "Not Assigned";
+
+        this.dtEmployees.resetFilters(filter);
     }
 
     onEmployeeSelect(employee: Employee): void {

@@ -1,0 +1,28 @@
+:host {
+    flex: 1;
+    display: flex;
+    align-content: stretch;
+    flex-direction: column;
+}
+
+.modal-dialog {
+    width: 80% !important;
+    padding-top: 30px;
+    padding-bottom: 30px;
+    max-width: 80% !important;
+    margin-left: 265px;
+}
+
+.modal-title {
+    text-align: center;
+}
+
+.event-view {
+    padding: 15px;
+    display: flex;
+    justify-content: center;
+}
+
+.event-card {
+    max-width: 1280px;
+}

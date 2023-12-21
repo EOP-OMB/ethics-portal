@@ -29,6 +29,7 @@ namespace Mod.Ethics.Application.Dtos
         public string AdditionalInfo { get; set; }
         public bool NoLongerHeld { get; set; }
         public string CorrelationId { get; set; }
+        public bool IsDeleted { get; set; }
 
         public bool IsEmpty()
         {

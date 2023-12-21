@@ -1,7 +1,7 @@
 import { SelectionModel } from '@angular/cdk/collections';
 import { Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges, ViewChild } from '@angular/core';
 import { MatPaginator } from '@angular/material/paginator';
-import { MatSort } from '@angular/material/sort';
+import { MatSort, MatSortHeader } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
 import { MatTableExporterDirective } from 'mat-table-exporter';
 import { PropertyOptions } from 'mat-table-filter';
@@ -39,7 +39,7 @@ export abstract class TableBaseComponent<T extends IDto> implements OnInit, OnCh
     @ViewChild(MatSort, { static: true })
     public sort!: MatSort;
 
-    @ViewChild(MatTableExporterDirective, { static: true })
+    @ViewChild(MatTableExporterDirective, { static: false })
     exporter!: MatTableExporterDirective;
 
     public isExporting: boolean = false;
@@ -71,7 +71,7 @@ export abstract class TableBaseComponent<T extends IDto> implements OnInit, OnCh
     }
 
     public initializeDataSource() {
-        this.dataSource.data = this.data;
+        this.dataSource = new MatTableDataSource(this.data);
         this.dataSource.paginator = this.paginator;
         this.dataSource.sort = this.sort;
     }

@@ -1,6 +1,6 @@
 <div class="filter-container">
     <div class="filter-row">
-        <mat-form-field appearance="outline" style="flex: 2;" class="inline-form-field" *ngIf="showColumn('employeeName')">
+        <mat-form-field appearance="outline" style="flex-grow: 2;" class="inline-form-field" *ngIf="showColumn('employeeName')">
             <mat-label>Filter by Name</mat-label>
             <input [(ngModel)]="filter.employeeName" matInput placeholder="Filter by Name">
         </mat-form-field>
@@ -15,11 +15,11 @@
                 </mat-option>
             </mat-select>
         </mat-form-field>
-        <mat-form-field appearance="outline" style="flex: 2;" class="inline-form-field" *ngIf="showColumn('summary')">
+        <mat-form-field appearance="outline" class="inline-form-field" *ngIf="showColumn('summary')">
             <mat-label>Filter by Summary</mat-label>
             <input [(ngModel)]="filter.summary" matInput placeholder="Filter by Summary">
         </mat-form-field>
-        <mat-form-field appearance="outline" class="inline-form-field" *ngIf="showColumn('guidanceType')" style="flex: 2;">
+        <mat-form-field appearance="outline" class="inline-form-field" *ngIf="showColumn('guidanceType')">
             <mat-label>Filter by Guidance Type</mat-label>
             <mat-select [(ngModel)]="filter.guidanceType">
                 <mat-option [value]="0">
@@ -88,6 +88,10 @@
     <ng-container matColumnDef="employeeName">
         <th mat-header-cell *matHeaderCellDef mat-sort-header> Name </th>
         <td mat-cell *matCellDef="let guidance"> {{ guidance.employeeName }} </td>
+    </ng-container>
+    <ng-container matColumnDef="createdBy">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header> Given By </th>
+        <td mat-cell *matCellDef="let guidance"> {{ guidance.createdBy }} </td>
     </ng-container>
     <ng-container matColumnDef="summary">
         <th mat-header-cell *matHeaderCellDef mat-sort-header> Summary </th>

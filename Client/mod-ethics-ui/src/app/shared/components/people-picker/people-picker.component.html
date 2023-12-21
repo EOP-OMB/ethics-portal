@@ -1,8 +1,8 @@
 <form class="peoplePickerContainer">
     <mat-form-field appearance="outline" class="inline-form-field">
-        <mat-label>Employee</mat-label>
+        <mat-label *ngIf="label">{{label}}</mat-label>
         <input matInput [matAutocomplete]="auto" #term [formControl]="termControl" (focus)="onTouch($event)" (keydown)="keyDown($event)" (keyup)="search(term.value, $event);"
-               class="peoplePickerText" placeholder="Start typing employee name" [attr.required]="required != null"/>
+               class="peoplePickerText" placeholder="Start typing employee name" [attr.required]="required != null" (blur)="onBlur($event)" />
     </mat-form-field>
     <div *ngIf="resultedItems != null && resultedItems?.length == 0 && !searching && searchTerm.length > 2 && term.value.length > 2 && term.value != selectedEmp?.displayName" class="alert alert-danger not-found-msg">
         No results found for '{{term.value}}'

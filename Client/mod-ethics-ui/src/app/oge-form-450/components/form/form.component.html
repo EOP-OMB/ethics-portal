@@ -1,7 +1,7 @@
 <nav class="navbar navbar-light navbar-expand-sm justify-content-sm-center fixed-top" *ngIf="mode != 'COMPARE'">
     <ul class="navbar-nav">
         <li *ngIf="canSave()" class="nav-item">
-            <button id="btnSave" class="btn btn-primary nav-icon invert" data-toggle="tooltip" title="Save Draft" (click)="save()" [disabled]="!isDirty()">
+            <button id="btnSave" class="btn btn-primary nav-icon invert" data-toggle="tooltip" title="Save Draft" (click)="save(false)" [disabled]="!isDirty()">
                 <i class="fa fa-save"></i>
             </button>
         </li>
@@ -176,9 +176,10 @@
                         <div class="question-text form-box" style="margin-right: auto;">
                             <div class="control-label required">
                                 I. I have reportable assets or sources of income for myself, my spouse, or my dependent children.
-                                <a id="lnkPartI" (click)="scrollTo('#I')" class="btn" rel="popover" data-placement="top" data-original-title="<h4>Part I: Assets and Income</h4>" data-trigger="hover">
+                                <a class="btn hideprint" data-toggle="collapse" data-target="#instructionsI"><i class="fa fa-question-circle"></i></a>
+                                <!--<a id="lnkPartI" (click)="scrollTo('#I')" class="btn" rel="popover" data-placement="top" data-trigger="hover">
                                     <i class="fa fa-question-circle"></i>
-                                </a>
+                                </a>-->
                             </div>
                         </div>
                         <div class="yes-no form-box">
@@ -188,13 +189,16 @@
                             <app-radio-button name="rbI" [selectedValue]="false" [prevValue]="compareForm ? compareForm.hasAssetsOrIncome : null" [(ngModel)]="form.hasAssetsOrIncome" [disabled]="inputDisabled">No</app-radio-button>
                         </div>
                     </div>
+                    <div id="instructionsI" class="collapse">
+                    </div>
                     <div class="row question">
                         <div class="question-text form-box">
                             <div class="control-label required">
                                 II. I have reportable liabilities (debts) for myself, my spouse, or my dependent children.
-                                <a id="lnkPartII" (click)="scrollTo('#II')" class="btn" rel="popover" data-placement="top" data-original-title="<h4>Part II: Liabilities</h4>" data-trigger="hover">
+                                <a class="btn hideprint" data-toggle="collapse" data-target="#instructionsII"><i class="fa fa-question-circle"></i></a>
+                                <!--<a id="lnkPartII" (click)="scrollTo('#II')" class="btn" rel="popover" data-placement="top" data-trigger="hover">
                                     <i class="fa fa-question-circle"></i>
-                                </a>
+                                </a>-->
                             </div>
                         </div>
                         <div class="yes-no form-box">
@@ -204,13 +208,16 @@
                             <app-radio-button name="rbII" [selectedValue]="false" [prevValue]="compareForm ? compareForm.hasLiabilities : null" [(ngModel)]="form.hasLiabilities" [disabled]="inputDisabled">No</app-radio-button>
                         </div>
                     </div>
+                    <div id="instructionsII" class="collapse">
+                    </div>
                     <div class="row question">
                         <div class="question-text form-box">
                             <div class="control-label required">
                                 III. I have reportable outside positions for myself.
-                                <a id="lnkPartIII" (click)="scrollTo('#III')" class="btn" rel="popover" data-placement="top" data-original-title="<h4>Part III: Outside Positions</h4>" data-trigger="hover">
+                                <!--<a id="lnkPartIII" (click)="scrollTo('#III')" class="btn" rel="popover" data-placement="top" data-trigger="hover">
                                     <i class="fa fa-question-circle"></i>
-                                </a>
+                                </a>-->
+                                <a class="btn hideprint" data-toggle="collapse" data-target="#instructionsIII"><i class="fa fa-question-circle"></i></a>
                             </div>
                         </div>
                         <div class="yes-no form-box">
@@ -220,13 +227,16 @@
                             <app-radio-button name="rbIII" [selectedValue]="false" [prevValue]="compareForm ? compareForm.hasOutsidePositions : null" [(ngModel)]="form.hasOutsidePositions" [disabled]="inputDisabled">No</app-radio-button>
                         </div>
                     </div>
+                    <div id="instructionsIII" class="collapse">
+                    </div>
                     <div class="row question">
                         <div class="question-text form-box">
                             <div class="control-label required">
                                 IV. I have reportable agreements or arrangements for myself.
-                                <a id="lnkPartIV" (click)="scrollTo('#IV')" class="btn" rel="popover" data-placement="top" data-original-title="<h4>Part IV: Agreements or Arrangements</h4>" data-trigger="hover">
+                                <!--<a id="lnkPartIV" (click)="scrollTo('#IV')" class="btn" rel="popover" data-placement="top" data-trigger="hover">
                                     <i class="fa fa-question-circle"></i>
-                                </a>
+                                </a>-->
+                                <a class="btn hideprint" data-toggle="collapse" data-target="#instructionsIV"><i class="fa fa-question-circle"></i></a>
                             </div>
                         </div>
                         <div class="yes-no form-box">
@@ -236,14 +246,17 @@
                             <app-radio-button name="rbIV" [selectedValue]="false" [prevValue]="compareForm ? compareForm.hasAgreementsOrArrangements : null" [(ngModel)]="form.hasAgreementsOrArrangements" [disabled]="inputDisabled">No</app-radio-button>
                         </div>
                     </div>
+                    <div id="instructionsIV" class="collapse">
+                    </div>
                     <div class="row question">
                         <div class="question-text form-box">
                             <div class="control-label">
                                 <span style="color: red;">NOTE: Statement V is for <u>annual</u> filers only. It does not apply to new entrants and SGEs.</span><br />
                                 V. I have reportable gifts or travel reimbursements for myself, my spouse, or my dependent children.
-                                <a id="lnkPartV" (click)="scrollTo('#V')" class="btn" rel="popover" data-placement="top" data-original-title="<h4>Part V: Gifts and Travel Reimbursements</h4>" data-trigger="hover">
+                                <!--<a id="lnkPartV" (click)="scrollTo('#V')" class="btn" rel="popover" data-placement="top" data-trigger="hover">
                                     <i class="fa fa-question-circle"></i>
-                                </a>
+                                </a>-->
+                                <a class="btn hideprint" data-toggle="collapse" data-target="#instructionsV"><i class="fa fa-question-circle"></i></a>
                             </div>
                         </div>
                         <div class="yes-no form-box">
@@ -252,6 +265,8 @@
                         <div class="yes-no form-box">
                             <app-radio-button name="rbV" [selectedValue]="false" [prevValue]="compareForm ? compareForm.hasGiftsOrTravelReimbursements : null" [(ngModel)]="form.hasGiftsOrTravelReimbursements" [disabled]="inputDisabled">No</app-radio-button>
                         </div>
+                    </div>
+                    <div id="instructionsV" class="collapse">
                     </div>
                 </div>
                 <div class="row">
@@ -316,7 +331,7 @@
                                 <div class="control-label">
                                     Date (mm/dd/yy)
                                 </div>
-                                <input title="Substantive Review Date" type="date" class="form-control" [ngModel]="tempReviewDate | date:'yyyy-MM-dd'" (ngModelChange)="form.dateOfSubstantiveReview = $event" disabled />
+                                <input title="Substantive Review Date" type="date" class="form-control" [ngModel]="tempReviewDate | date:'yyyy-MM-dd'" (ngModelChange)="tempReviewDate = $event" disabled />
                             </div>
                         </div>
                         <div class="row">
@@ -353,9 +368,9 @@
                 <h3 id="I">
                     Part I: Assets and Income
                 </h3>
-                <a class="btn hideprint" data-toggle="collapse" data-target="#partI_Instructions">Instructions</a>
+                <a class="btn hideprint" data-toggle="collapse" data-target="#partI_Instructions" *ngIf="mode != 'COMPARE'">Instructions</a>
             </div>
-            <div id="partI_Instructions" class="collapse showprint">
+            <div id="partI_Instructions" class="collapse showprint" *ngIf="mode != 'COMPARE'">
                 <div class="outer-form-box">
                     <div class="row">
                         <div class="col-7 form-box-sm">
@@ -514,13 +529,10 @@
             <div class="row example-row">
                 <div class="example-row">
                     <b>Reportable Information</b>
-                    <a id="lnkPartIExample" class="btn" data-placement="bottom" data-original-title="<h4>Examples: Part I</h4>" data-trigger="hover">
-                        <i class="fa fa-question-circle"></i>
-                    </a>
                 </div>
-                <a class="btn hideprint" data-toggle="collapse" data-target="#partI_Examples">Examples</a>
+                <a class="btn hideprint" data-toggle="collapse" data-target="#partI_Examples" *ngIf="mode != 'COMPARE'">Examples</a>
             </div>
-            <div id="partI_Examples" class="collapse hideprint">
+            <div id="partI_Examples" class="collapse hideprint" *ngIf="mode != 'COMPARE'">
 
             </div>
             <div class="outer-form-box">
@@ -559,9 +571,9 @@
             <app-print-page-header [employeesName]="form.employeesName" [settings]="settings" class="showprint" hidden></app-print-page-header>
             <div class="row example-row">
                 <h3 id="II">Part II: Liabilities</h3>
-                <a class="btn hideprint" data-toggle="collapse" data-target="#partII_Instructions">Instructions</a>
+                <a class="btn hideprint" data-toggle="collapse" data-target="#partII_Instructions" *ngIf="mode != 'COMPARE'">Instructions</a>
             </div>
-            <div id="partII_Instructions" class="collapse showprint">
+            <div id="partII_Instructions" class="collapse showprint" *ngIf="mode != 'COMPARE'">
                 <div class="outer-form-box">
                     <div class="row">
                         <div class="col-5 form-box-sm">
@@ -610,13 +622,10 @@
             <div class="row example-row">
                 <div class="example-row">
                     <b>Reportable Information</b>
-                    <a id="lnkPartIIExample" class="btn" data-placement="bottom" data-original-title="<h4>Examples: Part II</h4>" data-trigger="hover">
-                        <i class="fa fa-question-circle"></i>
-                    </a>
                 </div>
-                <a class="btn hideprint" data-toggle="collapse" data-target="#partII_Examples">Examples</a>
+                <a class="btn hideprint" data-toggle="collapse" data-target="#partII_Examples" *ngIf="mode != 'COMPARE'">Examples</a>
             </div>
-            <div id="partII_Examples" class="collapse hideprint">
+            <div id="partII_Examples" class="collapse hideprint" *ngIf="mode != 'COMPARE'">
 
             </div>
             <div class="outer-form-box">
@@ -650,9 +659,9 @@
             <app-print-page-header [employeesName]="form.employeesName" [settings]="settings" class="showprint" hidden></app-print-page-header>
             <div class="row example-row">
                 <h3 id="III">Part III: Outside Positions</h3>
-                <a class="btn hideprint" data-toggle="collapse" data-target="#partIII_Instructions">Instructions</a>
+                <a class="btn hideprint" data-toggle="collapse" data-target="#partIII_Instructions" *ngIf="mode != 'COMPARE'">Instructions</a>
             </div>
-            <div id="partIII_Instructions" class="collapse showprint">
+            <div id="partIII_Instructions" class="collapse showprint" *ngIf="mode != 'COMPARE'">
                 <div class="outer-form-box">
                     <div class="row">
                         <div class="col-7 form-box-sm">
@@ -674,7 +683,8 @@
                                     <ul>
                                         <li>Corporation, partnership, trust, or other business entity</li>
                                         <li>Non-profit or volunteer organization</li>
-                                        <li>Educational institution
+                                        <li>Educational institution</li>
+                                        <li>State or Local Government</li>
                                     </ul>
                                 </li>
                             </ul>
@@ -700,13 +710,10 @@
             <div class="row example-row">
                 <div class="example-row">
                     <b>Reportable Information</b>
-                    <a id="lnkPartIIIExample" class="btn" data-placement="bottom" data-original-title="<h4>Examples: Part III</h4>" data-trigger="hover">
-                        <i class="fa fa-question-circle"></i>
-                    </a>
                 </div>
-                <a class="btn hideprint" data-toggle="collapse" data-target="#partIII_Examples">Examples</a>
+                <a class="btn hideprint" data-toggle="collapse" data-target="#partIII_Examples" *ngIf="mode != 'COMPARE'">Examples</a>
             </div>
-            <div id="partIII_Examples" class="collapse hideprint">
+            <div id="partIII_Examples" class="collapse hideprint" *ngIf="mode != 'COMPARE'">
 
             </div>
             <div class="outer-form-box">
@@ -752,9 +759,9 @@
             <app-print-page-header [employeesName]="form.employeesName" [settings]="settings" class="showprint" hidden></app-print-page-header>
             <div class="row example-row">
                 <h3 id="IV">Part IV: Agreements or Arrangements</h3>
-                <a class="btn hideprint" data-toggle="collapse" data-target="#partIV_Instructions">Instructions</a>
+                <a class="btn hideprint" data-toggle="collapse" data-target="#partIV_Instructions" *ngIf="mode != 'COMPARE'">Instructions</a>
             </div>
-            <div id="partIV_Instructions" class="collapse showprint">
+            <div id="partIV_Instructions" class="collapse showprint" *ngIf="mode != 'COMPARE'">
                 <div class="outer-form-box">
                     <div class="row">
                         <div class="col-8 form-box-sm">
@@ -790,13 +797,10 @@
             <div class="row example-row">
                 <div class="example-row">
                     <b>Reportable Information</b>
-                    <a id="lnkPartIVExample" class="btn" rel="popover" data-placement="bottom" data-original-title="<h4>Examples: Part IV</h4>" data-trigger="hover">
-                        <i class="fa fa-question-circle"></i>
-                    </a>
                 </div>
-                <a class="btn hideprint" data-toggle="collapse" data-target="#partIV_Examples">Examples</a>
+                <a class="btn hideprint" data-toggle="collapse" data-target="#partIV_Examples" *ngIf="mode != 'COMPARE'">Examples</a>
             </div>
-            <div id="partIV_Examples" class="collapse hideprint">
+            <div id="partIV_Examples" class="collapse hideprint" *ngIf="mode != 'COMPARE'">
 
             </div>
             <div class="outer-form-box">
@@ -831,10 +835,10 @@
             <app-print-page-header [employeesName]="form.employeesName" [settings]="settings" class="showprint" hidden></app-print-page-header>
             <div class="row example-row">
                 <h3 id="V">Part V: Gifts and Travel Reimbursements</h3>
-                <a class="btn hideprint" data-toggle="collapse" data-target="#partV_Instructions">Instructions</a>
+                <a class="btn hideprint" data-toggle="collapse" data-target="#partV_Instructions" *ngIf="mode != 'COMPARE'">Instructions</a>
                 Fill out this part only if you are filing an Annual Report.  If you are a new entrant or an SGE, skip this part.
             </div>
-            <div id="partV_Instructions" class="collapse showprint">
+            <div id="partV_Instructions" class="collapse showprint" *ngIf="mode != 'COMPARE'">
                 <div class="outer-form-box">
                     <div class="row">
                         <div class="col-7 form-box-sm">
@@ -885,13 +889,10 @@
             <div class="row example-row">
                 <div class="example-row">
                     <b>Reportable Information</b>
-                    <a id="lnkPartVExample" class="btn" rel="popover" data-placement="bottom" data-original-title="<h4>Examples: Part V</h4>" data-trigger="hover">
-                        <i class="fa fa-question-circle"></i>
-                    </a>
                 </div>
-                <a class="btn hideprint" data-toggle="collapse" data-target="#partV_Examples">Examples</a>
+                <a class="btn hideprint" data-toggle="collapse" data-target="#partV_Examples" *ngIf="mode != 'COMPARE'">Examples</a>
             </div>
-            <div id="partV_Examples" class="collapse hideprint">
+            <div id="partV_Examples" class="collapse hideprint" *ngIf="mode != 'COMPARE'">
 
             </div>
             <div class="outer-form-box">
@@ -969,17 +970,23 @@
                             <div class="control-label">
                                 First Substantive Review Completed Signature and Date
                             </div>
-                            <div *ngIf="canReview() && !form.substantiveReviewer" class="btn btn-text btn-default hideprint" style="margin-left: 20%;" data-toggle="modal" data-target="#confirm-review">
-                                <span class="fa fa-check float-left" style="padding-top: 1px;"></span>
-                                Review Complete
+                            <div style="display: flex; gap: 15px;">
+                                <div *ngIf="canReview() && !form.substantiveReviewer" class="btn btn-text btn-default hideprint" style="margin-left: 20%; z-index: 10; position: relative;" data-toggle="modal" data-target="#confirm-review-init">
+                                    <span class="fa fa-check float-left" style="padding-top: 1px;"></span>
+                                    First Substantive Review
+                                </div>
+                                <input *ngIf="!(canReview() && !form.substantiveReviewer)" type="text" class="form-control" style="font-weight: bold; flex: 3;" [(ngModel)]="form.substantiveReviewer" disabled />
+                                <div *ngIf="canReview() && (form.formStatus == 'In Review')" class="btn btn-text btn-success hideprint" style="z-index: 10; position: relative;" data-toggle="modal" data-target="#confirm-review-complete">
+                                    <span class="fa fa-check float-left" style="padding-top: 1px;"></span>
+                                    Review Complete
+                                </div>
                             </div>
-                            <input *ngIf="!(canReview() && !form.substantiveReviewer)" type="text" class="form-control" style="font-weight: bold;" [(ngModel)]="form.substantiveReviewer" disabled />
                         </div>
                         <div class="col-3 form-box">
                             <div class="control-label">
                                 Date (mm/dd/yy)
                             </div>
-                            <input id="dtReviewDate" title="Substantive Review Date" type="date" class="form-control" [ngModel]="tempReviewDate | date:'yyyy-MM-dd'" (ngModelChange)="form.dateOfSubstantiveReview = $event" [disabled]="!canReview()" />
+                            <input id="dtReviewDate" title="Substantive Review Date" type="date" class="form-control" [ngModel]="tempReviewDate | date:'yyyy-MM-dd'" (ngModelChange)="tempReviewDate = $event" [disabled]="!canReview()" />
                         </div>
                     </div>
                     <div class="row">
@@ -987,15 +994,19 @@
                             <div class="control-label">
                                 Signature and Title of Agency's Final Reviewing Official
                             </div>
-                            <div *ngIf="canCertify()" class="btn btn-text btn-success hideprint" style="margin-left: 20%;" (click)="promptCertify()">
+                            <div *ngIf="canCertify()" class="btn btn-text btn-success hideprint" style="margin-left: 20%; z-index: 10; position: relative;" (click)="promptCertify()">
                                 <span class="fa fa-check float-left" style="padding-top: 1px;"></span>
                                 Sign & Certify Form
                             </div>
-                            <div *ngIf="canCertify()" class="btn btn-text btn-danger hideprint" style="margin-left: 20px;" data-toggle="modal" data-target="#reject-msg">
+                            <div *ngIf="canCertify()" class="btn btn-text btn-danger hideprint" style="margin-left: 20px; z-index: 10; position: relative; " data-toggle="modal" data-target="#reject-msg">
                                 <span class="fa fa-times float-left" style="padding-top: 1px;"></span>
                                 Reject
                             </div>
-                            <div *ngIf="canSubmitPaper()" class="btn btn-text btn-primary hideprint" style="margin-left: 20%;" data-toggle="modal" data-target="#confirm-paper">
+                            <div *ngIf="canDecline()" class="btn btn-text btn-default hideprint" style="margin-left: 20px; z-index: 10; position: relative; " data-toggle="modal" data-target="#decline-reason">
+                                <span class="fa fa-times float-left" style="padding-top: 1px;"></span>
+                                Decline to Certify
+                            </div>
+                            <div *ngIf="canSubmitPaper()" class="btn btn-text btn-primary hideprint" style="margin-left: 20%;" data-toggle="modal" data-target="#confirm-paper-submit">
                                 <span class="fa fa-file-text-o float-left" style="font-size: 1.2em; padding-top: 1px;"></span>
                                 Submit Paper Form
                             </div>
@@ -1016,6 +1027,14 @@
                             <textarea id="txtReviewerComments" type='text' class="form-control" rows="6" [(ngModel)]="form.commentsOfReviewingOfficial" [disabled]="reviewCommentsDisabled"></textarea>
                         </div>
                     </div>
+                    <div class="row hideprint" *ngIf="canLeavePrivateComment()">
+                        <div class="col-12 form-box">
+                            <div class="control-label">
+                                *** Private Comments (not visible to user) ***
+                            </div>
+                            <textarea type='text' class="form-control" rows="6" [(ngModel)]="form.privateComments"></textarea>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -1023,7 +1042,29 @@
         <app-examples></app-examples>
     </div>
 </div>
-<div class="modal fade" id="confirm-review" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+
+<div class="modal fade" id="confirm-review-init" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4>Substantive Review Initiated</h4>
+            </div>
+            <div class="modal-body">
+                The Office of Government Ethics requires the capture of the date an OMB ethics official conducts a first substantive view of a 450.
+                <br />
+                This action will <u>record</u> your name and the date entered as the first substantive review of this OGE 450.  If you wish to make changes to the date, click <b>Cancel</b>.
+                <br /><br />
+                You are indicating that you have performed an initial review, but require more information from the filer. Once that information has been gathered, please mark the review as complete.
+            </div>
+            <div class="modal-footer">
+                <div class="btn btn-success btn-ok" data-dismiss="modal" (click)="reviewComplete()">OK</div>
+                <div class="btn btn-default" data-dismiss="modal">Cancel</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="confirm-review-complete" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
@@ -1033,9 +1074,11 @@
                 The Office of Government Ethics requires the capture of the date an OMB ethics official conducts a first substantive view of a 450.
                 <br />
                 This action will <u>record</u> your name and the date entered as the first substantive review of this OGE 450.  If you wish to make changes to the date, click <b>Cancel</b>.
+                <br /><br />
+                You are indicating that this form is ready for certification.
             </div>
             <div class="modal-footer">
-                <div class="btn btn-success btn-ok" data-dismiss="modal" (click)="reviewComplete()">OK</div>
+                <div class="btn btn-success btn-ok" data-dismiss="modal" (click)="markReadyToCertify()">OK</div>
                 <div class="btn btn-default" data-dismiss="modal">Cancel</div>
             </div>
         </div>
@@ -1050,12 +1093,12 @@
             </div>
             <div class="modal-body">
                 <p style="color: red">Before you certify, you must set the first substantive review date.</p>
-                <input id="dtReviewDate" title="Substantive Review Date" type="date" class="form-control" [ngModel]="tempReviewDate | date:'yyyy-MM-dd'" (ngModelChange)="form.dateOfSubstantiveReview = $event" />
+                <input id="dtReviewDate" title="Substantive Review Date" type="date" class="form-control" [ngModel]="tempReviewDate | date:'yyyy-MM-dd'" (ngModelChange)="tempReviewDate = $event" />
             </div>
             <div class="modal-footer">
                 <div class="btn btn-success btn-ok" data-dismiss="modal" (click)="useToday()" *ngIf="!tempReviewDate">Use Today</div>
-                <div class="btn btn-success btn-ok" data-dismiss="modal" (click)="promptCertify()"  *ngIf="tempReviewDate">Ok</div>
-                <div class="btn btn-default" data-dismiss="modal">Cancel</div>
+                <div class="btn btn-success btn-ok" data-dismiss="modal" (click)="promptCertify()" *ngIf="tempReviewDate">Ok</div>
+                <div class="btn btn-default" data-dismiss="modal" (click)="tempReviewDate = null">Cancel</div>
             </div>
         </div>
     </div>
@@ -1071,6 +1114,11 @@
                 <b>On the basis of information contained in this report, I conclude that the filer is in compliance with applicable laws and regulations, except as noted in the "comments" box below.</b><br />
                 <br />
                 This action will <u>sign</u> and <u>certify</u> this OGE 450.  If you are not ready to certify this form, click <b>Cancel</b>.
+                <br /><br />
+                <div *ngIf="form.formStatus != 'Ready to Certify'">
+                    <span style="color: red; font-weight: bold;">Note:</span>
+                    This form has not yet been marked as 'Ready to Certify'. Only continue with this action if you're certain you are ready to certify.
+                </div>
             </div>
             <div class="modal-footer">
                 <div class="btn btn-success btn-ok" data-dismiss="modal" (click)="certify()">Certify</div>
@@ -1080,19 +1128,60 @@
     </div>
 </div>
 
-<div class="modal fade" id="confirm-paper" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+<div class="modal fade" id="confirm-paper-submit" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
                 <h4>Submit Paper Form on Behalf of Filer</h4>
             </div>
             <div class="modal-body">
-                <b>The filer has filled out a paper copy of the OGE Form 450.  On the basis of the information contained within it, I conclude that the filer is in compliance with applicable laws and regulations, except as noted in the "comments" box below or otherwise communicated to the filer.</b><br />
+                <b>The filer has filled out a paper copy of the OGE Form 450 and submitted it to OGC.</b><br />
                 <br />
-                This action will <u>submit</u> and <u>certify</u> the filers electronic OGE 450 record.  If you have not received or certified the filer's paper copy, click <b>Cancel</b>.
+                This action will <u>submit</u> an empty electronic OGE 450 record indicating that it has been received. You must <u>certify</u> this form as an additional step.  If you have not received the filer's paper copy, click <b>Cancel</b>.
             </div>
             <div class="modal-footer">
-                <div class="btn btn-success btn-ok" data-dismiss="modal" (click)="certifyPaper()">Certify</div>
+                <div class="btn btn-success btn-ok" data-dismiss="modal" (click)="submitPaper()">Submit</div>
+                <div class="btn btn-default" data-dismiss="modal">Cancel</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="decline-reason" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4>Decline to Certify</h4>
+            </div>
+            <div class="modal-body">
+                Please enter the reason you declined to certify this form.  If you do not wish to decline this form, click <b>Cancel</b>.
+                <br /><br />
+                <div class="row form-group">
+                    <div class="col-md-12">
+                        <label id="reason-label">Reason</label>
+                        <mat-radio-group aria-labelledby="reason-label" class="radio-group-vertical" [(ngModel)]="form.declineReason">
+                            <mat-radio-button class="radio-button" value="Filer left OMB prior to submitting form">
+                                Filer left OMB prior to submitting form
+                            </mat-radio-button>
+                            <mat-radio-button class="radio-button" value="Filer left OMB prior to initial review completion">
+                                Filer left OMB prior to initial review completion
+                            </mat-radio-button>
+                            <mat-radio-button class="radio-button" value="Filer left OMB prior to final review completion">
+                                Filer left OMB prior to final review completion
+                            </mat-radio-button>
+                            <mat-radio-button class="radio-button" value="Other">
+                                Other
+                            </mat-radio-button>
+                        </mat-radio-group>
+                        
+                    </div>
+                    <div class="col-md-12" *ngIf="form.declineReason == 'Other'">
+                        <textarea rows="4" name="reasonOther" type="text" class="form-control" [(ngModel)]="form.reasonOther" [disabled]="form.declineReason != 'Other'"></textarea>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <div class="btn btn-primary btn-ok" data-dismiss="modal" (click)="decline()">Decline</div>
                 <div class="btn btn-default" data-dismiss="modal">Cancel</div>
             </div>
         </div>

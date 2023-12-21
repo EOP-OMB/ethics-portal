@@ -3,6 +3,9 @@ import { Injectable } from '@angular/core';
 import { ModPromiseServiceBase } from 'mod-framework';
 import { environment } from '@src/environments/environment';
 import { ExtensionRequest } from '../models/extension-request.model';
+import { Observable } from 'rxjs';
+import { TableData } from '../models/table-data.model';
+import { EventRequestSummary } from '../models/event-request-summary.model';
 
 @Injectable({
     providedIn: 'root'
@@ -33,5 +36,11 @@ export class ExtensionRequestService extends ModPromiseServiceBase<ExtensionRequ
                 return data;
             })
             .catch(this.handleError);
+    }
+
+    getTable(page: number, pageSize: number, sort: string, sortDirection: string, filter: string): Observable<TableData<ExtensionRequest>> {
+        const url = `${this.url}/${this.endpoint}/getTable?page=${page}&pageSize=${pageSize}&sort=${sort}&sortDirection=${sortDirection}&filter=${filter}`;
+
+        return this.http.get<TableData<ExtensionRequest>>(url);
     }
 }

@@ -47,7 +47,8 @@ export class ExtensionRequestComponent implements OnInit, OnChanges {
     }
 
     ngOnInit(): void {
-        
+        if (this.extension && this.extension.id > 0)
+            this.newDueDate = Helper.formatDate(this.extension.extensionDate);
     }
 
     initializeMessage() {
@@ -83,7 +84,12 @@ export class ExtensionRequestComponent implements OnInit, OnChanges {
     }
 
     saveClick(): void {
-        if (this.extension.daysRequested > 0 && this.extension.reason) {
+        if (this.extension.daysRequested > 0 && this.extension.reason && this.newDueDate) {
+            this.extension.dueDate = new Date(this.extension.form.dueDate);
+            this.extension.extensionDate = new Date(this.newDueDate.toString());
+            this.extension.filerName = this.extension.form.employeesName;
+            this.extension.year = this.extension.form.year;
+            this.extension.ogeForm450Id = this.extension.form.id;
             this.save.emit(this.extension);
         } else {
             this.showError = true;
@@ -100,5 +106,9 @@ export class ExtensionRequestComponent implements OnInit, OnChanges {
         this.showError = false;
         var newDate = Helper.addDays(new Date(this.extension.form.dueDate), this.extension.daysRequested);
         this.newDueDate = Helper.formatDate(newDate);
+    }
+
+    canEdit(): boolean {
+        return this.extension.id == 0 || (this.extension.status == ExtensionStatus.PENDING && this.extension.form.filer == this.userService.user.upn);
     }
 }

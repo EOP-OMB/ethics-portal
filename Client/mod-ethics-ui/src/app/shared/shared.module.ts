@@ -32,6 +32,9 @@ import { MatTableExporterModule } from 'mat-table-exporter';
 // Kendo
 import { EditorModule } from '@progress/kendo-angular-editor';
 import { UploadsModule } from '@progress/kendo-angular-upload';
+import { DateInputsModule } from '@progress/kendo-angular-dateinputs';
+import { InputsModule } from '@progress/kendo-angular-inputs';
+import { ButtonsModule } from "@progress/kendo-angular-buttons";
 
 import { CheckBoxComponent } from './components/controls/check-box/check-box.component';
 import { ControlBaseComponent } from './components/controls/control-base/control-base.component';
@@ -45,10 +48,8 @@ import { PhonePipe } from './phone.pipe';
 import { FileSizePipe } from './file-size.pipe';
 import { ExtensionTableComponent } from './components/extension-table/extension-table.component';
 import { FormDetailsComponent } from './components/form-details/form-details.component';
-import { FormViewBaseComponent } from './views/form-view-base/form-view-base.component';
 import { FormMultipleEditComponent } from './components/form-multiple-edit/form-multiple-edit.component';
 import { ExtensionRequestComponent } from './components/extension-request/extension-request.component';
-import { TableBaseComponent } from './components/table-base/table-base.component';
 import { PeoplePickerComponent } from './components/people-picker/people-picker.component';
 import { GuidanceTableComponent } from './components/guidance-table/guidance-table.component';
 import { EmployeeProfileComponent } from './components/employee-profile/employee-profile.component';
@@ -56,7 +57,21 @@ import { GuidanceEditComponent } from './components/guidance-edit/guidance-edit.
 import { GuidanceDetailComponent } from './components/guidance-detail/guidance-detail.component';
 import { EmployeeEditComponent } from './components/employee-edit/employee-edit.component';
 import { EmployeeCardComponent } from './components/employee-card/employee-card.component';
-import { UploadComponent } from './components/controls/upload/upload.component';
+import { UploadComponent } from './components/upload/upload.component';
+import { NotificationTemplateEditComponent } from './components/notification-template-edit/notification-template-edit.component';
+import { EventRequestTableComponent } from './components/event-request-table/event-request-table.component';
+import { FormExportTableComponent } from './components/form-export-table/form-export-table.component';
+import { HTTP_INTERCEPTORS } from '@angular/common/http';
+import { UploadInterceptor } from './services/upload.interceptor';
+import { EventRequestDetailComponent } from './components/event-request-detail/event-request-detail.component';
+import { NgxMaskDirective, NgxMaskPipe, provideNgxMask } from 'ngx-mask';
+import { ChartsModule } from '@progress/kendo-angular-charts';
+import { TrainingTableComponent } from './components/training-table/training-table.component';
+import { TrainingFormComponent } from './components/training-form/training-form.component';
+import { OutsidePositionDetailComponent } from './components/outside-position-detail/outside-position-detail.component';
+import { TrainingExportTableComponent } from './components/training-export-table/training-export-table.component';
+import { OutsidePositionsExportTableComponent } from './components/outside-positions-export-table/outside-positions-export-table.component';
+import { OutsidePositionsTableComponent } from './components/outside-positions-table/outside-positions-table.component';
 
 @NgModule({
     declarations: [
@@ -80,7 +95,17 @@ import { UploadComponent } from './components/controls/upload/upload.component';
         GuidanceDetailComponent,
         EmployeeEditComponent,
         EmployeeCardComponent,
-        UploadComponent
+        UploadComponent,
+        NotificationTemplateEditComponent,
+        EventRequestTableComponent,
+        FormExportTableComponent,
+        EventRequestDetailComponent,
+        TrainingTableComponent,
+        TrainingFormComponent,
+        OutsidePositionDetailComponent,
+        TrainingExportTableComponent,
+        OutsidePositionsTableComponent,
+        OutsidePositionsExportTableComponent
     ],
     imports: [
         CommonModule,
@@ -114,7 +139,13 @@ import { UploadComponent } from './components/controls/upload/upload.component';
         MatProgressBarModule,
         // Kendo
         EditorModule,
-        UploadsModule
+        UploadsModule,
+        DateInputsModule,
+        InputsModule,
+        ButtonsModule,
+        NgxMaskDirective,
+        NgxMaskPipe,
+        ChartsModule
     ],
     exports: [
         FormsModule,
@@ -147,6 +178,10 @@ import { UploadComponent } from './components/controls/upload/upload.component';
         // Kendo
         EditorModule,
         UploadsModule,
+        DateInputsModule,
+        InputsModule,
+        ButtonsModule,
+        ChartsModule,
         // Components
         CheckBoxComponent,
         ControlBaseComponent,
@@ -164,10 +199,30 @@ import { UploadComponent } from './components/controls/upload/upload.component';
         MatTableExporterModule,
         GuidanceTableComponent,
         GuidanceEditComponent,
+        PeoplePickerComponent,
         GuidanceDetailComponent,
         EmployeeEditComponent,
         EmployeeCardComponent,
-        UploadComponent
-    ]
+        UploadComponent,
+        EventRequestTableComponent,
+        FormExportTableComponent,
+        EventRequestDetailComponent,
+        NgxMaskDirective,
+        NgxMaskPipe,
+        TrainingTableComponent,
+        TrainingFormComponent,
+        OutsidePositionDetailComponent,
+        OutsidePositionsTableComponent,
+        OutsidePositionsExportTableComponent
+    ],
+    providers: [
+        PhonePipe,
+        {
+            provide: HTTP_INTERCEPTORS,
+            useClass: UploadInterceptor,
+            multi: true,
+        },
+        provideNgxMask()
+    ],
 })
 export class SharedModule { }

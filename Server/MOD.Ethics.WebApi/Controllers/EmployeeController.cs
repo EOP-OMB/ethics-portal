@@ -21,6 +21,14 @@ namespace Mod.Ethics.WebApi.Controllers
             Service = service;
         }
 
+        [HttpGet("GetByUpn/{upn}")]
+        public virtual ActionResult<EmployeeDto> GetByUpn(string upn)
+        {
+            var emp = Service.GetByUpn(upn);
+
+            return Json(emp);
+        }
+
         [HttpGet("Sync")]
         public virtual ActionResult Sync()
         {
@@ -30,7 +38,7 @@ namespace Mod.Ethics.WebApi.Controllers
         }
 
         [HttpGet("MyProfile")]
-        public virtual ActionResult<EmployeeDto> MyPortfolio()
+        public virtual ActionResult<EmployeeDto> MyProfile()
         {
             var emp = Service.GetMyProfile();
 

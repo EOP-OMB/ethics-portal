@@ -15,8 +15,19 @@ namespace Mod.Ethics.WebApi.Controllers
     [Authorize]
     public class PortalController : ModControllerBase
     {
+        public new IPortalAppService Service { get; set; }
+
         public PortalController(ILogger<PortalController> logger, IPortalAppService service) : base(logger, service)
         {
+            Service = service;
+        }
+
+        [HttpGet("{id}")]
+        public virtual ActionResult<PortalDto> Get(int id)
+        {
+            var list = Service.Get();
+
+            return Json(list);
         }
     }
 }

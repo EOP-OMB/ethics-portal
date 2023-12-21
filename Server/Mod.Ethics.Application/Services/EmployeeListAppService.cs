@@ -5,6 +5,7 @@ using Mod.Framework.Runtime.Session;
 using Mod.Framework.User.Entities;
 using Mod.Framework.User.Interfaces;
 using Mod.Ethics.Application.Dtos;
+using Mod.Ethics.Application.Constants;
 using Mod.Ethics.Domain.Interfaces;
 using System;
 using System.Collections.Generic;
@@ -28,14 +29,11 @@ namespace Mod.Ethics.Application.Services
         {
             if (!Permissions.CanRead)
                 throw new SecurityException("Access denied.  Cannot read object of type " + typeof(Employee).Name);
-
-            var settings = SettingsService.Get();
-            _currentForms = FormRepository.GetAll(x => x.FormStatus != OgeForm450Statuses.CANCELED && x.Year == settings.CurrentFilingYear);
-            var entities = Repository.GetAllIncluding(w => w.Type == "EMP" || w.Type == "OGE" || w.Type == "CSULT", x => x.EmployeeAttributes);
+            
+            var entities = Repository.GetAllIncluding(w => w.Type != "CONT", x => x.EmployeeAttributes);
+            preloadedForms = FormRepository.GetAll();
 
             var list = entities.Select(Map).ToList();
-
-            _currentForms = null;
 
             return list.Where(x => !string.IsNullOrEmpty(x.FilerType)).OrderBy(x => x.DisplayName).ToList();
         }
@@ -45,13 +43,23 @@ namespace Mod.Ethics.Application.Services
             if (!Permissions.CanRead)
                 throw new SecurityException("Access denied.  Cannot read object of type " + typeof(Employee).Name);
 
-            var settings = SettingsService.Get();
-            _currentForms = FormRepository.GetAll(x => x.FormStatus != OgeForm450Statuses.CANCELED && x.Year == settings.CurrentFilingYear);
-            var entities = Repository.GetAllNoFilterIncluding(w => w.Type == "EMP" || w.Type == "OGE" || w.Type == "CSULT", x => x.EmployeeAttributes);
+            preloadedForms = FormRepository.GetAll();
+            var entities = Repository.GetAllNoFilterIncluding(w => w.Type != "CONT", x => x.EmployeeAttributes);
 
             var list = entities.Select(Map).ToList();
 
-            _currentForms = null;
+            return list.Where(x => !string.IsNullOrEmpty(x.FilerType)).OrderBy(x => x.DisplayName).ToList();
+        }
+
+        public List<EmployeeListDto> GetAllNoFilter()
+        {
+            if (!Permissions.CanRead)
+                throw new SecurityException("Access denied.  Cannot read object of type " + typeof(Employee).Name);
+
+            preloadedForms = FormRepository.GetAll();
+            var entities = Repository.GetAllNoFilterIncluding(w =>true, x => x.EmployeeAttributes);
+
+            var list = entities.Select(Map).ToList();
 
             return list.Where(x => !string.IsNullOrEmpty(x.FilerType)).OrderBy(x => x.DisplayName).ToList();
         }
@@ -124,6 +132,15 @@ namespace Mod.Ethics.Application.Services
         public List<EmployeeListDto> GetReviewers()
         {
             var reviewerGroups = ApplicationRoles.GetRoleGroups(Roles.OGEReviewer);
+
+            var reviewers = Repository.GetAllInGroups(reviewerGroups);
+
+            return reviewers.Select(MapToDto).ToList();
+        }
+
+        public List<EmployeeListDto> GetEventReviewers()
+        {
+            var reviewerGroups = ApplicationRoles.GetRoleGroups(Roles.EventReviewer);
 
             var reviewers = Repository.GetAllInGroups(reviewerGroups);
 

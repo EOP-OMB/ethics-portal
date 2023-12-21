@@ -1,0 +1,36 @@
+.grid-body {
+    display: grid;
+    grid-template-columns: 2fr 4fr 2fr;
+    gap: 10px 15px;
+    align-items: start;
+    justify-items: flex-start;
+}
+
+
+.grid-body > small {
+    text-align: left;
+    max-width: 100%;
+}
+
+.mat-mdc-form-field {
+    width: 100%;
+}
+
+.error {
+    font-size: .8em;
+    margin-bottom: 15px;
+    padding: 0 1em;
+}
+
+.control-label {
+    font-weight: bold;
+    text-align: left;
+}
+
+.form-field {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    width: 100%;
+    text-align: left;
+}

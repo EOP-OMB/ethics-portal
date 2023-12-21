@@ -1,4 +1,4 @@
-.mat-form-field {
+.mat-mdc-form-field {
     width: 100%;
 }
 
@@ -11,8 +11,9 @@ app-employee-card {
     margin-bottom: 15px;
 }
 
-ngx-editor.ng-invalid > div {
-    //border: 1px solid red;
-    background-color: red;
-    padding-top: 300px;
+.button-row {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    margin-top: 15px;
 }

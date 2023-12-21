@@ -1,0 +1,37 @@
+<mat-paginator #paginator style="margin-top: -45px"></mat-paginator>
+<table mat-table matTableExporter [dataSource]="dataSource"
+       (exportStarted)="exporting(true)" (exportCompleted)="exporting(false)" #exporter="matTableExporter">
+    <ng-container matColumnDef="employeeName">
+        <th mat-header-cell *matHeaderCellDef> Name </th>
+        <td mat-cell *matCellDef="let training"> {{ training.employeeName }} </td>
+    </ng-container>
+    <ng-container matColumnDef="employeeStatus">
+        <th mat-header-cell *matHeaderCellDef> Employee Status </th>
+        <td mat-cell *matCellDef="let training"> {{ training.employeeStatus }} </td>
+    </ng-container>
+    <ng-container matColumnDef="year">
+        <th mat-header-cell *matHeaderCellDef> Year </th>
+        <td mat-cell *matCellDef="let training"> {{ training.year }} </td>
+    </ng-container>
+    <ng-container matColumnDef="trainingType">
+        <th mat-header-cell *matHeaderCellDef> Training Type </th>
+        <td mat-cell *matCellDef="let training"> {{ training.trainingType }} </td>
+    </ng-container>
+    <ng-container matColumnDef="ethicsOfficial">
+        <th mat-header-cell *matHeaderCellDef> Official </th>
+        <td mat-cell *matCellDef="let training"> {{ training.ethicsOfficial }} </td>
+    </ng-container>
+    <ng-container matColumnDef="location">
+        <th mat-header-cell *matHeaderCellDef> Location </th>
+        <td mat-cell *matCellDef="let training">
+            {{ training.location }}
+        </td>
+    </ng-container>
+    <ng-container matColumnDef="trainingDate">
+        <th mat-header-cell *matHeaderCellDef>Date Attended</th>
+        <td mat-cell *matCellDef="let training"> {{ training.trainingDate | date:'MM/dd/yyyy' }} </td>
+    </ng-container>
+
+    <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+    <tr mat-row *matRowDef="let row; columns: displayedColumns;" (click)="rowSelected(row)"></tr>
+</table>

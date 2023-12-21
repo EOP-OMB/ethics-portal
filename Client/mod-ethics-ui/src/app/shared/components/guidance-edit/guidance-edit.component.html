@@ -1,6 +1,9 @@
 <form [formGroup]="guidanceForm" (ngSubmit)="onSubmit(guidanceForm)" class="guidance-form">
 
     <app-people-picker *ngIf="!selectedEmployee || selectedEmployee.id == 0; else hasValue" (onPeoplePicked)="employeeSelected($event)" formControlName="employee"></app-people-picker>
+    <span *ngIf="!(selectedEmployee && selectedEmployee.id > 0) && (formEmployee.touched || formEmployee.dirty || submitted)" style="color: red; font-size: 12px; margin-top: -15px; padding-bottom: 10px;">
+        Employee is <strong>required</strong>.
+    </span>
     <ng-template #hasValue>
         <app-employee-card [employee]="selectedEmployee" [showClose]="allowEmployeeSelect" [showDetails]="!allowEmployeeSelect" (select)="employeeClicked($event)" (close)="clearEmployee()"></app-employee-card>
     </ng-template>
@@ -22,6 +25,12 @@
                 {{ val.text }}
             </mat-option>
         </mat-select>
+        <mat-error *ngIf="guidanceType.errors">
+            <span *ngIf="guidanceType.errors.required">
+                Type of Guidance is
+                <strong>required</strong>
+            </span>
+        </mat-error>
     </mat-form-field>
     <mat-form-field appearance="outline" class="inline-form-field">
         <mat-label>Subject Matter</mat-label>
@@ -32,14 +41,8 @@
         </mat-select>
     </mat-form-field>
     <div>
-        <!--<ngx-editor-menu [editor]="editor"> </ngx-editor-menu>
-        <ngx-editor [editor]="editor"
-                    [placeholder]="'Type here...'"
-                    minHeight="250px"
-                    height="250px"
-                    formControlName="text"></ngx-editor>-->
-
-        <kendo-editor formControlName="text" style="height: 300px; width: 475px;"></kendo-editor>
+        <kendo-editor formControlName="text" style="height: 300px;">
+        </kendo-editor>
         <div *ngIf="guidanceText?.invalid && (guidanceText?.dirty || guidanceText?.touched || submitted)" class="alert alert-danger">
             <div *ngIf="guidanceText?.errors?.required">
                 Guidance Text is required.
@@ -52,6 +55,8 @@
 
     <app-upload [saveUrl]="saveUrl" [removeUrl]="removeUrl" [guid]="newGuid" [files]="files" (download)="downloadFile($event)" [restrictions]="restrictions"></app-upload>
 
-    <button mat-flat-button type="submit" color="primary" style="margin-top: 15px;">Save</button>
-    <button *ngIf="guidance.id > 0" mat-flat-button type="button" (click)="deleteGuidance()" color="warn" style="margin-top: 15px;">Delete</button>
+    <div class="button-row">
+        <button mat-flat-button type="submit" color="primary">Save</button>
+        <button *ngIf="guidance.id > 0" mat-flat-button type="button" (click)="deleteGuidance()" color="warn">Delete</button>
+    </div>
 </form>

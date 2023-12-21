@@ -1,0 +1,17 @@
+<kendo-chart style="width: 100%; height: 200px;" *ngIf="chartData" [seriesColors]="seriesColors">
+    <kendo-chart-legend position="top" orientation="horizontal"></kendo-chart-legend>
+    <kendo-chart-category-axis>
+        <kendo-chart-category-axis-item [categories]="chartData.labels">
+        </kendo-chart-category-axis-item>
+    </kendo-chart-category-axis>
+    <kendo-chart-series>
+        <kendo-chart-series-item *ngFor="let ds of chartData.datasets" type="column" [gap]="2" [spacing]="0.25" [data]="ds.data" [name]="ds.label">
+            <kendo-chart-series-item-tooltip>
+                <ng-template kendoChartSeriesTooltipTemplate let-value="value" let-category="category">
+                    {{category }}<br />
+                    {{ds.label}}: {{ value }}
+                </ng-template>
+            </kendo-chart-series-item-tooltip>
+        </kendo-chart-series-item>
+    </kendo-chart-series>
+</kendo-chart>

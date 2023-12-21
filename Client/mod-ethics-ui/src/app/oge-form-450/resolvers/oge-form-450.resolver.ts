@@ -1,10 +1,10 @@
 import { Injectable } from "@angular/core";
-import { ActivatedRouteSnapshot, Resolve, Router, RouterStateSnapshot } from "@angular/router";
+import { ActivatedRouteSnapshot, Router, RouterStateSnapshot } from "@angular/router";
 import { OgeForm450 } from "../../shared/models/oge-form-450.model";
 import { OGEForm450Service } from "../../shared/services/oge-form-450.service";
 
 @Injectable()
-export class OGEForm450Resolver implements Resolve<OgeForm450 | null> {
+export class OGEForm450Resolver  {
     constructor(private formService: OGEForm450Service, private router: Router) { }
 
     resolve(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): Promise<OgeForm450 | null>  {

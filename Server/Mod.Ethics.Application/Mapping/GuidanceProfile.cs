@@ -1,5 +1,6 @@
 ﻿using Mod.Ethics.Application.Dtos;
 using Mod.Ethics.Domain.Entities;
+using System.Linq;
 
 namespace Mod.Ethics.Application.Mapping
 {
@@ -7,7 +8,9 @@ namespace Mod.Ethics.Application.Mapping
     {
         public GuidanceProfile()
         {
-            CreateMap<Guidance, GuidanceDto>().ReverseMap();
+            CreateMap<Guidance, GuidanceDto>();
+            CreateMap<GuidanceDto, Guidance>()
+                .ForMember(ent => ent.Attachments, src => src.Ignore());
             CreateMap<GuidanceSubject, GuidanceSubjectDto>().ReverseMap();
             CreateMap<GuidanceType, GuidanceTypeDto>().ReverseMap();
         }

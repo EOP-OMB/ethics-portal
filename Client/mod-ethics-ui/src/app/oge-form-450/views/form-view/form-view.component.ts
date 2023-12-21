@@ -53,8 +53,7 @@ export class FormViewComponent implements OnInit {
     }
 
     ngAfterViewInit() {
-        if (this.form.formStatus == FormStatus.NOT_STARTED && this.form.filer == this.userService.user.upn)
-            $('#intro-popup').modal();
+        
     }
 
     saveForm(form: OgeForm450) {

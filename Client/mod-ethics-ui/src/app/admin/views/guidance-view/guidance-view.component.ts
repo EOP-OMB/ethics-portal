@@ -16,7 +16,7 @@ import { Roles } from '@shared/static/roles.const';
 })
 export class GuidanceViewComponent implements OnInit {
 
-    @ViewChild('dtGuidances') dtGuidance!: GuidanceTableComponent;
+    @ViewChild('dtGuidance') dtGuidance!: GuidanceTableComponent;
 
     @ViewChild('drawer', { static: false })
     drawer!: MatDrawer;
@@ -27,7 +27,7 @@ export class GuidanceViewComponent implements OnInit {
 
     numberOfBlankForms: number = 0;
     numberOfUnchangedForms: number = 0;
-
+    employee: Employee;
     filersWidget: Widget = new Widget();
 
     hiddenCols: string[] = [];
@@ -61,6 +61,7 @@ export class GuidanceViewComponent implements OnInit {
     onGuidanceSelect(guidance: Guidance): void {
         this.guidanceService.get(guidance.id).then(response => {
             this.selectedGuidance = response;
+            this.employee = response.employee;
             this.showDrawer(response);
         });
     }

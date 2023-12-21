@@ -1,8 +1,10 @@
 import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
-import { AllExtensionsViewComponent } from './views/all-extensions-view/all-extensions-view.component';
-import { AllFormsViewComponent } from './views/all-forms-view/all-forms-view.component';
+import { NotificationTemplateEditComponent } from '@shared/components/notification-template-edit/notification-template-edit.component';
+
 import { EmployeeViewComponent } from './views/employee-view/employee-view.component';
+import { EoyReportViewComponent } from './views/eoy-report-view/eoy-report-view.component';
+import { EthicsTrainingViewComponent } from './views/ethics-training-view/ethics-training-view.component';
 import { GuidanceViewComponent } from './views/guidance-view/guidance-view.component';
 import { ReportsViewComponent } from './views/reports-view/reports-view.component';
 import { SettingsViewComponent } from './views/settings-view/settings-view.component';
@@ -21,21 +23,26 @@ const routes: Routes = [
         component: EmployeeViewComponent
     },
     {
-        path: 'forms',
-        component: AllFormsViewComponent
-    },
-    {
-        path: 'extensions',
-        component: AllExtensionsViewComponent
-    },
-    {
         path: 'guidance',
         component: GuidanceViewComponent
     },
     {
+        path: 'training',
+        component: EthicsTrainingViewComponent
+    },
+    {
         path: 'reports',
         component: ReportsViewComponent
+    },
+    {
+        path: 'eoy-report',
+        component: EoyReportViewComponent
+    },
+    {
+        path: 'notifications',
+        component: NotificationTemplateEditComponent
     }
+
 ];
 
 @NgModule({

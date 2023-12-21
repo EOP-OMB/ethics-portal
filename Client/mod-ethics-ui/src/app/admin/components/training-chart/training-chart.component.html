@@ -1,0 +1,25 @@
+<kendo-chart style="width: 100%; height: 200px;" *ngIf="chartData" [seriesColors]="seriesColors">
+    <kendo-chart-title text="Employees ({{chartData.totalEmployees}})"></kendo-chart-title>
+    <kendo-chart-legend position="bottom" orientation="horizontal"></kendo-chart-legend>
+    <kendo-chart-series>
+        <kendo-chart-tooltip>
+            <ng-template kendoChartSeriesTooltipTemplate>
+                Employees ({{chartData.totalEmployees}})<br />
+                Completed: {{chartData.completedTraining}}<br />
+                Missing: {{missingEmployeesCount}}
+            </ng-template>
+        </kendo-chart-tooltip>
+        <kendo-chart-series-item type="bar"
+                                 [stack]="{ group: 'a' }"
+                                 [data]="[0]">
+        </kendo-chart-series-item>
+        <kendo-chart-series-item name="Completed" type="bar"
+                                 [stack]="{ group: 'a' }"
+                                 [data]="[chartData.completedTraining]">
+        </kendo-chart-series-item>
+        <kendo-chart-series-item name="Missing" type="bar"
+                                 [data]="[missingEmployeesCount]"
+                                 [stack]="{ group: 'a' }">
+        </kendo-chart-series-item>
+    </kendo-chart-series>
+</kendo-chart>

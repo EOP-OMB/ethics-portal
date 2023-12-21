@@ -1,11 +1,11 @@
 ﻿using Microsoft.Extensions.Logging;
 using Mod.Ethics.Application.Dtos;
+using Mod.Ethics.Application.Constants;
 using Mod.Ethics.Domain.Entities;
 using Mod.Ethics.Domain.Enumerations;
 using Mod.Ethics.Domain.Interfaces;
 using Mod.Framework.Application;
 using Mod.Framework.Application.ObjectMapping;
-using Mod.Framework.Domain.Repositories;
 using Mod.Framework.Notifications.Domain.Entities;
 using Mod.Framework.Notifications.Domain.Services;
 using Mod.Framework.Runtime.Session;
@@ -32,15 +32,17 @@ namespace Mod.Ethics.Application.Services
 
             var isAdminOrReviewer = Session.Principal.IsInRole(Roles.OGEReviewer) || Session.Principal.IsInRole(Roles.EthicsAppAdmin) || Session.Principal.IsInRole(Roles.OGESupport);
 
-            Permissions.CanRead = isAdminOrReviewer;
-            Permissions.CanUpdate = isAdminOrReviewer;  
+            //Permissions.CanRead = isAdminOrReviewer;
+//            Permissions.CanUpdate = isAdminOrReviewer;  
             Permissions.CanCreate = true; // check done in OnBeforeCreate
             Permissions.CanDelete = false;
+
+            Permissions.PermissionFilter = x => x.OgeForm450.FilerUpn.ToLower() == session.UserId.ToLower() || isAdminOrReviewer;
         }
 
         protected override void OnBeforeCreate(CrudEventArgs<ExtensionRequestDto, OgeForm450ExtensionRequest> e)
         {
-            var form = FormService.Get(e.Dto.OGEForm450Id);
+            var form = FormService.Get(e.Dto.OgeForm450Id);
             _pendingEmails = new List<Notification>();
 
             if (!(form.FormStatus == OgeForm450Statuses.NOT_STARTED || form.FormStatus == OgeForm450Statuses.DRAFT || form.FormStatus == OgeForm450Statuses.MISSING_INFORMATION))
@@ -75,12 +77,12 @@ namespace Mod.Ethics.Application.Services
             var data = GetEmailData(e.Dto);
 
             e.Entity.Status = ExtensionRequestStatuses.PENDING;
-            e.Entity.ExtensionDate = form.DueDate.AddDays(e.Dto.DaysRequested);
+            e.Entity.ExtensionDate = Convert.ToDateTime(form.DueDate).AddDays(e.Dto.DaysRequested);
 
-            var notification = NotificationService.CreateNotification((int)NotificationTypes.ExtensionRecieved, Session.Principal.EmailAddress, data);
+            var notification = NotificationService.CreateNotification((int)NotificationTypes.ExtensionRecieved, Session.Principal.EmailAddress, data, "");
             _pendingEmails.Add(notification);
 
-            notification = NotificationService.CreateNotification((int)NotificationTypes.ExtensionRequest, "", data);
+            notification = NotificationService.CreateNotification((int)NotificationTypes.ExtensionRequest, "", data, "");
             _pendingEmails.Add(notification);
         }
 
@@ -97,7 +99,7 @@ namespace Mod.Ethics.Application.Services
             {
                 var data = GetEmailData(e.Dto);
 
-                var notification = NotificationService.CreateNotification((int)NotificationTypes.ExtensionDecision, "", data);
+                var notification = NotificationService.CreateNotification((int)NotificationTypes.ExtensionDecision, "", data, "");
                 _pendingEmails.Add(notification);
             }
         }
@@ -120,29 +122,24 @@ namespace Mod.Ethics.Application.Services
         // Id here is the Form ID not the Extension Id
         public override ExtensionRequestDto Get(int id)
         {
-            var currentForm = FormService.GetCurrentForm();
+            // get form by ID
+            var form = FormService.Get(id);
 
-            // Can only access extensions if is a reviewer or admin or if it is your extension request
-            if (!(Permissions.CanRead || currentForm.Id == id))
-            {
-                throw new SecurityException("Not Authorized");               
-            }
-            
             ExtensionRequestDto extension = null;
 
-            if (!HasPending(currentForm.Filer))
+            var pendingExtensions = GetBy(x => x.OgeForm450.FilerUpn == form.Filer && x.Status == ExtensionRequestStatuses.PENDING);
+            if (pendingExtensions.Count() == 0)
             {
-                if (currentForm.Id == id)
+                // If no pending extension for form, create a new extension
+                extension = new ExtensionRequestDto
                 {
-                    // If no extension for form and is user's current form, create a new extension
-                    extension = new ExtensionRequestDto
-                    {
-                        OGEForm450Id = id,
-                        DaysRequested = 0
-                    };
-                }
-                else
-                    throw new Exception("No extension found for form id " + id.ToString());
+                    OgeForm450Id = id,
+                    DaysRequested = 0
+                };
+            }
+            else
+            {
+                extension = pendingExtensions.First();
             }
 
             return extension;

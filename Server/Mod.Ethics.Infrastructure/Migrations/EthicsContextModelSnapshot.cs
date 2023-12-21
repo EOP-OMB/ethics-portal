@@ -6,6 +6,8 @@ using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Mod.Ethics.Infrastructure.EfCore;
 
+#nullable disable
+
 namespace Mod.Ethics.Infrastructure.Migrations
 {
     [DbContext(typeof(EthicsContext))]
@@ -15,16 +17,123 @@ namespace Mod.Ethics.Infrastructure.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("Relational:MaxIdentifierLength", 128)
-                .HasAnnotation("ProductVersion", "5.0.13")
-                .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+                .HasAnnotation("ProductVersion", "6.0.11")
+                .HasAnnotation("Relational:MaxIdentifierLength", 128);
+
+            SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder, 1L, 1);
+
+            modelBuilder.Entity("Mod.Ethics.Domain.Entities.AttendeeAttachment", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+
+                    b.Property<Guid>("AttachedToGuid")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("AttachmentType")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<byte[]>("Content")
+                        .HasColumnType("varbinary(max)");
+
+                    b.Property<string>("ContentType")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("CreatedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("CreatedTime")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("DeletedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("DeletedTime")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int?>("EventRequestAttendeeId")
+                        .HasColumnType("int");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("ModifiedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("ModifiedTime")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Name")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<long>("Size")
+                        .HasColumnType("bigint");
+
+                    b.Property<Guid>("Uid")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("EventRequestAttendeeId");
+
+                    b.ToTable("AttendeeAttachment");
+                });
 
             modelBuilder.Entity("Mod.Ethics.Domain.Entities.EthicsForm", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+
+                    b.Property<byte[]>("Content")
+                        .HasColumnType("varbinary(max)");
+
+                    b.Property<string>("ContentType")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("CreatedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("CreatedTime")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("DeletedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("DeletedTime")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Description")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("FileSize")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Filename")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("FormType")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("ModifiedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("ModifiedTime")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Name")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("SortOrder")
+                        .HasColumnType("int");
 
                     b.HasKey("Id");
 
@@ -35,8 +144,9 @@ namespace Mod.Ethics.Infrastructure.Migrations
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
                     b.Property<string>("CreatedBy")
                         .HasColumnType("nvarchar(max)");
@@ -59,11 +169,11 @@ namespace Mod.Ethics.Infrastructure.Migrations
                     b.Property<DateTime>("ModifiedTime")
                         .HasColumnType("datetime2");
 
+                    b.Property<string>("Name")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<int>("SortOrder")
                         .HasColumnType("int");
-
-                    b.Property<string>("Title")
-                        .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("Type")
                         .HasColumnType("int");
@@ -80,8 +190,193 @@ namespace Mod.Ethics.Infrastructure.Migrations
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+
+                    b.Property<string>("AdditionalInformation")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("ApproximateAttendees")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("AssignedTo")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("AssignedToUpn")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("AttachmentGuid")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("ClosedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("ClosedDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("ClosedReason")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("ContactComponent")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("ContactEmail")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("ContactNumber")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("CreatedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("CreatedTime")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("CrowdDescription")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("DeletedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("DeletedTime")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("EventContactEmail")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("EventContactName")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("EventContactPhone")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("EventEndDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("EventLocation")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("EventName")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("EventStartDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("FairMarketValue")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool?>("GuestsInvited")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("GuidanceGiven")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("HostOther")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("IndividualExtendingInvite")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool?>("InternationalTravel")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<bool?>("IsFundraiser")
+                        .HasColumnType("bit");
+
+                    b.Property<bool?>("IsHostLobbyist")
+                        .HasColumnType("bit");
+
+                    b.Property<bool?>("IsIndividualLobbyist")
+                        .HasColumnType("bit");
+
+                    b.Property<bool?>("IsOpenToMedia")
+                        .HasColumnType("bit");
+
+                    b.Property<bool?>("IsOrgLobbyist")
+                        .HasColumnType("bit");
+
+                    b.Property<bool?>("IsQAndA")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("ModeratorsAndPanelists")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("ModifiedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("ModifiedTime")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("OrgExtendingInvite")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("OrgHostingEvent")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("OrgOther")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool?>("ReceivedInvitation")
+                        .HasColumnType("bit");
+
+                    b.Property<bool?>("RequiresTravel")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("Status")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("SubmittedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("SubmittedDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Submitter")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Title")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("TypeOfHost")
+                        .HasColumnType("int");
+
+                    b.Property<int>("TypeOfOrg")
+                        .HasColumnType("int");
+
+                    b.Property<string>("WhatIsProvided")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("WhoIsPaying")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("EventRequest");
+                });
+
+            modelBuilder.Entity("Mod.Ethics.Domain.Entities.EventRequestAttachment", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+
+                    b.Property<Guid>("AttachedToGuid")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("AttachmentType")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<byte[]>("Content")
+                        .HasColumnType("varbinary(max)");
+
+                    b.Property<string>("ContentType")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("CreatedBy")
                         .HasColumnType("nvarchar(max)");
@@ -95,6 +390,9 @@ namespace Mod.Ethics.Infrastructure.Migrations
                     b.Property<DateTime?>("DeletedTime")
                         .HasColumnType("datetime2");
 
+                    b.Property<int?>("EventRequestId")
+                        .HasColumnType("int");
+
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("bit");
 
@@ -104,17 +402,101 @@ namespace Mod.Ethics.Infrastructure.Migrations
                     b.Property<DateTime>("ModifiedTime")
                         .HasColumnType("datetime2");
 
+                    b.Property<string>("Name")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<long>("Size")
+                        .HasColumnType("bigint");
+
+                    b.Property<Guid>("Uid")
+                        .HasColumnType("uniqueidentifier");
+
                     b.HasKey("Id");
 
-                    b.ToTable("EventRequest");
+                    b.HasIndex("EventRequestId");
+
+                    b.ToTable("EventRequestAttachment");
+                });
+
+            modelBuilder.Entity("Mod.Ethics.Domain.Entities.EventRequestAttendee", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+
+                    b.Property<string>("AttachmentGuid")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Capacity")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("CreatedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("CreatedTime")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("DeletedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("DeletedTime")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("EmployeeName")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("EmployeeType")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("EmployeeUpn")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("EventRequestId")
+                        .HasColumnType("int");
+
+                    b.Property<bool?>("InformedSupervisor")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<bool?>("IsGivingRemarks")
+                        .HasColumnType("bit");
+
+                    b.Property<bool?>("IsSpeakerAgreementRequired")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("ModifiedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("ModifiedTime")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("NameOfSupervisor")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("ReasonForAttending")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Remarks")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("EventRequestId");
+
+                    b.ToTable("EventRequestAttendee");
                 });
 
             modelBuilder.Entity("Mod.Ethics.Domain.Entities.Guidance", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
                     b.Property<string>("CreatedBy")
                         .HasColumnType("nvarchar(max)");
@@ -133,6 +515,9 @@ namespace Mod.Ethics.Infrastructure.Migrations
 
                     b.Property<int>("EmployeeId")
                         .HasColumnType("int");
+
+                    b.Property<string>("EmployeeUpn")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("GuidanceType")
                         .HasColumnType("nvarchar(max)");
@@ -167,8 +552,9 @@ namespace Mod.Ethics.Infrastructure.Migrations
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
                     b.Property<Guid>("AttachedToGuid")
                         .HasColumnType("uniqueidentifier");
@@ -226,8 +612,9 @@ namespace Mod.Ethics.Infrastructure.Migrations
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
                     b.Property<string>("CreatedBy")
                         .HasColumnType("nvarchar(max)");
@@ -262,8 +649,9 @@ namespace Mod.Ethics.Infrastructure.Migrations
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
                     b.Property<string>("CreatedBy")
                         .HasColumnType("nvarchar(max)");
@@ -298,8 +686,9 @@ namespace Mod.Ethics.Infrastructure.Migrations
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
                     b.Property<string>("CreatedBy")
                         .HasColumnType("nvarchar(max)");
@@ -337,15 +726,22 @@ namespace Mod.Ethics.Infrastructure.Migrations
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
                     b.Property<string>("Agency")
                         .HasMaxLength(150)
                         .HasColumnType("nvarchar(150)");
 
+                    b.Property<string>("AssignedTo")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<int>("AssignedToEmployeeId")
                         .HasColumnType("int");
+
+                    b.Property<string>("AssignedToUpn")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("BranchUnitAndAddress")
                         .HasColumnType("nvarchar(max)");
@@ -434,14 +830,23 @@ namespace Mod.Ethics.Infrastructure.Migrations
                         .HasMaxLength(100)
                         .HasColumnType("nvarchar(100)");
 
+                    b.Property<string>("PrivateComments")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("ReportingStatus")
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)");
+
+                    b.Property<string>("ReviewStatus")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("SgeMailingAddress")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("SubstantiveReviewer")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("SubstantiveReviewerUpn")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Title")
@@ -465,8 +870,9 @@ namespace Mod.Ethics.Infrastructure.Migrations
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
                     b.Property<string>("Comments")
                         .HasColumnType("nvarchar(max)");
@@ -519,8 +925,9 @@ namespace Mod.Ethics.Infrastructure.Migrations
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
                     b.Property<string>("AdditionalInfo")
                         .HasColumnType("nvarchar(max)");
@@ -572,8 +979,9 @@ namespace Mod.Ethics.Infrastructure.Migrations
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
                     b.Property<string>("Comment")
                         .HasColumnType("nvarchar(max)");
@@ -603,12 +1011,266 @@ namespace Mod.Ethics.Infrastructure.Migrations
                     b.ToTable("OgeForm450Status");
                 });
 
+            modelBuilder.Entity("Mod.Ethics.Domain.Entities.OutsidePosition", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+
+                    b.Property<string>("AdditionalRemarks")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int?>("AnnualSalary")
+                        .HasColumnType("int");
+
+                    b.Property<string>("AttachmentGuid")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("CreatedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("CreatedTime")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("DeletedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("DeletedTime")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("DepartmentName")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Duties")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("EmployeeEmail")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("EmployeeName")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<long?>("EmployeePhone")
+                        .HasColumnType("bigint");
+
+                    b.Property<string>("EmployeeSignature")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("EmployeeUpn")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("EndDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("FilerType")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Grade")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Guidance")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool?>("InvolveDutiesSales")
+                        .HasColumnType("bit");
+
+                    b.Property<bool?>("InvolveExpense")
+                        .HasColumnType("bit");
+
+                    b.Property<bool?>("InvolveOfficialTitle")
+                        .HasColumnType("bit");
+
+                    b.Property<bool?>("InvolveOrg")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<bool?>("IsLikeOfficialDuties")
+                        .HasColumnType("bit");
+
+                    b.Property<bool?>("IsPaid")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("MethodOfCompensation")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("ModifiedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("ModifiedTime")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("OrganizationName")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("PeriodsOfEmployment")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("PhysicalLocation")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Poc")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("PocEmail")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<long?>("PocPhone")
+                        .HasColumnType("bigint");
+
+                    b.Property<string>("PositionTitle")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("RelationshipToDuties")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool?>("RequireDutiesContract")
+                        .HasColumnType("bit");
+
+                    b.Property<bool?>("RequiresAbsence")
+                        .HasColumnType("bit");
+
+                    b.Property<bool?>("RequiresDutiesFederal")
+                        .HasColumnType("bit");
+
+                    b.Property<DateTime?>("StartDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Status")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("SubmittedDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("SupervisorName")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("SupervisorUpn")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Title")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("TypeOfWork")
+                        .HasColumnType("int");
+
+                    b.Property<bool?>("UseOfFacilities")
+                        .HasColumnType("bit");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("OutsidePosition");
+                });
+
+            modelBuilder.Entity("Mod.Ethics.Domain.Entities.OutsidePositionAttachment", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+
+                    b.Property<Guid>("AttachedToGuid")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("AttachmentType")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<byte[]>("Content")
+                        .HasColumnType("varbinary(max)");
+
+                    b.Property<string>("ContentType")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("CreatedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("CreatedTime")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("DeletedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("DeletedTime")
+                        .HasColumnType("datetime2");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("ModifiedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("ModifiedTime")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Name")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int?>("OutsidePositionId")
+                        .HasColumnType("int");
+
+                    b.Property<long>("Size")
+                        .HasColumnType("bigint");
+
+                    b.Property<Guid>("Uid")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("OutsidePositionId");
+
+                    b.ToTable("OutsidePositionAttachment");
+                });
+
+            modelBuilder.Entity("Mod.Ethics.Domain.Entities.OutsidePositionStatus", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+
+                    b.Property<string>("Action")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Comment")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("CreatedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("CreatedTime")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("ModifiedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("ModifiedTime")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("OutsidePositionId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Status")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("OutsidePositionId");
+
+                    b.ToTable("OutsidePositionStatus");
+                });
+
             modelBuilder.Entity("Mod.Ethics.Domain.Entities.Settings", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
                     b.Property<DateTime>("AnnualDueDate")
                         .HasColumnType("datetime2");
@@ -675,8 +1337,9 @@ namespace Mod.Ethics.Infrastructure.Migrations
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
                     b.Property<string>("CreatedBy")
                         .HasColumnType("nvarchar(max)");
@@ -690,14 +1353,38 @@ namespace Mod.Ethics.Infrastructure.Migrations
                     b.Property<DateTime?>("DeletedTime")
                         .HasColumnType("datetime2");
 
+                    b.Property<string>("EmployeeName")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("EmployeeStatus")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("EmployeeUpn")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("EthicsOfficial")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("bit");
+
+                    b.Property<string>("Location")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("ModifiedBy")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime>("ModifiedTime")
                         .HasColumnType("datetime2");
+
+                    b.Property<DateTime>("TrainingDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("TrainingType")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("Year")
+                        .HasColumnType("int");
 
                     b.HasKey("Id");
 
@@ -708,8 +1395,9 @@ namespace Mod.Ethics.Infrastructure.Migrations
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
                     b.Property<string>("Bcc")
                         .HasColumnType("nvarchar(max)");
@@ -762,12 +1450,49 @@ namespace Mod.Ethics.Infrastructure.Migrations
                     b.ToTable("Notification");
                 });
 
+            modelBuilder.Entity("Mod.Framework.Notifications.Domain.Entities.NotificationAttachment", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+
+                    b.Property<string>("CreatedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("CreatedTime")
+                        .HasColumnType("datetime2");
+
+                    b.Property<byte[]>("Data")
+                        .HasColumnType("varbinary(max)");
+
+                    b.Property<string>("FileName")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("ModifiedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("ModifiedTime")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("NotificationId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("NotificationId");
+
+                    b.ToTable("NotificationAttachment");
+                });
+
             modelBuilder.Entity("Mod.Framework.Notifications.Domain.Entities.NotificationStatus", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
                     b.Property<string>("CreatedBy")
                         .HasColumnType("nvarchar(max)");
@@ -801,11 +1526,21 @@ namespace Mod.Ethics.Infrastructure.Migrations
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+
+                    b.Property<string>("Application")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Body")
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Cc")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<byte[]>("ConcurrencyToken")
+                        .HasColumnType("varbinary(max)");
 
                     b.Property<int>("Frequency")
                         .HasColumnType("int");
@@ -843,6 +1578,35 @@ namespace Mod.Ethics.Infrastructure.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("NotificationTemplate");
+                });
+
+            modelBuilder.Entity("Mod.Ethics.Domain.Entities.AttendeeAttachment", b =>
+                {
+                    b.HasOne("Mod.Ethics.Domain.Entities.EventRequestAttendee", "EventRequestAttendee")
+                        .WithMany("AttendeeAttachments")
+                        .HasForeignKey("EventRequestAttendeeId");
+
+                    b.Navigation("EventRequestAttendee");
+                });
+
+            modelBuilder.Entity("Mod.Ethics.Domain.Entities.EventRequestAttachment", b =>
+                {
+                    b.HasOne("Mod.Ethics.Domain.Entities.EventRequest", "EventRequest")
+                        .WithMany("EventRequestAttachments")
+                        .HasForeignKey("EventRequestId");
+
+                    b.Navigation("EventRequest");
+                });
+
+            modelBuilder.Entity("Mod.Ethics.Domain.Entities.EventRequestAttendee", b =>
+                {
+                    b.HasOne("Mod.Ethics.Domain.Entities.EventRequest", "EventRequest")
+                        .WithMany("EventRequestAttendees")
+                        .HasForeignKey("EventRequestId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("EventRequest");
                 });
 
             modelBuilder.Entity("Mod.Ethics.Domain.Entities.GuidanceAttachment", b =>
@@ -887,6 +1651,26 @@ namespace Mod.Ethics.Infrastructure.Migrations
                     b.Navigation("OgeForm450");
                 });
 
+            modelBuilder.Entity("Mod.Ethics.Domain.Entities.OutsidePositionAttachment", b =>
+                {
+                    b.HasOne("Mod.Ethics.Domain.Entities.OutsidePosition", "OutsidePosition")
+                        .WithMany("OutsidePositionAttachments")
+                        .HasForeignKey("OutsidePositionId");
+
+                    b.Navigation("OutsidePosition");
+                });
+
+            modelBuilder.Entity("Mod.Ethics.Domain.Entities.OutsidePositionStatus", b =>
+                {
+                    b.HasOne("Mod.Ethics.Domain.Entities.OutsidePosition", "OutsidePosition")
+                        .WithMany("OutsidePositionStatuses")
+                        .HasForeignKey("OutsidePositionId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("OutsidePosition");
+                });
+
             modelBuilder.Entity("Mod.Framework.Notifications.Domain.Entities.Notification", b =>
                 {
                     b.HasOne("Mod.Framework.Notifications.Domain.Entities.NotificationTemplate", "NotificationTemplate")
@@ -898,6 +1682,15 @@ namespace Mod.Ethics.Infrastructure.Migrations
                     b.Navigation("NotificationTemplate");
                 });
 
+            modelBuilder.Entity("Mod.Framework.Notifications.Domain.Entities.NotificationAttachment", b =>
+                {
+                    b.HasOne("Mod.Framework.Notifications.Domain.Entities.Notification", null)
+                        .WithMany("NotificationAttachments")
+                        .HasForeignKey("NotificationId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
             modelBuilder.Entity("Mod.Framework.Notifications.Domain.Entities.NotificationStatus", b =>
                 {
                     b.HasOne("Mod.Framework.Notifications.Domain.Entities.Notification", "Notification")
@@ -907,6 +1700,18 @@ namespace Mod.Ethics.Infrastructure.Migrations
                         .IsRequired();
 
                     b.Navigation("Notification");
+                });
+
+            modelBuilder.Entity("Mod.Ethics.Domain.Entities.EventRequest", b =>
+                {
+                    b.Navigation("EventRequestAttachments");
+
+                    b.Navigation("EventRequestAttendees");
+                });
+
+            modelBuilder.Entity("Mod.Ethics.Domain.Entities.EventRequestAttendee", b =>
+                {
+                    b.Navigation("AttendeeAttachments");
                 });
 
             modelBuilder.Entity("Mod.Ethics.Domain.Entities.Guidance", b =>
@@ -923,8 +1728,17 @@ namespace Mod.Ethics.Infrastructure.Migrations
                     b.Navigation("ReportableInformation");
                 });
 
+            modelBuilder.Entity("Mod.Ethics.Domain.Entities.OutsidePosition", b =>
+                {
+                    b.Navigation("OutsidePositionAttachments");
+
+                    b.Navigation("OutsidePositionStatuses");
+                });
+
             modelBuilder.Entity("Mod.Framework.Notifications.Domain.Entities.Notification", b =>
                 {
+                    b.Navigation("NotificationAttachments");
+
                     b.Navigation("NotificationStatuses");
                 });
 #pragma warning restore 612, 618

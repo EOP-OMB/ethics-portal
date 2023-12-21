@@ -1,16 +1,16 @@
 <mat-drawer-container>
-    <mat-drawer #drawer mode="over" position="end" class="details-drawer" (closedStart)="drawerClosing()" [opened]="false">
+    <mat-drawer #drawer mode="over" position="end" class="details-drawer" (closedStart)="drawerClosing()" [opened]="false" [autoFocus]="false">
         <div class="drawer-container">
+            <button mat-icon-button type="button" (click)="drawer.close()" class="drawer-close"><mat-icon>close</mat-icon></button>
             <div *ngIf="selectedForm">
-                <app-form-details [form]="selectedForm" [reviewers]="reviewers" [accessLevel]="formAccessLevel" (save)="saveForm($event)" (view)="viewForm($event)" (cancel)="cancelForm($event)"></app-form-details>
+                <app-form-details [form]="selectedForm" [reviewers]="reviewers" [accessLevel]="formAccessLevel" (save)="saveForm($event)" (view)="viewForm($event)" (cancel)="cancelForm($event)" [canExtend]="canExtend" (extend)="addExtension($event)"></app-form-details>
             </div>
             <div *ngIf="selectedForms">
                 <app-form-multiple-edit [forms]="selectedForms" [reviewers]="reviewers" (save)="assignMultiple(selectedForms, $event)"></app-form-multiple-edit>
             </div>
             <div *ngIf="selectedExtension">
-                <app-extension-request [extension]="selectedExtension" (approve)="approveExtension($event)" (reject)="rejectExtension($event)"></app-extension-request>
+                <app-extension-request [extension]="selectedExtension" (save)="saveExtension($event)" (approve)="approveExtension($event)" (reject)="rejectExtension($event)"></app-extension-request>
             </div>
-            <button mat-stroked-button type="button" (click)="drawer.close()" class="drawer-close">Close</button>
         </div>
     </mat-drawer>
     <mat-drawer-content>
@@ -18,29 +18,27 @@
             <mat-card>
                 <div class="widget-row">
                     <div class="widget">
-                        <app-widget [data]="submittedWidget" icon="fa-cogs" (widgetClick)="onSubmittedClick()"></app-widget>
+                        <app-widget [data]="submittedWidget" icon="all_inbox" (widgetClick)="onSubmittedClick()"></app-widget>
                     </div>
                     <div class="widget">
-                        <app-widget [data]="extensionWidget" icon="fa-clock-o" (widgetClick)="onExtensionClick()"></app-widget>
+                        <app-widget [data]="readyToCertWidget" icon="verified" (widgetClick)="onReadyToCertClick()"></app-widget>
                     </div>
                     <div class="widget">
-                        <app-widget [data]="overdueWidget" icon="fa-hourglass-end" (widgetClick)="onOverdueClick()"></app-widget>
+                        <app-widget [data]="extensionWidget" icon="schedule" (widgetClick)="onExtensionClick()"></app-widget>
+                    </div>
+                    <div class="widget">
+                        <app-widget [data]="overdueWidget" icon="hourglass_bottom" (widgetClick)="onOverdueClick()"></app-widget>
                     </div>
                 </div>
                 <div style="margin-top: 20px;">
-                    <mat-tab-group [selectedIndex]="selectedIndex" (selectedIndexChange)="selectedIndex = $event">
+                    <mat-tab-group mat-stretch-tabs="false" [selectedIndex]="selectedIndex" (selectedIndexChange)="selectedIndex = $event">
                         <mat-tab label="Forms">
                             <div class="form-tab">
-                                <!--<div style="flex: 1; padding: 15px;" *ngIf="numberOfBlankForms > 0 || numberOfUnchangedForms > 0">
-                                    <div *ngIf="numberOfBlankForms > 0" class="btn btn-success pull-right batch-button" (click)="certifyBlankForms()">Batch Certify Blank Forms</div>
-                                    <div *ngIf="numberOfUnchangedForms > 0" class="btn btn-success pull-right batch-button" (click)="certifyUnchangedForms()">Batch Certify Unchanged Forms</div>
-                                </div>-->
-                                <app-form-table #dtForms key="reviewer" [data]="forms" [selectable]="true" [hiddenCols]="hiddenCols" [reviewers]="reviewers" (rowSelect)="onFormSelect($event)" (certifyClicked)="certifyForms($event)" (assignClicked)="assignForms($event)"></app-form-table>
+                                <app-form-table #dtForms key="reviewer" [selectable]="true" [reviewers]="reviewers" (rowSelect)="onFormSelect($event)" (certifyClicked)="certifyForms($event)" (assignClicked)="assignForms($event)"></app-form-table>
                             </div>
-                            <!--<forms-grid #dtForms [forms]="forms" gridId="dashboardForms"></forms-grid>-->
                         </mat-tab>
                         <mat-tab label="Extensions">
-                            <app-extension-table key="reviewer-ext" [data]="extensions" (rowSelect)="onExtensionSelect($event)"></app-extension-table>
+                            <app-extension-table #dtExtensions key="reviewer-ext" [selectable]="true" (rowSelect)="onExtensionSelect($event)"></app-extension-table>
                         </mat-tab>
                     </mat-tab-group>
                 </div>

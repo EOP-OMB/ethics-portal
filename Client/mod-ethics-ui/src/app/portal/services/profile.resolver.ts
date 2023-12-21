@@ -1,11 +1,11 @@
 import { Injectable } from "@angular/core";
-import { ActivatedRouteSnapshot, Resolve, Router, RouterStateSnapshot } from "@angular/router";
+import { ActivatedRouteSnapshot, Router, RouterStateSnapshot } from "@angular/router";
 import { Employee } from "@shared/models/employee.model";
 import { EmployeeService } from "@shared/services/employee.service";
 import { CurrentUserService } from "mod-framework";
 
 @Injectable()
-export class ProfileResolver implements Resolve<Employee | null> {
+export class ProfileResolver  {
     constructor(private employeeService: EmployeeService,
             private userService: CurrentUserService,
             private router: Router) { }

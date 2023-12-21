@@ -117,6 +117,7 @@ export class GuidanceTableComponent extends CachedTableComponent<Guidance, Guida
         this.displayedColumns.push('guidanceType');
         this.displayedColumns.push('subject');
         this.displayedColumns.push('createdTime');
+        this.displayedColumns.push('createdBy');
     }
 
     getHiddenExportCols() {

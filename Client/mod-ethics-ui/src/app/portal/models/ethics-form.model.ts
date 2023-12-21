@@ -6,11 +6,11 @@ export class EthicsForm extends DtoBase {
         this.id = 0;
     }
 
-    url: string = "";
-    doctype: string = "";
-    formType: string = ""; // Form or Guidance
-    title: string = "";
-    modifiedBy: string = "";
-    modified: Date = new Date();
-    description: string = "";
+    name: string = '';
+    description: string = '';
+    filename: string = '';
+    contentType: string = '';
+    formType: string = ''; // Guidance or Form
+    fileSize: number = 0;
+    sortOrder: number = 0;
 }

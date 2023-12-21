@@ -24,14 +24,16 @@ export class Helper {
         var dateString: string | null = null;
 
         if (date) {
-            dateString = Helper.format(date.getMonth() + 1, "00") + '/' + Helper.format(date.getDate(), "00") + '/' + date.getFullYear();
+            var dt = new Date(date);
+
+            dateString = Helper.format(dt.getMonth() + 1, "00") + '/' + Helper.format(dt.getDate(), "00") + '/' + dt.getFullYear();
         }
 
         return dateString;
     }
 
     static getDate(value: string, useToday: boolean = false): Date | null {
-        return value ? new Date(value) : useToday ? new Date() : null;
+        return value ? new Date(value) : (useToday ? new Date() : null);
     }
 
     static getDaysSince(date: string) {

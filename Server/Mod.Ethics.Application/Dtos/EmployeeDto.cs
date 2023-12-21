@@ -45,6 +45,10 @@ namespace Mod.Ethics.Application.Dtos
         public string DepartmentOverride { get; set; }
 
         public string Bio { get; set; }
+        public string AppointmentType { get; set; }
+        public string AppointmentType2 { get; set; }
+        public bool Political { get; set; }
+        public int? AnnualSalary { get; set; }
     }
 
     public class EmployeeListDto : EmployeeListDtoBase
@@ -70,5 +74,7 @@ namespace Mod.Ethics.Application.Dtos
         public string SortOrder { get; set; }
         public bool Inactive { get; set; }
         public DateTime? InactiveDate { get; set; }
+
+        public DateTime? HireDate { get; set; }
     }
 }

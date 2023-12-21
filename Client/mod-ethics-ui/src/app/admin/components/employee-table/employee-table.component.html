@@ -1,12 +1,12 @@
 <div class="filter-container">
     <div class="filter-row">
-        <mat-form-field appearance="outline" style="flex: 2;" class="inline-form-field">
+        <mat-form-field appearance="outline" style="flex-grow: 2;" class="inline-form-field">
             <mat-label>Filter by Name</mat-label>
-            <input [(ngModel)]="filter.displayName" matInput placeholder="Filter by Name">
+            <input [(ngModel)]="filter.displayName" matInput placeholder="Filter by Name" (keyup)="applyFilter()">
         </mat-form-field>
         <mat-form-field appearance="outline" class="inline-form-field">
             <mat-label>Filter by Filer Type</mat-label>
-            <mat-select [(ngModel)]="filter.filerType">
+            <mat-select [(ngModel)]="filter.filerType" (selectionChange)="applyFilter()">
                 <mat-option value="">
                     All
                 </mat-option>
@@ -17,7 +17,7 @@
         </mat-form-field>
         <mat-form-field appearance="outline" class="inline-form-field">
             <mat-label>Filter by Detailee Type</mat-label>
-            <mat-select [(ngModel)]="filter.employeeStatus">
+            <mat-select [(ngModel)]="filter.employeeStatus" (selectionChange)="applyFilter()">
                 <mat-option value="">
                     All
                 </mat-option>
@@ -28,7 +28,7 @@
         </mat-form-field>
         <mat-form-field appearance="outline" class="inline-form-field">
             <mat-label>Filter by Reporting</mat-label>
-            <mat-select [(ngModel)]="filter.reportingStatus">
+            <mat-select [(ngModel)]="filter.reportingStatus" (selectionChange)="applyFilter()">
                 <mat-option value="">
                     All
                 </mat-option>
@@ -39,7 +39,7 @@
         </mat-form-field>
         <mat-form-field appearance="outline" class="inline-form-field">
             <mat-label>Filter by Form Status</mat-label>
-            <mat-select [(ngModel)]="filter.currentFormStatus">
+            <mat-select [(ngModel)]="filter.currentFormStatus" (selectionChange)="applyFilter()">
                 <mat-option value="">
                     All
                 </mat-option>
@@ -50,7 +50,7 @@
         </mat-form-field>
         <mat-form-field appearance="outline" class="inline-form-field">
             <mat-label>Filter by Last File Date</mat-label>
-            <mat-select [(ngModel)]="filter.last450Date">
+            <mat-select [(ngModel)]="filter.last450Date" (selectionChange)="applyFilter()">
                 <mat-option value="">
                     All
                 </mat-option>
@@ -77,10 +77,15 @@
     <i class="fa fa-file-excel-o excel-button" title="Download (xlsx)"></i>
 </button>
 <mat-paginator [pageSizeOptions]="[15, 30, 45, 60]" pageSize="15" style="margin-top: -45px;"></mat-paginator>
-<table mat-table [dataSource]="dataSource" matSort matTableFilter [exampleEntity]="filter" [debounceTime]="100" [propertyOptions]="propertyOptions" matTableExporter (exportStarted)="exporting(true)" (exportCompleted)="exporting(false)" #exporter="matTableExporter" [hidden]="this.isExporting">
+<table mat-table [dataSource]="dataSource" matSort matTableExporter (exportStarted)="exporting(true)" (exportCompleted)="exporting(false)" #exporter="matTableExporter" [hidden]="this.isExporting">
     <ng-container matColumnDef="displayName">
         <th mat-header-cell *matHeaderCellDef mat-sort-header> Name </th>
         <td mat-cell *matCellDef="let employee"> {{ employee.displayName }} </td>
+    </ng-container>
+    <ng-container matColumnDef="hireDate">
+        <th mat-header-cell *matHeaderCellDef>Hire Date</th>
+        <!--<td mat-cell *matCellDef="let employee"> {{ (employee.hireDate ? employee.hireDate : (employee.appointmentDate ? employee.appointmentDate : '')) | date:'MM/dd/yyyy' }} </td>-->
+        <td mat-cell *matCellDef="let employee"> {{ employee.hireDate | date:'MM/dd/yyyy' }} </td>
     </ng-container>
     <ng-container matColumnDef="filerType">
         <th mat-header-cell *matHeaderCellDef mat-sort-header> Filer Type </th>

@@ -1,7 +1,6 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormViewComponent } from './views/form-view/form-view.component';
-import { HomeViewComponent } from './views/home-view/home-view.component';
 import { ReviewerViewComponent } from './views/reviewer-view/reviewer-view.component';
 import { FormComponent } from './components/form/form.component';
 import { FormCompareComponent } from './components/form-compare/form-compare.component';
@@ -19,7 +18,6 @@ import { RedirectGuard } from './guards/redirect.guard';
 @NgModule({
     declarations: [
         FormViewComponent,
-        HomeViewComponent,
         ReviewerViewComponent,
         FormComponent,
         FormCompareComponent,

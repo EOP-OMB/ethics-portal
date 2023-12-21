@@ -1,0 +1,41 @@
+<div class="ethics-item ethics-item-{{item.type}}" (click)="onSelected()">
+    <div class="item-row icon icon-{{item.type}}">
+        <mat-icon>{{ item.icon }}</mat-icon>
+    </div>
+    <div class="item-row title-row">
+        <span class="item-title">{{ item.title }}</span>
+        <span class="item-details" *ngIf="item.subtitle">{{ item.subtitle }}</span>
+    </div>
+    <div class="item-row item-details">
+        {{ item.details }}
+    </div>
+    <div class="item-row" *ngIf="item.type == 'training' && item.obj">
+        &nbsp;
+    </div>
+    <div class="item-row" *ngIf="item.type == 'event' && item.obj">
+        <mat-icon *ngIf="item.obj.hasAttachments">attach_file</mat-icon>
+    </div>
+    <div class="item-row" *ngIf="item.type == 'position' && item.obj">
+        <mat-icon *ngIf="item.obj.hasAttachments">attach_file</mat-icon>
+    </div>
+    <div class="item-row" *ngIf="item.type == 'guidance' && item.obj">
+        <mat-icon *ngIf="item.obj.hasAttachments">attach_file</mat-icon>
+    </div>
+    <div class="item-row" *ngIf="item.type == 'oge450' && item.obj">
+        <span *ngIf="item.obj.daysExtended > 0" class="fa-stack" title="Due date has been extended">
+            <!-- The icon that will wrap the number -->
+            <span class="fa fa-calendar-o fa-stack-2x"></span>
+            <!-- a strong element with the custom content, in this case a number -->
+            <strong class="fa-stack-1x" style="padding-top: 3px; color: #222222;">
+                {{ item.obj.daysExtended }}
+            </strong>
+        </span>
+        <span *ngIf="item.obj.submittedPaperCopy" class="fa fa-file-text-o" style="font-size: 1.6em; color: #222222; vertical-align: middle; padding-left: 3px;" title="Submitted Paper Copy"></span>
+        <span *ngIf="item.obj.isBlank" class="fa fa-info-circle text-primary" style="font-size: 1.6em; vertical-align: middle; padding-left: 3px;" title="Blank submissions answered 'no' to all 5 questions"></span>
+        <span *ngIf="item.obj.isUnchanged" class="fa fa-files-o text-primary" style="font-size: 1.6em; vertical-align: middle; padding-left: 3px;" title="Submission is unchanged from previous year's certified form"></span>
+        <span *ngIf="item.obj.isOverdue" class='fa fa-exclamation-triangle text-danger' style="font-size: 1.6em; vertical-align: middle;" title="Form is overdue"></span>
+    </div>
+    <div class="item-row item-subtitle">
+        {{ item.status }}
+    </div>
+</div>

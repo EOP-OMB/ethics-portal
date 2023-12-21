@@ -8,10 +8,13 @@ import { EditContactsComponent } from './components/edit-contacts/edit-contacts.
 import { SharedModule } from '@shared/shared.module';
 import { EmployeeTableComponent } from './components/employee-table/employee-table.component';
 import { EmployeeViewComponent } from './views/employee-view/employee-view.component';
-import { AllFormsViewComponent } from './views/all-forms-view/all-forms-view.component';
-import { AllExtensionsViewComponent } from './views/all-extensions-view/all-extensions-view.component';
 import { GuidanceViewComponent } from './views/guidance-view/guidance-view.component';
 import { ReportsViewComponent } from './views/reports-view/reports-view.component';
+import { EoyReportViewComponent } from './views/eoy-report-view/eoy-report-view.component';
+import { OgeForm450StatusChartComponent } from './components/oge-form450-status-chart/oge-form450-status-chart.component';
+import { TrainingChartComponent } from './components/training-chart/training-chart.component';
+import { EventRequestChartComponent } from './components/event-request-chart/event-request-chart.component';
+import { EthicsTrainingViewComponent } from './views/ethics-training-view/ethics-training-view.component';
 
 @NgModule({
     declarations: [
@@ -21,10 +24,13 @@ import { ReportsViewComponent } from './views/reports-view/reports-view.componen
         EditContactsComponent,
         EmployeeTableComponent,
         EmployeeViewComponent,
-        AllFormsViewComponent,
-        AllExtensionsViewComponent,
         GuidanceViewComponent,
-        ReportsViewComponent
+        ReportsViewComponent,
+        EoyReportViewComponent,
+        OgeForm450StatusChartComponent,
+        TrainingChartComponent,
+        EventRequestChartComponent,
+        EthicsTrainingViewComponent,
     ],
     imports: [
         CommonModule,

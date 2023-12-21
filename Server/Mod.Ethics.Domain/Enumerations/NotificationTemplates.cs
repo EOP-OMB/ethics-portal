@@ -26,7 +26,13 @@ namespace Mod.Ethics.Domain.Enumerations
         GuidanceGiven = 15,
         EmployeeSync = 16,
         SyncFailed = 17,
-        NotificationError = 18
+        NotificationError = 18,
+        FormOverdue = 19,
+        OutsidePositionSubmitted = 20,
+        OutsidePositionConfirmation =  21,
+        OutsidePositionApproval = 22,
+        OutsidePositionEthicsApproval = 23,
+        OutsidePositionDisapproved = 24
     }
 
     public static class NotificationTemplates
@@ -43,5 +49,6 @@ namespace Mod.Ethics.Domain.Enumerations
         public const string OGE_FORM_450_DUE_3_DAYS = "OGE Form 450 Due in 3 Days";
         public const string OGE_FORM_450_DUE_7_DAYS = "OGE Form 450 Due in 7 Days";
         public const string EMPLOYEE_SYNC = "Employee Sync";
+        public const string FORM_OVERDUE = "OGE Form 450 Overdue";
     }
 }

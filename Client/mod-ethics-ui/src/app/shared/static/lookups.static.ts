@@ -6,7 +6,12 @@ import { ExtensionStatus } from "./extension-status.const";
 import { FilerTypes } from "./filer-types.const";
 import { FormFlags } from "./form-flags.const";
 import { FormStatus } from "./form-status.const";
+import { RecipientTypes } from "../components/notification-template-edit/recipient-types.const";
 import { ReportingStatus } from "./reporting-status.const";
+import { EventStatus } from "./event-status.const";
+import { TrainingTypes } from "./training-types.const";
+import { WorkTypes } from "./work-types.const";
+import { OutsidePositionStatuses } from "./outside-position-statuses.const";
 
 export class Lookups {
     public static YEARS: SelectItem[] = [];
@@ -20,6 +25,10 @@ export class Lookups {
     public static FORM_FLAGS: SelectItem[] = [];
     public static EMPLOYEE_TYPES: SelectItem[] = [];
     public static EMPLOYEE_SUBTYPES: SelectItem[] = [];
+    public static EVENT_STATUSES: SelectItem[] = [];
+    public static TRAINING_TYPES: SelectItem[] = [];
+    public static WORK_TYPES: SelectItem[] = [];
+    public static OUTSIDE_POSITION_STATUSES: SelectItem[] = [];
 
     public static initialize() {
         Lookups.YEARS = [];
@@ -29,6 +38,26 @@ export class Lookups {
         for (var i = year; i >= year - 5; i--) {
             Lookups.YEARS.push({ text: i.toString(), value: i.toString(), group: "" });
         }
+
+        Lookups.WORK_TYPES = [];
+        Lookups.WORK_TYPES.push({ value: WorkTypes.Professional, text: "Professional or Consultative Activity", group: '' });
+        Lookups.WORK_TYPES.push({ value: WorkTypes.OfficialDuties, text: "Teaching, Speaking, Writing or Editing related to official duties", group: '' });
+        Lookups.WORK_TYPES.push({ value: WorkTypes.BoardService, text: "Board Service", group: '' });
+        Lookups.WORK_TYPES.push({ value: WorkTypes.Volunteer, text: "Volunteer", group: '' });
+        Lookups.WORK_TYPES.push({ value: WorkTypes.ExpertWitness, text: "Expert Witness", group: '' });
+        Lookups.WORK_TYPES.push({ value: WorkTypes.SelfEmployment, text: "Self-Employment", group: '' });
+        Lookups.WORK_TYPES.push({ value: WorkTypes.SalariedEmployee, text: "Salaried or Hourly Employee", group: '' });
+        Lookups.WORK_TYPES.push({ value: WorkTypes.Other, text: "Other (please explain in Additional Remarks)", group: '' });
+
+        Lookups.EVENT_STATUSES = [];
+        Lookups.EVENT_STATUSES.push({ text: EventStatus.DRAFT, value: EventStatus.DRAFT, group: '' });
+        Lookups.EVENT_STATUSES.push({ text: EventStatus.UNASSIGNED, value: EventStatus.UNASSIGNED, group: '' });
+        Lookups.EVENT_STATUSES.push({ text: EventStatus.OPEN, value: EventStatus.OPEN, group: '' });
+        Lookups.EVENT_STATUSES.push({ text: EventStatus.CLOSED, value: EventStatus.CLOSED, group: '' });
+        Lookups.EVENT_STATUSES.push({ text: EventStatus.APPROVED, value: EventStatus.APPROVED, group: '' });
+        Lookups.EVENT_STATUSES.push({ text: EventStatus.CANCELED, value: EventStatus.CANCELED, group: '' });
+        Lookups.EVENT_STATUSES.push({ text: EventStatus.WITHDRAWN, value: EventStatus.WITHDRAWN, group: '' });
+        Lookups.EVENT_STATUSES.push({ text: EventStatus.DENIED, value: EventStatus.DENIED, group: '' });
 
         Lookups.FORM_FLAGS = [];
         Lookups.FORM_FLAGS.push({ text: FormFlags.EXTENDED, value: FormFlags.EXTENDED, group: "" });
@@ -66,13 +95,17 @@ export class Lookups {
         Lookups.FORM_STATUSES.push({ text: FormStatus.SUBMITTED, value: FormStatus.SUBMITTED, group: "" });
         Lookups.FORM_STATUSES.push({ text: FormStatus.MISSING_INFORMATION, value: FormStatus.MISSING_INFORMATION, group: "" });
         Lookups.FORM_STATUSES.push({ text: FormStatus.RE_SUBMITTED, value: FormStatus.RE_SUBMITTED, group: "" });
+        Lookups.FORM_STATUSES.push({ text: FormStatus.IN_REVIEW, value: FormStatus.IN_REVIEW, group: "" });
+        Lookups.FORM_STATUSES.push({ text: FormStatus.READY_TO_CERT, value: FormStatus.READY_TO_CERT, group: "" });
         Lookups.FORM_STATUSES.push({ text: FormStatus.CERTIFIED, value: FormStatus.CERTIFIED, group: "" });
+        Lookups.FORM_STATUSES.push({ text: FormStatus.DECLINED, value: FormStatus.DECLINED, group: "" });
         Lookups.FORM_STATUSES.push({ text: FormStatus.CANCELED, value: FormStatus.CANCELED, group: "" });
         Lookups.FORM_STATUSES.push({ text: FormStatus.EXPIRED, value: FormStatus.EXPIRED, group: "" });
 
-        //Lookups.RECIPIENT_TYPES = [];
-        //Lookups.RECIPIENT_TYPES.push({ label: RecipientTypes.USER, value: RecipientTypes.USER });
-        //Lookups.RECIPIENT_TYPES.push({ label: RecipientTypes.GROUP, value: RecipientTypes.GROUP });
+        Lookups.RECIPIENT_TYPES = [];
+        Lookups.RECIPIENT_TYPES.push({ text: RecipientTypes.USER, value: 0, group: "" });
+        Lookups.RECIPIENT_TYPES.push({ text: RecipientTypes.GROUP, value: 1, group: "" });
+        Lookups.RECIPIENT_TYPES.push({ text: RecipientTypes.ROLE, value: 2, group: "" });
 
         Lookups.EMPLOYEE_TYPES = [];
         Lookups.EMPLOYEE_TYPES.push({ text: EmployeeType.POLITICAL, value: EmployeeType.POLITICAL, group: "" });
@@ -88,7 +121,18 @@ export class Lookups {
         Lookups.EMPLOYEE_SUBTYPES.push({ text: EmployeeSubtype.GS_INTER_CSULT, value: EmployeeSubtype.GS_INTER_CSULT, group: EmployeeType.CAREER });
         Lookups.EMPLOYEE_SUBTYPES.push({ text: EmployeeSubtype.GS_SGE, value: EmployeeSubtype.GS_SGE, group: EmployeeType.CAREER });
         Lookups.EMPLOYEE_SUBTYPES.push({ text: EmployeeSubtype.GS_INTERN, value: EmployeeSubtype.GS_INTERN, group: EmployeeType.CAREER });
-        
+
+        Lookups.TRAINING_TYPES = [];
+        Lookups.TRAINING_TYPES.push({ text: TrainingTypes.ANNUAL, value: TrainingTypes.ANNUAL, group: "" });
+        Lookups.TRAINING_TYPES.push({ text: TrainingTypes.INITIAL, value: TrainingTypes.INITIAL, group: "" });
+
+        Lookups.OUTSIDE_POSITION_STATUSES = [];
+        Lookups.OUTSIDE_POSITION_STATUSES.push({ text: OutsidePositionStatuses.DRAFT, value: OutsidePositionStatuses.DRAFT, group: '' });
+        Lookups.OUTSIDE_POSITION_STATUSES.push({ text: OutsidePositionStatuses.AWAITING_MANAGER, value: OutsidePositionStatuses.AWAITING_MANAGER, group: '' });
+        Lookups.OUTSIDE_POSITION_STATUSES.push({ text: OutsidePositionStatuses.AWAITING_ETHICS, value: OutsidePositionStatuses.AWAITING_ETHICS, group: '' });
+        Lookups.OUTSIDE_POSITION_STATUSES.push({ text: OutsidePositionStatuses.APPROVED, value: OutsidePositionStatuses.APPROVED, group: '' });
+        Lookups.OUTSIDE_POSITION_STATUSES.push({ text: OutsidePositionStatuses.DISAPPROVED, value: OutsidePositionStatuses.DISAPPROVED, group: '' });
+        Lookups.OUTSIDE_POSITION_STATUSES.push({ text: OutsidePositionStatuses.CANCELED, value: OutsidePositionStatuses.CANCELED, group: '' });
     }
 }
 Lookups.initialize();

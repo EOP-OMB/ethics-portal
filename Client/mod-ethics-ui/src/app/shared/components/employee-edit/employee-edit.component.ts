@@ -6,6 +6,7 @@ import { Lookups } from '@shared/static/lookups.static';
 import { ReportingStatus } from '@shared/static/reporting-status.const';
 import { FilerTypes } from '@shared/static/filer-types.const';
 import { MatSelectChange } from '@angular/material/select';
+import { FormStatus } from '../../static/form-status.const';
 
 @Component({
     selector: 'app-employee-edit',
@@ -69,6 +70,16 @@ export class EmployeeEditComponent implements OnInit, OnChanges, OnDestroy {
         
     }
 
+    canCreateNewForm(): boolean {
+        console.log('canCreateNewForm');
+        console.log(this.editEmployee.currentFormStatus);
+        return this.editEmployee.currentFormId == 0 ||
+            this.editEmployee.currentFormStatus == FormStatus.CANCELED ||
+            this.editEmployee.currentFormStatus == FormStatus.CERTIFIED ||
+            this.editEmployee.currentFormStatus == FormStatus.DECLINED ||
+            this.editEmployee.currentFormStatus.toLowerCase().includes(FormStatus.EXPIRED.toLowerCase());
+    }
+
     private initializeEmployee() {
         this.editEmployee = new Employee();
 
@@ -105,6 +116,10 @@ export class EmployeeEditComponent implements OnInit, OnChanges, OnDestroy {
         }
     }
 
+    startNewFormChange(): void {
+        this.updateDueDate();
+    }
+
     reportingStatusChange() {
         this.updateDueDate();
 
@@ -119,7 +134,17 @@ export class EmployeeEditComponent implements OnInit, OnChanges, OnDestroy {
         this.tempDueDate = Helper.getDate(this.employee.dueDate);
     }
 
+    public error: boolean = false;
+
     public saveEmployee(employee: Employee) {
+        if (this.editEmployee.generateForm && !this.tempDueDate) {
+            this.error = true;
+            return;
+        }
+        else {
+            this.error = false;
+        }
+
         employee.dueDate = Helper.formatDate(this.tempDueDate) ?? '';
         employee.appointmentDate = Helper.formatDate(this.tempAppointmentDate) ?? '';
 

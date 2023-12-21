@@ -1,0 +1,16 @@
+<kendo-chart style="width: 100%; height: 200px;" *ngIf="pieData" [seriesColors]="seriesColors">
+    <kendo-chart-legend></kendo-chart-legend>
+    <kendo-chart-series>
+        <kendo-chart-tooltip>
+            <ng-template kendoChartSeriesTooltipTemplate let-value="value" let-category="category">
+                {{category }}: {{ value }}
+            </ng-template>
+        </kendo-chart-tooltip>
+        <kendo-chart-series-item type="donut"
+                                 [data]="pieData"
+                                 [autoFit]="true"
+                                 field="value"
+                                 categoryField="category">
+        </kendo-chart-series-item>
+    </kendo-chart-series>
+</kendo-chart>

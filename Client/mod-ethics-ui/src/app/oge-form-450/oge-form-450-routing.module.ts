@@ -6,21 +6,12 @@ import { RedirectGuard } from './guards/redirect.guard';
 import { OGEForm450Resolver } from './resolvers/oge-form-450.resolver';
 import { PreviousOGEForm450Resolver } from './resolvers/previous-oge-form-450.resolver';
 import { FormViewComponent } from './views/form-view/form-view.component';
-import { HomeViewComponent } from './views/home-view/home-view.component';
 import { ReviewerViewComponent } from './views/reviewer-view/reviewer-view.component';
 
 const routes: Routes = [
     {
         path: 'dashboard',
         component: ReviewerViewComponent
-    },
-    {
-        path: 'portal',
-        canActivate: [RedirectGuard],
-        component: HomeViewComponent,
-        data: {
-            externalUrl: environment.portalUrl
-        }
     },
     {
         path: 'myform',

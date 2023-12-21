@@ -10,7 +10,7 @@ export class Guidance extends DtoBase {
 
     employeeName: string = "";
     filerType: string = "";
-    employeeId: number = 0;
+    employeeUpn: string = "";
     guidanceType: string = "";
     subject: string = "";
     text: string = "";
@@ -19,6 +19,7 @@ export class Guidance extends DtoBase {
     summary: string = "";
     guid: string = "";
     isShared: boolean = false;
+    hasAttachments: boolean = false;
 
     // client use only
     employee: Employee = new Employee();

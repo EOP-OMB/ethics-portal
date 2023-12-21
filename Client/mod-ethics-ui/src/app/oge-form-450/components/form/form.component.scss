@@ -132,7 +132,6 @@ input[type="text"], textarea[type="text"], input[type="tel"], input[type="date"]
 
 .modal-admin {
     max-width: 70%;
-    margin-left: 25%;
     margin-top: 5%;
 }
 
@@ -373,3 +372,9 @@ body {
     margin-top: 0px !important;
 }
 */
+
+.radio-group-vertical {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+}

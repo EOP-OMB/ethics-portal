@@ -8,5 +8,8 @@ export const FormStatus =
     SUBMITTED: "Submitted",
     CERTIFIED: "Certified",
     CANCELED: "Canceled",
-    EXPIRED: "Expired"
+    EXPIRED: "Expired",
+    IN_REVIEW: "In Review",
+    READY_TO_CERT: "Ready to Certify",
+    DECLINED: "Declined"
 };

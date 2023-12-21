@@ -12,8 +12,8 @@ export class GuidanceService extends ModPromiseServiceBase<Guidance> {
         super(http, environment.apiUrl, 'guidance', Guidance)
     }
 
-    public getByEmployee(employeeId: number): Promise<Guidance[]> {
-        var url = `${this.url}/${this.endpoint}/getByEmployee/${employeeId}`;
+    public getByEmployee(upn: string): Promise<Guidance[]> {
+        var url = `${this.url}/${this.endpoint}/getByEmployee/${upn}`;
 
         return this.getAllByUrl(url);
     }

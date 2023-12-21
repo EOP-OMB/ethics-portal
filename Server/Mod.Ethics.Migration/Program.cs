@@ -32,8 +32,8 @@ namespace Mod.Ethics.Migration
 
             try
             {
-                MigratePortfolioManagerDatabase(loggerFactory);
-                //MigrateUserDatabase(loggerFactory);
+                MigrateEthicsDatabase(loggerFactory);
+                MigrateUserDatabase(loggerFactory);
             }
             catch (Exception ex)
             {
@@ -46,9 +46,9 @@ namespace Mod.Ethics.Migration
         }
 
 
-        private static void MigratePortfolioManagerDatabase(ILoggerFactory loggerFactory)
+        private static void MigrateEthicsDatabase(ILoggerFactory loggerFactory)
         {
-            var connectionString = ConfigurationManager.Secrets["Mod_Ethics_ConnectionString"];
+            var connectionString = ConfigurationManager.Secrets["MOD_Ethics_ConnectionString"];
 
             var optionsBuilder = new DbContextOptionsBuilder<EthicsContext>();
 
@@ -66,6 +66,32 @@ namespace Mod.Ethics.Migration
             context.Database.Migrate();
 
             var t1 = DateTime.Now;
+            if (ConfigurationManager.RunningInContainer)
+            {
+                // Make sure this takes long enough for the orchestrator to think it's stable (20s?)
+                Thread.Sleep(Math.Max(20000 - Convert.ToInt32((t1 - t0).TotalMilliseconds), 0));
+            }
+        }
+
+        private static void MigrateUserDatabase(ILoggerFactory loggerFactory)
+        {
+            string connectionString = ConfigurationManager.Secrets["MOD_User_ConnectionString"];
+
+            DbContextOptionsBuilder<UserContext> optionsBuilder = new DbContextOptionsBuilder<UserContext>();
+
+            optionsBuilder
+                .UseSqlServer(connectionString)
+                .UseLoggerFactory(loggerFactory)
+                .EnableDetailedErrors()
+                .EnableSensitiveDataLogging();
+
+            var context = new UserContext(optionsBuilder.Options);
+            Log.Information("--------------------------- Starting User Migration --------------------------");
+
+            DateTime t0 = DateTime.Now;
+            context.Database.Migrate();
+
+            DateTime t1 = DateTime.Now;
             if (ConfigurationManager.RunningInContainer)
             {
                 // Make sure this takes long enough for the orchestrator to think it's stable (20s?)

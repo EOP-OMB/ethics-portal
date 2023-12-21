@@ -1,0 +1,30 @@
+<mat-drawer-container>
+    <mat-drawer #drawer mode="over" position="end" class="details-drawer" (closedStart)="drawerClosing()" [opened]="false" [autoFocus]="false">
+        <div class="drawer-container">
+            <button mat-icon-button type="button" (click)="this.drawer.close()" class="drawer-close"><mat-icon>close</mat-icon></button>
+            <div *ngIf="selectedPosition">
+                <app-outside-position-detail [position]="selectedPosition" (employeeClick)="gotoEmployee($event)"></app-outside-position-detail>
+            </div>
+        </div>
+    </mat-drawer>
+    <mat-drawer-content>
+        <div class="view-container">
+            <mat-card>
+                <div class="widget-row">
+                    <div class="widget">
+                        <app-widget [data]="managerWidget" icon="calendar_today" (widgetClick)="managerClicked()"></app-widget>
+                    </div>
+                    <div class="widget">
+                        <app-widget [data]="ethicsWidget" icon="hourglass_top" (widgetClick)="ethicsClicked()"></app-widget>
+                    </div>
+                    <!--<div class="widget">
+                        <app-widget [data]="assignedWidget" icon="perm_contact_calendar" (widgetClick)="assignedClicked()"></app-widget>
+                    </div>-->
+                </div>
+                <div style="padding-top: 20px;">
+                    <app-outside-positions-table #table key="positions" [pageSizeOptions]="[15, 30, 45, 60]" (rowSelect)="onRowSelect($event)" (addClicked)="addPosition()"></app-outside-positions-table>
+                </div>
+            </mat-card>
+        </div>
+    </mat-drawer-content>
+</mat-drawer-container>

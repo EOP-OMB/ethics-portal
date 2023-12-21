@@ -27,6 +27,12 @@ namespace Mod.Ethics.WebApi.Controllers
             return Service.GetReviewers();
         }
 
+        [HttpGet("EventReviewers")]
+        public virtual ActionResult<List<EmployeeListDto>> EventReviewers()
+        {
+            return Service.GetEventReviewers();
+        }
+
         [HttpGet("IncludeInactive")]
         public virtual ActionResult<List<EmployeeListDto>> IncludeInactive()
         {

@@ -1,4 +1,5 @@
 ﻿using Microsoft.Extensions.Logging;
+using Mod.Ethics.Application.Constants;
 using Mod.Ethics.Application.Dtos;
 using Mod.Ethics.Domain.Entities;
 using Mod.Ethics.Domain.Enumerations;
@@ -23,8 +24,8 @@ namespace Mod.Ethics.Application.Services
         protected ISettingsAppService SettingsService { get; set; }
 
         protected IOgeForm450Repository FormRepository { get; set; }
-            
-        protected List<OgeForm450> _currentForms;
+
+        protected List<OgeForm450> preloadedForms { get; set; }
 
         public EmployeeAppServiceBase(IEmployeeRepository repository, ISettingsAppService settingsService, IOgeForm450Repository formRepository, IObjectMapper objectMapper, ILogger<IAppService> logger, IModSession session) : base(repository, objectMapper, logger, session)
         {
@@ -37,18 +38,13 @@ namespace Mod.Ethics.Application.Services
         {
             OgeForm450 currentForm;
 
-            if (_currentForms != null)
+            if (preloadedForms != null)
             {
-                currentForm = _currentForms.
-                                Where(x => x.FilerUpn.ToLower() == dto.Upn.ToLower()).
-                                OrderByDescending(x => x.DueDate).FirstOrDefault();
+                currentForm = preloadedForms.Where(x => x.FilerUpn.ToLower() == dto.Upn.ToLower() && x.FormStatus != OgeForm450Statuses.CANCELED).OrderByDescending(x => x.DueDate).FirstOrDefault();
             }
             else
             {
-                var settings = SettingsService.Get();
-                var list = FormRepository.GetAll(x => x.FilerUpn.ToLower() == dto.Upn.ToLower() && x.FormStatus != OgeForm450Statuses.CANCELED && x.Year == settings.CurrentFilingYear);
-
-                currentForm = list.OrderByDescending(x => x.DueDate).FirstOrDefault();
+                currentForm = FormRepository.Query().Where(x => x.FilerUpn.ToLower() == dto.Upn.ToLower() && x.FormStatus != OgeForm450Statuses.CANCELED).OrderByDescending(x => x.DueDate).FirstOrDefault();
             }
 
             return currentForm;

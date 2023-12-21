@@ -50,16 +50,18 @@ export abstract class CachedTableComponent<T extends IDto, TFilter> extends Tabl
             if (obj) {
                 this.tableState = obj;
             }
-
             if (this.tableState.sortDirection != "")
                 this.sort.sort(({ id: this.tableState.sort, start: this.tableState.sortDirection }) as MatSortable);
 
             this.paginator.pageSize = this.tableState.pageSize;
 
-            setTimeout(() => this.paginator.pageIndex = this.tableState.pageIndex);
+            //setTimeout(() => {
+                this.paginator.pageIndex = this.tableState.pageIndex;
+            //});
 
-            if (this.tableState.filter)
+            if (this.tableState.filter) {
                 this.filter = this.tableState.filter as TFilter;
+            }
 
             this.filterDiffer = this.differs.find(this.filter).create();
         }
@@ -72,14 +74,13 @@ export abstract class CachedTableComponent<T extends IDto, TFilter> extends Tabl
     pageChanged(event: PageEvent): void {
         this.tableState.pageIndex = event.pageIndex;
         this.tableState.pageSize = event.pageSize;
-
+       
         StateHelper.saveState(this.key, this.tableState);
     }
 
     sortChanged(event: Sort): void {
         this.tableState.sort = event.active;
         this.tableState.sortDirection = event.direction;
-        
         StateHelper.saveState(this.key, this.tableState);
     }
 
@@ -89,7 +90,6 @@ export abstract class CachedTableComponent<T extends IDto, TFilter> extends Tabl
 
     filterChanged(filter: TFilter): void {
         this.tableState.filter = filter;
-
         StateHelper.saveState(this.key, this.tableState);
     }
 }
@@ -100,4 +100,5 @@ export class TableState {
     sort: string = "";
     sortDirection: string = "asc";  // 'asc' or 'desc'
     filter: any;
+    data: any[] = [];
 }

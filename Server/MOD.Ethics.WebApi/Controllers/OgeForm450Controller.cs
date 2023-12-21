@@ -14,19 +14,21 @@ namespace Mod.Ethics.WebApi.Controllers
     public class OgeForm450Controller : CrudControllerBase<OgeForm450Dto, OgeForm450>
     {
         new readonly IOgeForm450AppService Service;
+        private OgeForm450TableAppService TableService { get; }
 
-        public OgeForm450Controller(ILogger<OgeForm450Controller> logger, IOgeForm450AppService service) : base(logger, service)
+        public OgeForm450Controller(ILogger<OgeForm450Controller> logger, IOgeForm450AppService service, OgeForm450TableAppService tableService) : base(logger, service)
         {
             Service = service;
+            TableService = tableService;
         }
 
-        [HttpGet("GetByYear")]
-        public virtual ActionResult<List<OgeForm450Dto>> GetByYear(int year)
-        {
-            var list = Service.GetBy(x => x.Year == year);
+        //[HttpGet("GetByYear")]
+        //public virtual ActionResult<List<OgeForm450Dto>> GetByYear(int year)
+        //{
+        //    var list = Service.GetBy(x => x.Year == year);
 
-            return Json(list);
-        }
+        //    return Json(list);
+        //}
 
         [HttpGet("MyCurrent")]
         public virtual ActionResult<OgeForm450Dto> MyCurrent()
@@ -60,10 +62,10 @@ namespace Mod.Ethics.WebApi.Controllers
             return Json(obj);
         }
 
-        [HttpGet("GetFormsByEmployee/{employeeId}")]
-        public virtual ActionResult<OgeForm450Dto> GetFormsByEmployee(int employeeId)
+        [HttpGet("GetFormsByEmployee/{upn}")]
+        public virtual ActionResult<OgeForm450Dto> GetFormsByEmployee(string upn)
         {
-            var obj = Service.GetFormsByEmployee(employeeId);
+            var obj = Service.GetFormsByEmployee(upn);
 
             return Json(obj);
         }
@@ -75,5 +77,34 @@ namespace Mod.Ethics.WebApi.Controllers
 
             return Json(obj);
         }
+
+        [HttpGet("GetTable")]
+        public virtual ActionResult<TableBase<OgeForm450Dto>> GetTable(int page, int pageSize, string sort, string sortDirection, string filter)
+        {
+            return TableService.Get(page, pageSize, sort, sortDirection, filter);
+        }
+
+        [HttpGet("GetSummary")]
+        public virtual ActionResult<OgeForm450Summary> GetSummary()
+        {
+            return Service.GetSummary();
+        }
+
+        [HttpGet("GetStatusChart")]
+        public virtual ActionResult<OgeForm450StatusChart> GetStatusChart()
+        {
+            return Service.GetStatusChart();
+        }
+
+        [HttpPut("AssignForm/{id}")]
+        public virtual ActionResult<OgeForm450> AssignForm(int id, AssignedToObj obj)
+        {
+            return Service.AssignForm(id, obj.assignedToUpn);
+        }
+    }
+
+    public class AssignedToObj
+    {
+        public string assignedToUpn { get; set;}
     }
 }

@@ -51,7 +51,8 @@ namespace Mod.Ethics.Application.Mapping
                 .ForMember(dto => dto.ReportingStatus, opt => opt.MapFrom(emp => emp.GetAttributeValue(EmployeeAttributes.EthicsReportingStatus)))
                 .ForMember(dto => dto.Last450Date, opt => opt.MapFrom(emp => SafeConvertToDateTime(emp.GetAttributeValue(EmployeeAttributes.Last450Date))))
                 .ForMember(dto => dto.Type, opt => opt.MapFrom(emp => emp.GetAttributeValue(EmployeeAttributes.EmployeeType)))
-                .ForMember(dto => dto.Subtype, opt => opt.MapFrom(emp => emp.GetAttributeValue(EmployeeAttributes.EmployeeSubtype)));
+                .ForMember(dto => dto.Subtype, opt => opt.MapFrom(emp => emp.GetAttributeValue(EmployeeAttributes.EmployeeSubtype)))
+                .ForMember(dto => dto.Upn, opt => opt.MapFrom(emp => emp.Upn.Trim().ToLower()));
         }
 
         private DateTime? SafeConvertToDateTime(string v)

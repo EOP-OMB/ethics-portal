@@ -1,0 +1,17 @@
+<kendo-upload [ngModel]="files" [saveUrl]="saveUrl" [removeUrl]="removeUrl" (upload)="onBeforeUpload($event)"
+              (success)="onUploaded($event)" (select)="onSelect($event)" (remove)="onBeforeRemove($event)" [disabled]="false"
+              [restrictions]="restrictions">
+    <ng-template kendoUploadFileInfoTemplate let-files>
+        <span class="k-file-name-size-wrapper">
+            <span (click)="onDownloadClick(files[0])" class="k-file-name" title="{{ files[0].name }}">
+                {{ files[0].name }}
+            </span>
+            <span class="k-file-size" ng-reflect-ng-class="[object Object]">
+                Size: {{ files[0].size | fileSize:2 }}
+            </span>
+        </span>
+    </ng-template>
+</kendo-upload>
+<div *ngIf="errors.length > 0">
+    <p style="color: red;" *ngFor="let err of errors">{{ err }}</p>
+</div>

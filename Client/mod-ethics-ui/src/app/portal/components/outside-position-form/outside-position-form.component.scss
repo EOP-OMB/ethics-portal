@@ -1,0 +1,306 @@
+:host {
+    flex: 1;
+}
+
+@media print {
+
+    #employmentFormContainer {
+        margin-bottom: 50px;
+    }
+}
+
+h1, .h1, h2, .h2, h3, .h3 {
+    margin-top: 20px;
+    margin-bottom: 10px;
+    line-height: 1.1;
+}
+
+h3 {
+    font-size: 24px !important;
+    display: block;
+    font-size: 1.17em;
+    margin-inline-start: 0px;
+    margin-inline-end: 0px;
+    font-weight: bold;
+}
+
+h4 {
+    font-size: 18px !important;
+    display: block;
+    margin-inline-start: 0px;
+    margin-inline-end: 0px;
+    font-weight: bold;
+}
+
+h4, .h4, h5, .h5, h6, .h6 {
+    margin-top: 10px;
+    margin-bottom: 10px;
+    font-family: inherit;
+    font-weight: 500;
+    line-height: 1.1;
+    color: inherit;
+}
+
+.btn-default {
+    border-color: #ccc;
+    background-color: #fff;
+}
+
+.nav-icon {
+    font-size: 1.0em;
+    width: 40px;
+    margin-left: 10px;
+    height: 42px;
+    padding-top: 10px;
+}
+
+.modal-admin {
+    max-width: 70%;
+    margin-left: 15%;
+    margin-top: 5%;
+}
+
+.intro {
+    font-size: .9em;
+    color: blue;
+}
+
+.required.print:before {
+    content: "";
+    color: red;
+}
+
+#watermark {
+    position: fixed;
+    opacity: 0.25;
+    color: black;
+    font-size: 7em;
+    transform: rotate(-45deg);
+    z-index: 9;
+    text-align: center;
+    width: 100%;
+    left: 0px;
+    top: 55%;
+}
+
+ul {
+    margin-block-end: 0px !important;
+}
+
+.navbar-nav {
+    margin-left: 325px;
+    margin-right: 60px;
+    width: 100%;
+}
+
+#employmentForm {
+    max-width: 1280px;
+}
+
+.required.print:before {
+    content: "";
+    color: red;
+}
+
+.break {
+    page-break-before: always;
+    padding-top: 10px;
+}
+
+a {
+    cursor: pointer;
+}
+
+.modal-admin {
+    max-width: 70%;
+    margin-left: 15%;
+    margin-top: 5%;
+}
+
+.button-toggle {
+    font-size: .85em !important;
+}
+
+mat-button-toggle-group {
+    flex-wrap: wrap;
+}
+
+.employment-form {
+    max-width: 1280px;
+    margin-top: 79px;
+}
+
+.navbar {
+    min-width: 480px;
+    align-self: stretch;
+    margin-top: 64px;
+}
+
+.navbar-light {
+    background-color: #f8f8f8;
+    border-bottom: solid 1px #e7e7e7;
+    margin-bottom: 20px;
+}
+
+.navbar-fixed-top {
+    z-index: 1029;
+}
+
+@media(max-width: 767px) {
+
+
+    .navbar-fixed-top {
+        z-index: 1029;
+    }
+}
+
+/*input[type="text"], textarea[type="text"], input[type="tel"], input[type="date"] {
+    background-color: #fafcff;
+}*/
+
+.navbar-nav > li {
+    float: none;
+}
+
+.nav > li {
+    display: inline;
+}
+
+.nav > li > div {
+    display: inline-block;
+    padding-left: 5px;
+    padding-right: 5px;
+}
+
+
+.grid-body {
+    display: grid;
+    grid-template-columns: 2fr 4fr 2fr;
+    gap: 10px 15px;
+    align-items: start;
+    justify-items: flex-start;
+}
+
+.grid-body > small {
+    text-align: left;
+    max-width: 100%;
+}
+
+.mat-mdc-form-field {
+    width: 100%;
+}
+
+.kendo-form-field {
+    display: block;
+    margin: .25em 0;
+    padding-bottom: 1.34375em;
+    text-align: left;
+    flex: 1;
+}
+
+.kendo-error {
+    font-size: .8em;
+    padding: 0 1em;
+    z-index: 999;
+    text-align: left !important;
+    display: block;
+    position: absolute;
+    box-sizing: border-box;
+    width: 100%;
+    overflow: hidden;
+    margin-top: 0.333em;
+}
+
+.form-input {
+    margin-bottom: 0px !important;
+    height: 53px;
+}
+
+.control-label {
+    font-weight: bold;
+    text-align: left;
+}
+
+.control-group {
+    display: flex;
+    gap: 20px;
+    flex: 1;
+    justify-content: space-between;
+    width: 100%;
+}
+
+.form-field {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    width: 100%;
+    text-align: left;
+}
+
+#employmentForm {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.error {
+    font-size: .8em;
+    padding: 0 1em;
+}
+
+#employmentFormContainer {
+    margin-top: 50px;
+}
+
+
+.button-row {
+    display: flex;
+    gap: 15px;
+    justify-content: center;
+}
+
+.grid-body {
+    display: grid;
+    grid-template-columns: 2fr 4fr 2fr;
+    gap: 10px 15px;
+    align-items: start;
+    justify-items: flex-start;
+}
+
+.grid-body > small {
+    text-align: left;
+    max-width: 100%;
+}
+
+.row {
+    grid-column-start: 1;
+    grid-column-end: 4;
+}
+
+.instructions {
+    display: flex;
+    flex-direction: column;
+}
+
+.outer-box {
+    border: 1px solid rgba(0, 0, 0, 0.125);
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+}
+
+.inner-box {
+    border: 1px solid rgba(0, 0, 0, 0.125);
+    padding: 15px;
+}
+
+/*@keyframes fadeIn {
+    0% {
+        opacity: 0;
+    }
+
+    100% {
+        opacity: 1;
+    }
+}*/
+

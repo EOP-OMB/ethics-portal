@@ -19,10 +19,10 @@ namespace Mod.Ethics.WebApi.Controllers
             Service = service;
         }
 
-        [HttpGet("GetByEmployee/{id}")]
-        public virtual ActionResult<List<GuidanceDto>> GetByEmployee(int id)
+        [HttpGet("GetByEmployee/{upn}")]
+        public virtual ActionResult<List<GuidanceDto>> GetByEmployee(string upn)
         {
-            return Json(Service.GetBy(x => x.EmployeeId == id));
+            return Json(Service.GetByEmployee(upn));
         }
     }
 }

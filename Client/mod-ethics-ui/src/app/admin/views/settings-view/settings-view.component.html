@@ -1,15 +1,7 @@
 <div class="settings-view" fxLayoutAlign="start start">
     <mat-card>
-        <div class="row">
-            <div class="col-md-5">
-                <app-settings [settings]="settings" (save)="saveSettings($event)" (rollover)="initiateAnnualRollover()"></app-settings>
-            </div>
-            <div class="col-md-7">
-                <app-edit-links [links]="links" (save)="saveLinks($event)"></app-edit-links>
-                <div style="position: absolute;">
-                    <app-edit-contacts></app-edit-contacts>
-                </div>
-            </div>
+        <div class="row" style="width: 100%; padding: 15px;">
+           <app-settings [settings]="settings" (save)="saveSettings($event)" (rollover)="initiateAnnualRollover()"></app-settings>
         </div>
     </mat-card>
 </div>

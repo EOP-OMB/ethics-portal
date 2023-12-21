@@ -1,0 +1,433 @@
+<div class="row" style="padding-bottom: 10px;">
+    <div class="col-3">
+        <label class="control-label" style="vertical-align: bottom;">Status</label>
+    </div>
+    <div class="col-9">
+        {{event.status}}
+    </div>
+</div>
+<div class="row" style="padding-bottom: 10px;" *ngIf="isClosed()">
+    <div class="col-3">
+        <label class="control-label" style="vertical-align: bottom;">Closed Reason</label>
+    </div>
+    <div class="col-9">
+        <span *ngIf="event.closedReason">{{ event.closedReason  }}</span>
+        <span *ngIf="!event.closedReason">None</span>
+    </div>
+</div>
+<div class="row" style="padding-bottom: 10px;">
+    <div class="col-3">
+        <label class="control-label" style="vertical-align: bottom;">Assigned To</label>
+    </div>
+    <div class="col-9" *ngIf="canAssign()">
+        <mat-form-field appearance="outline" class="form-field">
+            <mat-label>Assigned To</mat-label>
+            <mat-select [(ngModel)]="event.assignedToUpn">
+                <mat-option *ngFor="let reviewer of reviewers" [value]="reviewer.value">
+                    {{ reviewer.text }}
+                </mat-option>
+            </mat-select>
+        </mat-form-field>
+    </div>
+    <div class="col-9" *ngIf="!canAssign()">
+        {{event.assignedTo ? event.assignedTo : 'Unassigned'}}
+    </div>
+</div>
+<div class="row" style="padding-bottom: 10px;" *ngIf="canAssign() && prevAssignedToUpn && event.assignedToUpn == prevAssignedToUpn">
+    <div class="col-12" style="text-align: right; margin-top: -25px;">
+        <a (click)="resendAssignEmail()">resend email</a>
+    </div>
+</div>
+
+<mat-accordion class="example-headers-align" multi>
+    <mat-expansion-panel [expanded]="true">
+        <mat-expansion-panel-header class='panel-header'>
+            <mat-panel-title>
+                Attendee(s)
+            </mat-panel-title>
+        </mat-expansion-panel-header>
+
+        <div *ngFor="let att of event.eventRequestAttendees" class="attendee">
+            <div class="row detail-row">
+                <label>Name of Attendee</label>
+                <div>
+                    <a class="link" (click)="gotoEmployee(att.employee.id)">
+                        {{att.employee ? att.employee.displayName : att.employeeName}}
+                    </a>
+                </div>
+            </div>
+            <div class="row detail-row">
+                <label>Supervisor Informed?</label>
+                <div>
+                    {{att.informedSupervisor ? "Yes" : "No" }}
+                </div>
+            </div>
+            <div class="row detail-row">
+                <label>Name of Supervisor</label>
+                <div>
+                    {{att.nameOfSupervisor }}
+                </div>
+            </div>
+            <div class="row detail-row">
+                <label>Political or Career Employee</label>
+                <div>
+                    {{att.employeeType }}
+                </div>
+            </div>
+            <div class="row detail-row">
+                <label>Attending Capacity</label>
+                <div>
+                    {{att.capacity }}
+                </div>
+            </div>
+            <div class="row detail-row">
+                <label>Attendee giving remarks?</label>
+                <div>
+                    {{ att.isGivingRemarks ? "Yes" : "No" }}
+                </div>
+            </div>
+            <div class="row detail-row" *ngIf="att.isGivingRemarks">
+                <label>Remarks</label>
+                <div>
+                    {{ att.remarks }}
+                </div>
+            </div>
+            <div class="row detail-row" *ngIf="att.isGivingRemarks">
+                <label>Speaker Agreement Required?</label>
+                <div>
+                    {{ att.isSpeakerAgreementRequired ? "Yes" : "No" }}
+                </div>
+            </div>
+            <div class="row detail-row">
+                <label>Speaker Agreement</label>
+                <div>
+                    <div *ngFor="let form of att.attendeeAttachments" style="width: 100%; display: block;">
+                        <a (click)="getAttendeeAttachment(form.uid)">{{ form.name }}</a>
+                    </div>
+                </div>
+            </div>
+            <div class="row detail-row">
+                <label>Reason for Attending</label>
+                <div>
+                    {{ att.reasonForAttending }}
+                </div>
+            </div>
+        </div>
+
+    </mat-expansion-panel>
+    <mat-expansion-panel [expanded]="false">
+        <mat-expansion-panel-header class='panel-header'>
+            <mat-panel-title>
+                Event Details
+            </mat-panel-title>
+        </mat-expansion-panel-header>
+
+        <div class="row detail-row">
+            <label>Event Name</label>
+            <div>
+                {{ event.eventName }}
+            </div>
+        </div>
+        <div class="row detail-row">
+            <label>Event Start Date</label>
+            <div>
+                {{ event.eventStartDate | date: 'MM/dd/yyyy' }}
+            </div>
+        </div>
+        <div class="row detail-row">
+            <label>Event End Date</label>
+            <div>
+                {{ event.eventEndDate | date: 'MM/dd/yyyy' }}
+            </div>
+        </div>
+        <div class="row detail-row">
+            <label>Event Location</label>
+            <div>
+                {{ event.eventLocation }}
+            </div>
+        </div>
+        <div class="row detail-row">
+            <label>Approximate # of Attendees</label>
+            <div>
+                {{ event.approximateAttendees }}
+            </div>
+        </div>
+        <div class="row detail-row">
+            <label>Event Crowd</label>
+            <div>
+                {{ event.crowdDescription }}
+            </div>
+        </div>
+        <div class="row detail-row">
+            <label>Fundraiser</label>
+            <div>
+                {{ event.isFundraiser ? 'Yes' : 'No' }}
+            </div>
+        </div>
+        <div class="row detail-row">
+            <label>Open Media Present</label>
+            <div>
+                {{ event.isOpenToMedia ? 'Yes' : 'No' }}
+            </div>
+        </div>
+        <div class="row detail-row">
+            <label>Will there be Q&A?</label>
+            <div>
+                {{ event.isQAndA ? 'Yes' : 'No' }}
+            </div>
+        </div>
+        <div class="row detail-row" *ngIf="event.isQAndA">
+            <label>Moderator and Panelists</label>
+            <div>
+                {{ event.moderatorsAndPanelists }}
+            </div>
+        </div>
+        <div class="row detail-row">
+            <label>Requires Travel</label>
+            <div>
+                {{ event.requiresTravel ? 'Yes' : 'No' }}
+            </div>
+        </div>
+        <div class="row detail-row">
+            <label>International Travel</label>
+            <div>
+                {{ event.internationalTravel ? 'Yes' : 'No' }}
+            </div>
+        </div>
+        <div class="row detail-row">
+            <label>Fair Market Value</label>
+            <div>
+                ${{ event.fairMarketValue }}
+            </div>
+        </div>
+        <div class="row detail-row">
+            <label>Who is Paying?</label>
+            <div>
+                {{ event.whoIsPaying }}
+            </div>
+        </div>
+        <div class="row detail-row">
+            <label>Attached Travel Form(s)</label>
+            <div>
+                <div *ngFor="let form of travelForms" style="width: 100%; display: block;">
+                    <a (click)="getAttachment(form.uid)">{{ form.name }}</a>
+                </div>
+            </div>
+        </div>
+        <!--<div class="row detail-row">
+            <div>
+                <div class="control-label2">Please complete the <a target="_blank" href="https://portal.omb.gov/sites/EthicsClearance/Documents/omb-outside-source-travel-request-form.pdf">Outside Source Travel Form</a> and attach it to this request.</div>
+                <file-upload uploadText="Click or drag file(s) to upload "></file-upload>
+            </div>
+            <div>
+                <small>*** You are prohibited from asking anyone to pay for your travel. If a Non-Federal source has offered to pay for your travel, before accepting their offer you must obtain clearance from Counsel's Office.</small>
+            </div>
+        </div>-->
+    </mat-expansion-panel>
+
+    <mat-expansion-panel [expanded]="false">
+        <mat-expansion-panel-header class='panel-header'>
+            <mat-panel-title>
+                Invitation
+            </mat-panel-title>
+            <mat-panel-description>
+
+            </mat-panel-description>
+        </mat-expansion-panel-header>
+
+        <div class="row detail-row">
+            <label>Spouse or Guest Invited</label>
+            <div>
+                {{ event.guestsInvited ? "Yes" : "No" }}
+            </div>
+        </div>
+
+        <!--<div class="row detail-row">
+            <div>
+                <file-upload uploadText="Click or drag file(s) to upload "></file-upload>
+            </div>
+            <div>
+                <small>Please attach a copy of the event invitation you received. If there are any other documents, emails, talking points, slides and other relevant information associated with this event, please also attach them here.</small>
+            </div>
+        </div>-->
+        <div class="column-row">
+            <div class="row invite-row">
+                <label>Individual Extending Invite</label>
+                <div>
+                    {{ event.individualExtendingInvite }}
+                </div>
+            </div>
+            <div class="row invite-row">
+                <span><i>Registered Lobbyist</i></span>
+                <div>
+                    {{ event.isIndividualLobbyist ? "Yes" : "No" }}
+                </div>
+            </div>
+        </div>
+        <div class="column-row">
+            <div class="row invite-row">
+                <label>Org. Extending Invite</label>
+                <div>
+                    {{ event.orgExtendingInvite }}
+                </div>
+            </div>
+            <div class="row invite-row">
+                <span><i>Registered Lobbyist</i></span>
+                <div>
+                    {{ event.isOrgLobbyist ? "Yes" : "No" }}
+                </div>
+            </div>
+            <div class="row invite-row">
+                <span><i>Type of Organization</i></span>
+                <div>
+                    {{ getOrgTypeDesc(event.typeOfOrg, event.orgOther) }}
+                </div>
+            </div>
+        </div>
+        <div class="column-row">
+            <div class="row invite-row">
+                <label>Org. Sponsoring Event</label>
+                <div>
+                    {{ event.orgHostingEvent }}
+                </div>
+            </div>
+            <div class="row invite-row">
+                <span><i>Registered Lobbyist</i></span>
+                <div>
+                    {{ event.isHostLobbyist ? "Yes" : "No" }}
+                </div>
+            </div>
+            <div class="row invite-row">
+                <span><i>Type of Organization</i></span>
+                <div>
+                    {{ getOrgTypeDesc(event.typeOfHost, event.hostOther) }}
+                </div>
+            </div>
+        </div>
+        <div class="row detail-row">
+            <label>Attached Invitation(s)</label>
+            <div>
+                <div *ngFor="let form of invitations" style="width: 100%; display: block;">
+                    <a (click)="getAttachment(form.uid)">{{ form.name }}</a>
+                </div>
+            </div>
+        </div>
+    </mat-expansion-panel>
+
+    <mat-expansion-panel [expanded]="false">
+        <mat-expansion-panel-header class='panel-header'>
+            <mat-panel-title>
+                Contacts and Additional Info
+            </mat-panel-title>
+            <mat-panel-description>
+
+            </mat-panel-description>
+        </mat-expansion-panel-header>
+
+        <div class="row detail-row">
+            <label>Event Contact Name</label>
+            <div>
+                {{ event.eventContactName }}
+            </div>
+        </div>
+        <div class="row detail-row">
+            <label>Event Contact Phone</label>
+            <div>
+                {{ event.eventContactPhone | phone: '(000) 000-0000' }}
+            </div>
+        </div>
+        <div class="row detail-row">
+            <label>Event Contact Email</label>
+            <div>
+                {{ event.eventContactEmail }}
+            </div>
+        </div>
+        <!--<div class="row detail-row">
+        <label>Other Attachments(s)</label>
+        <div>
+            <div *ngFor="let form of otherAttachments" style="width: 100%; display: block;">
+                <a (click)="getAttachment(form.id)">{{ form.fileName }}</a>
+            </div>
+        </div>
+    </div>-->
+        <!--</div>
+    </div>
+
+    <div class="panel panel-default">
+        <div class="panel-heading">Submission Information</div>
+        <div class="panel-body">-->
+        <div class="row detail-row">
+            <label>Submitter's Name</label>
+            <div>
+                {{ event.submitter }}
+            </div>
+        </div>
+        <div class="row detail-row">
+            <label>E-mail Address</label>
+            <div>
+                {{ event.contactEmail }}
+            </div>
+        </div>
+        <div class="row detail-row">
+            <label>Contact Number</label>
+            <div>
+                {{ event.contactNumber | phone: '(000) 000-0000' }}
+            </div>
+        </div>
+        <div class="row detail-row">
+            <label>Component</label>
+            <div>
+                {{ event.contactComponent }}
+            </div>
+        </div>
+        <div class="row detail-row">
+            <label>Additional Information or Clarifications</label>
+            <div>
+                {{ event.additionalInformation }}
+            </div>
+        </div>
+    </mat-expansion-panel>
+</mat-accordion>
+
+<div class="row" style="padding-bottom: 10px; padding-top: 15px;" *ngIf="!canEdit() && isClosed()">
+    <div class="col-12">
+        <label class="control-label" style="vertical-align: bottom;">Guidance</label>
+        <div>
+            {{ event.Guidance ? event.Guidance : 'No Guidance Given' }}
+        </div>
+    </div>
+</div>
+<div class="row" style="padding-bottom: 10px; padding-top: 15px;" *ngIf="canEdit()">
+    <div class="col-12">
+        <label class="control-label" style="vertical-align: bottom;">Guidance</label>
+        <!--<tinymce-editor [elementId]="'txtGuidance'" [content]="event.guidanceGiven" (onEditorKeyup)="keyupHandlerFunction($event)" [height]="400"></tinymce-editor>-->
+        <textarea class="form-control" rows="12" [(ngModel)]="event.guidanceGiven"></textarea>
+    </div>
+</div>
+<div class="row" style="padding-bottom: 20px; display: flex; justify-content: space-between;">
+    <div *ngIf="canEdit()" class="btn btn-primary" (click)="save()">Save</div>
+    <div *ngIf="canClose()" class="btn btn-danger" (click)="showModal()">Close Request</div>
+</div>
+
+<div class="modal fade" id="confirm-close" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog">
+        <form [formGroup]="closeForm" id="closeForm" class="modal-content" (ngSubmit)="closeRequest()">
+            <div class="modal-header modal-header-danger">
+                <div class="modal-title" style="font-size: 1.5em;"><i class="fa fa-exclamation-triangle" style="padding-right: 20px;"></i>Confirm Close Event Request</div>
+            </div>
+            <div class="modal-body">
+                <p>This action will close the Event Request.  If you wish to make changes, please click cancel below.</p>
+                <label for="status" class="required control-label" style="vertical-align: bottom;">Reason</label>
+                <select id="status" name="status" required class="form-control" formControlName="reason">
+                    <option></option>
+                    <option *ngFor="let status of statuses" [value]="status.value">{{status.text}}</option>
+                </select>
+                <label for="reason" class="control-label" style="vertical-align: bottom;">Comment</label>
+                <textarea id="reason" name="reason" class="form-control" rows="6" formControlName="comments"></textarea>
+            </div>
+            <div class="modal-footer" style="text-align: center;">
+                <button type="submit" mat-flat-button style="background-color: #28a745; color: white; margin-right: 20px;">Confirm</button>
+                <button type="button" mat-flat-button (click)="closeModal()">Cancel</button>
+            </div>
+        </form>
+    </div>

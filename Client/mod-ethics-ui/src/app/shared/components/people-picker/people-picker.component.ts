@@ -2,25 +2,11 @@ import { Component, EventEmitter, forwardRef, Input, OnInit, Output, ViewChild }
 import { AbstractControl, ControlValueAccessor, FormControl, FormGroup, NG_VALUE_ACCESSOR, ValidationErrors, Validator, ValidatorFn, Validators } from '@angular/forms';
 import { MatAutocomplete, MatAutocompleteTrigger } from '@angular/material/autocomplete';
 
-import { Observable } from 'rxjs/Observable';
-import { Subject } from 'rxjs/Subject';
-
-// Observable class extensions
-import 'rxjs/add/observable/of';
-import 'rxjs/add/observable/throw';
-
-// Observable operators
-import 'rxjs/add/operator/catch';
-import 'rxjs/add/operator/debounceTime';
-import 'rxjs/add/operator/distinctUntilChanged';
-import 'rxjs/add/operator/do';
-import 'rxjs/add/operator/filter';
-import 'rxjs/add/operator/map';
-import 'rxjs/add/operator/switchMap';
+import { Observable } from 'rxjs';
+import { Subject } from 'rxjs';
 
 import { Employee } from '../../models/employee.model';
 import { EmployeeService } from '../../services/employee.service';
-import { finalize } from 'rxjs/operators';
 import { KeyCodes } from '../../static/key-codes.const';
 
 
@@ -37,6 +23,11 @@ import { KeyCodes } from '../../static/key-codes.const';
     ]
 })
 export class PeoplePickerComponent implements ControlValueAccessor, OnInit, Validator {
+    @Input()
+    label: string;
+
+    disabled: boolean = false;
+
     @Output()
     onPeoplePicked = new EventEmitter<Employee>();
 
@@ -46,7 +37,6 @@ export class PeoplePickerComponent implements ControlValueAccessor, OnInit, Vali
     selectedEmp: Employee | null = null;
 
     touched: boolean = false;
-    disabled: boolean = false;
 
     public get searching(): boolean {
         return this.employeeService.isSearching;
@@ -59,7 +49,7 @@ export class PeoplePickerComponent implements ControlValueAccessor, OnInit, Vali
 
     term$ = new Subject<string>();
 
-    termControl = new FormControl(null, Validators.required);
+    termControl = new FormControl('', Validators.required);
 
     searchTerm: string = "";
 
@@ -95,7 +85,13 @@ export class PeoplePickerComponent implements ControlValueAccessor, OnInit, Vali
     }
 
     setDisabledState(disabled: boolean) {
+        console.log('setDisabledStatet: ' + disabled + ' [people-picker.component.ts]');
+
         this.disabled = disabled;
+        if (disabled)
+            this.termControl.disable();
+        else
+            this.termControl.enable();
     }
         
     search(term: string, event: KeyboardEvent | null) {
@@ -137,10 +133,12 @@ export class PeoplePickerComponent implements ControlValueAccessor, OnInit, Vali
         this.highlightIndex = undefined;
         this.term$.next("");
         this.termControl.setValue(emp?.displayName);
-        this.onPeoplePicked.emit(emp);
 
-        this.onChange(emp);
-        this.onTouched();
+        if (emp) {
+            this.onPeoplePicked.emit(emp);
+            this.onChange(emp);
+            this.onTouched();
+        }
     }
 
     // Control Value Accessor Implementation
@@ -176,7 +174,16 @@ export class PeoplePickerComponent implements ControlValueAccessor, OnInit, Vali
         return null;
     }
 
+    onBlur(e: any) {
+        if (!this.selectedEmp) {
+            this.term$.next("");
+            this.termControl.setValue("");
+            this.onChange(null);
+        }
+    }
+
     autocompleteClosed(e: any) {
+        console.log('autocompleteClosed');
         if (!this.lock) {
             if (this.items.length > 0 && this.resultedItems != null) {
                 this.lock = true;
@@ -191,5 +198,9 @@ export class PeoplePickerComponent implements ControlValueAccessor, OnInit, Vali
                 this.setEmployee(emp);
             }
         }
+    }
+
+    public clearSelected(): void {
+        this.setEmployee(null);
     }
 }

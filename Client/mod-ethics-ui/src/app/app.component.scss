@@ -5,10 +5,10 @@
     flex: 1;
 }
 
+
 div:focus {
     outline: none !important;
 }
-
 
 ::ng-deep .mat-drawer-backdrop.mat-drawer-shown {
     background-color: transparent;
@@ -16,4 +16,13 @@ div:focus {
 
 ::ng-deep .mat-drawer-inner-container {
     border-left: none !important;
+}
+
+::ng-deep .mat-mdc-form-field-outline {
+    background-color: #fafcff !important;
+    border-radius: 5px;
+}
+
+::ng-deep .mat-mdc-form-field-appearance-outline.mat-mdc-form-field-disabled .mat-mdc-form-field-outline {
+    background-color: #f1f1f1 !important;
 }

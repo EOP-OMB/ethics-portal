@@ -17,6 +17,8 @@ using Mod.Ethics.Infrastructure.EfCore.Repositories;
 using Mod.Framework.Attachments.Services;
 using Mod.Ethics.Domain.Entities;
 using Mod.Framework.Attachments.Dtos;
+using Mod.Framework.Notifications;
+using Mod.Ethics.Application.Interfaces;
 
 namespace Mod.Ethics.Infrastructure.Dependency
 {
@@ -24,11 +26,12 @@ namespace Mod.Ethics.Infrastructure.Dependency
     {
         public static IServiceCollection AddEthics(this IServiceCollection services)
         {
+            var connectionString = ConfigurationManager.Secrets["MOD_Ethics_ConnectionString"];
             // Simplify and add to framework?
             services.AddDbContext<EthicsContext>(options =>
             {
                 options
-                      .UseSqlServer(ConfigurationManager.Secrets["Mod_Ethics_ConnectionString"])
+                      .UseSqlServer(connectionString)
                       .EnableDetailedErrors();
             });
 
@@ -88,7 +91,28 @@ namespace Mod.Ethics.Infrastructure.Dependency
             services.AddTransient<IGuidanceAttachmentRepository, GuidanceAttachmentRepository>();
             services.AddTransient<IGuidanceAttachmentAppService, GuidanceAttachmentAppService>();
 
+            services.AddTransient<IPortalAppService, PortalAppService>();
+
             services.AddTransient<IReportAppService, ReportAppService>();
+
+            services.AddTransient<EthicsNotificationTemplateAppService, EthicsNotificationTemplateAppService>();
+            services.AddTransient<EventRequestTableAppService, EventRequestTableAppService>();
+            services.AddTransient<OgeForm450TableAppService, OgeForm450TableAppService>();
+            services.AddTransient<ExtensionRequestTableAppService, ExtensionRequestTableAppService>();
+
+            services.AddTransient<IEventRequestAttachmentRepository, EventRequestAttachmentRepository>();
+            services.AddTransient<IEventRequestAttachmentAppService, EventRequestAttachmentAppService>();
+
+            services.AddTransient<IOutsidePositionAppService, OutsidePositionAppService>();
+            services.AddTransient<IOutsidePositionRepository, OutsidePositionRepository>();
+            services.AddTransient<IOutsidePositionAttachmentRepository, OutsidePositionAttachmentRepository>();
+            services.AddTransient<IOutsidePositionAttachmentAppService, OutsidePositionAttachmentAppService>();
+
+            services.AddTransient<TrainingTableAppService, TrainingTableAppService>();
+            services.AddTransient<OutsidePositionTableAppService, OutsidePositionTableAppService>();
+
+            services.AddTransient<IAttendeeAttachmentRepository, AttendeeAttachmentRepository>();
+            services.AddTransient<IAttendeeAttachmentAppService, AttendeeAttachmentAppService>();
 
             services.AddHostedService<EthicsNotificationService>();
 

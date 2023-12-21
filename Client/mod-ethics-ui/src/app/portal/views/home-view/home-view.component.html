@@ -1,20 +1,30 @@
-<div class="widget-container">
-    <app-icon-widget title="OGE Form 450" icon="description" text="" statusColor="text-primary" color="blue" status="SUBMITTED" actionText="click to launch app">
-    </app-icon-widget>
-    <app-icon-widget title="Ethics Training" icon="model_training" text="2021 Annual" statusColor="text-danger" color="orange" status="MISSING" actionIcon="calendar_today" actionText="click to certify training">
-    </app-icon-widget>
-    <app-icon-widget title="Event Clearance" icon="event" text="1 Event" statusColor="text-info" color="green" status="PENDING" actionText="click to launch app">
-    </app-icon-widget>
-</div>
+<mat-drawer-container>
+    <mat-drawer #drawer mode="over" position="end" class="details-drawer" (closedStart)="drawerClosing()" [opened]="false" [autoFocus]="false">
+        <div class="drawer-container">
+            <app-training-form *ngIf="myTraining" [myTraining]="myTraining"></app-training-form>
+        </div>
+    </mat-drawer>
+    <mat-drawer-content>
+        <div style="min-width: 1170px; padding: 1px;">
+            <div class="widget-container">
 
-<div class="card-container">
-    <div class="column">
-        <app-card title="My Timeline" [records]="timeline" totalRecords="11" [options]="options" [showRecordDate]="true"></app-card>
-    </div>
-    <div class="column">
-        <app-card title="Guidance" [records]="guidance" totalRecords="1" [options]="options" [showRecordDate]="true"></app-card>
-    </div>
-    <div class="column">
+                <app-icon-widget *ngFor="let widget of widgets" [title]="widget.title" [icon]="widget.icon" [text]="widget.text" [statusColor]="widget.statusColor" [color]="widget.color" [status]="widget.status" [actionText]="widget.actionText"
+                                 (widgetClick)="widgetClick($event)">
+                </app-icon-widget>
 
-    </div>
-</div>
+            </div>
+
+            <div class="card-container" *ngIf="data">
+                <div class="column">
+                    <app-card title="Ethics Team" [records]="ethicsTeam" [totalRecords]="ethicsTeam.length" [options]="options" [showRecordDate]="false" (selected)="teamSelected($event)"></app-card>
+                </div>
+                <div class="column">
+                    <app-card title="Guidance" [records]="guidanceFiles" [totalRecords]="guidanceFiles.length" [options]="options" [showRecordDate]="true" (selected)="formSelected($event)"></app-card>
+                </div>
+                <div class="column">
+                    <app-card title="Forms" [records]="ethicsFormFiles" [totalRecords]="ethicsFormFiles.length" [options]="options" [showRecordDate]="true" (selected)="formSelected($event)"></app-card>
+                </div>
+            </div>
+        </div>
+    </mat-drawer-content>
+</mat-drawer-container>

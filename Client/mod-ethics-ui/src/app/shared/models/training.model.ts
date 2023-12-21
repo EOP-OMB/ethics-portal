@@ -1,16 +1,15 @@
 import { DtoBase } from "mod-framework";
 
 export class Training extends DtoBase {
-    employee: string = "";
-    employeesName: string = "";
-    title: string = "";
-    dateAndTime: string = "";
-    location: string = "";
+    employeeStatus: string = "";
+    employeeName: string = "";
+    employeeUpn: string = "";
     ethicsOfficial: string = "";
-    division: string = "";
+    location: string = "";
+    trainingDate: Date = null;
     trainingType: string = "";
-    year?: number;
-    inactive: boolean = false;
+    year?: number = null;
+    
 }
 
 

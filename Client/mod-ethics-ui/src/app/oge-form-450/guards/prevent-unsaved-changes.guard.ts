@@ -1,7 +1,7 @@
-import { CanDeactivate } from "@angular/router";
+
 import { FormViewComponent } from "../views/form-view/form-view.component";
 
-export class PreventUnsavedChangesGuard implements CanDeactivate<FormViewComponent> {
+export class PreventUnsavedChangesGuard  {
     canDeactivate(component: FormViewComponent) {
         var override = localStorage.getItem('dirtyOvervide') ? localStorage.getItem('dirtyOvervide') == "1" : false;
 

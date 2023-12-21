@@ -34,17 +34,20 @@ namespace Mod.Ethics.Application.Services
 
                 if (et.Type == (int)EthicsTeamType.Employee)
                 {
-                    var employee = EmployeeRepository.Get(Convert.ToInt32(et.Value));
-                    dto.Branch = employee.Office;
-                    dto.CellPhone = employee.MobilePhone;
-                    dto.Email = employee.EmailAddress;
-                    dto.Id = et.Id;
+                    var employee = EmployeeRepository.GetAll(x => x.Upn == et.Value).FirstOrDefault();
+
+                    if (employee != null)
+                    {
+                        dto.Branch = employee.Department?.Name;
+                        dto.CellPhone = employee.MobilePhone;
+                        dto.Email = employee.EmailAddress;
+                        dto.Org = employee.Company == "OMB" ? "Office of Management and Budget" : employee.Company;
+                        dto.Title = employee.Title;
+                        dto.WorkPhone = employee.OfficePhone;
+                        dto.EmployeeId = employee.Id;
+                    }
+                    
                     dto.IsUser = true;
-                    dto.Org = employee.Company == "OMB" ? "Office of Management and Budget" : employee.Company;
-                    dto.Position = employee.Title;
-                    dto.SortOrder = et.SortOrder;
-                    dto.WorkPhone = employee.OfficePhone;
-                    dto.EmployeeId = employee.Id;
                 }
                 else
                 {
@@ -52,7 +55,10 @@ namespace Mod.Ethics.Application.Services
                     dto.Email = et.Value;
                 }
 
-                dto.Title = et.Title;   
+                dto.Id = et.Id;
+                dto.SortOrder = et.SortOrder;
+
+                dto.Name = et.Name;   
 
                 list.Add(dto);
             }

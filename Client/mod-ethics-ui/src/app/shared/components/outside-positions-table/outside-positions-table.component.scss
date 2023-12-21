@@ -1,0 +1,75 @@
+.inline-form-field {
+    margin: 0 10px
+}
+
+table {
+    width: 100%;
+}
+
+.column-header {
+    display: flex;
+    flex-direction: column;
+}
+
+
+th.mat-mdc-sort-header-sorted {
+    color: black;
+}
+
+.filter-container {
+    display: flex;
+    justify-content: space-between;
+    padding: 15px 15px 0 0;
+    align-items: center;
+    margin-bottom: 45px;
+}
+
+.filter-row {
+    display: flex;
+    flex: 1;
+    align-items: center;
+    flex-wrap: wrap;
+}
+
+.filter-item {
+    margin: 0px 10px;
+}
+
+.search-container {
+    padding-top: 15px;
+}
+
+.reset-button {
+    display: block;
+}
+
+.mat-mdc-row:hover {
+    background-color: #d8b3044d !important;
+    cursor: pointer;
+}
+
+.mat-mdc-expansion-panel-header {
+    height: auto !important;
+    cursor: initial !important;
+}
+
+mat-expansion-panel:not(.mat-mdc-expanded)
+.mat-mdc-expansion-panel-header:not([aria-disabled='true']):hover {
+    background: white;
+}
+
+::ng-deep .mat-mdc-expansion-panel-header > .mat-mdc-content {
+    overflow: visible !important;
+}
+
+.filter-button {
+    margin-bottom: 1.59em;
+}
+
+.mat-mdc-form-field-infix {
+    width: 150px !important;
+}
+
+.action-button {
+    margin-left: 15px;
+}

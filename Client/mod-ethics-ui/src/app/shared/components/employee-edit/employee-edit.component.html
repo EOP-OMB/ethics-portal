@@ -22,6 +22,34 @@
     </div>-->
     <app-employee-card [employee]="editEmployee" (select)="profileClick($event)"></app-employee-card>
 
+    <div *ngIf="!editEmployee.appointmentType" style="display: flex; flex-direction: column;">
+        <mat-form-field appearance="outline" class="inline-form-field">
+            <mat-label>Political or Career</mat-label>
+            <mat-select [(ngModel)]="editEmployee.type" (selectionChange)="typeChange($event)">
+                <mat-option value="">
+                </mat-option>
+                <mat-option *ngFor="let val of employeeTypes" [value]="val.value">
+                    {{ val.text }}
+                </mat-option>
+            </mat-select>
+        </mat-form-field>
+        <mat-form-field appearance="outline" class="inline-form-field">
+            <mat-label>Type of Employee</mat-label>
+            <mat-select [(ngModel)]="editEmployee.subtype">
+                <mat-option *ngFor="let val of employeeSubtypes" [value]="val.value">
+                    {{ val.text }}
+                </mat-option>
+            </mat-select>
+        </mat-form-field>
+    </div>
+    <div *ngIf="editEmployee.appointmentType" style="display: flex; flex-direction: column; padding-bottom: 25px;">
+        <mat-label style="font-weight: bold; padding-bottom: 5px;">Political or Career</mat-label>
+        <span>{{ editEmployee.political ? 'Political' : 'Career' }}</span>
+        <br />
+        <mat-label style="font-weight: bold; padding-bottom: 5px;">Appointment Type</mat-label>
+        <span>{{ editEmployee.appointmentType + ' - ' + editEmployee.appointmentType2 }}</span>
+    </div>
+
     <mat-form-field appearance="outline" class="inline-form-field">
         <mat-label>Detailee Type</mat-label>
         <mat-select [(ngModel)]="editEmployee.employeeStatus">
@@ -32,24 +60,7 @@
             </mat-option>
         </mat-select>
     </mat-form-field>
-    <mat-form-field appearance="outline" class="inline-form-field">
-        <mat-label>Political or Career</mat-label>
-        <mat-select [(ngModel)]="editEmployee.type" (selectionChange)="typeChange($event)">
-            <mat-option value="">
-            </mat-option>
-            <mat-option *ngFor="let val of employeeTypes" [value]="val.value">
-                {{ val.text }}
-            </mat-option>
-        </mat-select>
-    </mat-form-field>
-    <mat-form-field appearance="outline" class="inline-form-field">
-        <mat-label>Type of Employee</mat-label>
-        <mat-select [(ngModel)]="editEmployee.subtype">
-            <mat-option *ngFor="let val of employeeSubtypes" [value]="val.value">
-                {{ val.text }}
-            </mat-option>
-        </mat-select>
-    </mat-form-field>
+
     <mat-form-field appearance="outline" class="inline-form-field">
         <mat-label>Filer Type</mat-label>
         <mat-select [(ngModel)]="editEmployee.filerType">
@@ -59,53 +70,67 @@
         </mat-select>
     </mat-form-field>
 
-
-    <div *ngIf="editEmployee.filerType == '450 Filer'" style="display: block; padding-top: 6px;">
-        <mat-form-field appearance="outline" class="inline-form-field">
-            <mat-label>Reporting Status</mat-label>
-            <mat-select [(ngModel)]="editEmployee.reportingStatus" (selectionChange)="reportingStatusChange()">
-                <mat-option value="">
-                    N/A
-                </mat-option>
-                <mat-option *ngFor="let rs of reportingStatuses" [value]="rs.value">
-                    {{ rs.text }}
-                </mat-option>
-            </mat-select>
-        </mat-form-field>
+    <div style="display: flex; gap: 15px;">
+        <div *ngIf="editEmployee.filerType == '450 Filer'" style="display: block; padding-top: 6px;">
+            <mat-form-field appearance="outline" class="inline-form-field">
+                <mat-label>Reporting Status</mat-label>
+                <mat-select [(ngModel)]="editEmployee.reportingStatus" (selectionChange)="reportingStatusChange()">
+                    <mat-option value="">
+                        N/A
+                    </mat-option>
+                    <mat-option *ngFor="let rs of reportingStatuses" [value]="rs.value">
+                        {{ rs.text }}
+                    </mat-option>
+                </mat-select>
+            </mat-form-field>
+        </div>
+        <div *ngIf="editEmployee.hireDate" style="display: flex; flex-direction: column; justify-content: center; padding-bottom: 15px; align-items: flex-end; flex: 1; padding-right: 15px;">
+            <mat-label style="font-weight: bold; padding-bottom: 5px;">Hire Date</mat-label>
+            <span>{{ editEmployee.hireDate | date: 'MM/dd/yyyy' }}</span>
+        </div>
     </div>
 
-    <mat-form-field appearance="outline">
+
+    <mat-form-field appearance="outline" *ngIf="!editEmployee.hireDate">
         <mat-label>Appointment Date</mat-label>
         <input matInput [matDatepicker]="picker" [(ngModel)]="tempAppointmentDate">
         <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
         <mat-datepicker #picker></mat-datepicker>
     </mat-form-field>
 
-
-    <div *ngIf="editEmployee.currentFormId > 0" class="header">
-        <div class="user-profile">
-            <h4 class="employee-row"><strong>Form Status:</strong><span>{{editEmployee.currentFormStatus}}</span></h4>
-            <h4 class="employee-row"><strong>Due Date:</strong><span>{{ editEmployee.dueDate | date: 'MM/dd/yyyy'}}</span></h4>
+    <div *ngIf="editEmployee.currentFormId > 0" style="margin-bottom: 15px; display: flex; flex-direction: column; gap: 15px;">
+        <b>Last Completed OGE Form 450</b>
+        <div class="header">
+            <div class="user-profile">
+                <h4 class="employee-row"><span style="font-weight: 400;">Form Status:</span><span>{{editEmployee.currentFormStatus}}</span></h4>
+                <h4 class="employee-row"><span style="font-weight: 400;">Due Date:</span><span>{{ editEmployee.dueDate | date: 'MM/dd/yyyy'}}</span></h4>
+            </div>
+            <button mat-stroked-button type="button" color="primary" (click)="gotoForm(editEmployee)"><mat-icon>description</mat-icon>View Form</button>
         </div>
-        <button mat-stroked-button type="button" color="primary" (click)="gotoForm(editEmployee)"><mat-icon>description</mat-icon>View Form</button>
     </div>
 
-    <div *ngIf="editEmployee.currentFormId == 0 && editEmployee.filerType == '450 Filer' && !editEmployee.inactive && editEmployee.reportingStatus != null">
+    <div *ngIf="canCreateNewForm() && editEmployee.filerType == '450 Filer' && !editEmployee.inactive && editEmployee.reportingStatus != null">
 
         <h2 id="start-new">Start New OGE Form 450 for Filer?</h2>
 
         <div class="header">
-            <mat-radio-group aria-labelledby="start-new" [(ngModel)]="editEmployee.generateForm">
+            <mat-radio-group aria-labelledby="start-new" [(ngModel)]="editEmployee.generateForm" (change)="startNewFormChange()">
                 <mat-radio-button [value]="true" class="radio-button">Yes</mat-radio-button>
                 <mat-radio-button [value]="false" class="radio-button">No</mat-radio-button>
             </mat-radio-group>
 
-            <mat-form-field appearance="outline" *ngIf="editEmployee.generateForm">
-                <mat-label>Due Date</mat-label>
-                <input matInput [matDatepicker]="dueDatePicker" [(ngModel)]="tempDueDate">
-                <mat-datepicker-toggle matSuffix [for]="dueDatePicker"></mat-datepicker-toggle>
-                <mat-datepicker #dueDatePicker></mat-datepicker>
-            </mat-form-field>
+            <div style="display: flex; flex-direction: column;">
+                <mat-form-field appearance="outline" *ngIf="editEmployee.generateForm">
+                    <mat-label>Due Date</mat-label>
+                    <input matInput [matDatepicker]="dueDatePicker" [(ngModel)]="tempDueDate">
+                    <mat-datepicker-toggle matSuffix [for]="dueDatePicker"></mat-datepicker-toggle>
+                    <mat-datepicker #dueDatePicker></mat-datepicker>
+                </mat-form-field>
+                <span *ngIf="error" style="color: red; margin-top: -15px; font-size: 12px">
+                    Due Date is
+                    <strong>required</strong>
+                </span>
+            </div>
         </div>
 
         <div *ngIf="editEmployee.generateForm">
@@ -113,16 +138,18 @@
 
             <div class="NgxEditor__Wrapper">
                 <!--<ngx-editor-menu [editor]="editor"> </ngx-editor-menu>
-    <ngx-editor [editor]="editor"
-                [(ngModel)]="emailText"
-                [disabled]="false"
-                [placeholder]="'Type here...'"></ngx-editor>-->
+                <ngx-editor [editor]="editor"
+                            [(ngModel)]="emailText"
+                            [disabled]="false"
+                            [placeholder]="'Type here...'"></ngx-editor>-->
                 <kendo-editor [(ngModel)]="emailText" style="height: 300px; width: 475px;"></kendo-editor>
             </div>
         </div>
     </div>
 
-    <button *ngIf="!editEmployee.inactive" mat-flat-button type="button" (click)="saveEmployee(editEmployee)" color="primary" style="margin-top: 15px;">Save</button>
+    <div>
+        <button *ngIf="!editEmployee.inactive" mat-flat-button type="button" (click)="saveEmployee(editEmployee)" color="primary" style="margin-top: 15px;">Save</button>
+    </div>
 </div>
 
 

@@ -1,0 +1,19 @@
+<mat-drawer-container>
+    <mat-drawer #drawer mode="over" position="end" class="details-drawer" (closedStart)="drawerClosing()" [opened]="false" [autoFocus]="false">
+        <div class="drawer-container">
+            <button mat-icon-button type="button" (click)="drawer.close()" class="drawer-close"><mat-icon>close</mat-icon></button>
+            <div *ngIf="selectedTraining">
+                <app-training-form [mode]="MANAGE" [training]="selectedTraining" [canDelete]="canDelete()" (close)="trainingClosed($event)"></app-training-form>
+            </div>
+        </div>
+    </mat-drawer>
+    <mat-drawer-content>
+        <div class="training-view">
+            <mat-card>
+                <div style="margin-top: 20px;">
+                    <app-training-table #dtTrainings key="training" [data]="trainings" [canAdd]="true" (addClicked)="addTraining()" (rowSelect)="onTrainingSelect($event)" [hiddenCols]="hiddenCols"></app-training-table>
+                </div>
+            </mat-card>
+        </div>
+    </mat-drawer-content>
+</mat-drawer-container>

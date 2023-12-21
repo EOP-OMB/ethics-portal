@@ -59,6 +59,11 @@ export class Employee extends DtoBase {
         this.bio = emp.bio;
 
         this.departmentName = emp.departmentName;
+        this.hireDate = emp.hireDate;
+        this.appointmentType = emp.appointmentType;
+        this.appointmentType2 = emp.appointmentType2;
+        this.political = emp.political;
+        this.annualSalary = emp.annualSalary;
     }
         
     title: string = "";
@@ -106,6 +111,11 @@ export class Employee extends DtoBase {
     bio: string = "";
 
     departmentName: string = "";
+    hireDate?: Date;
+    appointmentType: string = "";
+    appointmentType2: string = "";
+    political: boolean = false;
+    annualSalary: number |  null = null;
 
     get cityStateFormatted(): string {
         var cs = this.city;

@@ -7,7 +7,7 @@ namespace Mod.Ethics.Application.Dtos
 {
     public class ExtensionRequestDto : AuditedDtoBase
     {
-        public int OGEForm450Id { get; set; }
+        public int OgeForm450Id { get; set; }
         public string Reason { get; set; }
         public int DaysRequested { get; set; }
         public string Status { get; set; }

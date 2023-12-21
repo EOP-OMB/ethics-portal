@@ -1,0 +1,648 @@
+<div *ngIf="request && canSave()">
+    <nav class="navbar navbar-light navbar-expand-sm justify-content-sm-center fixed-top">
+        <ul class="navbar-nav">
+            <li class="nav-item" *ngIf="canSave()"><button id="btnSave" class="btn btn-primary nav-icon" data-toggle="tooltip" title="Save Draft" (click)="save(false)" [disabled]="!isDirty()"><span class="fa fa-save"></span></button></li>
+            <li class="nav-item"><button class="btn btn-default nav-icon" data-toggle="tooltip" title="Print Form" (click)="print()"><span class="fa fa-print"></span></button></li>
+            <li style="flex:2;">&nbsp;</li>
+            <li class="nav-item"><button class="btn btn-danger nav-icon invert" data-toggle="tooltip" title="Close Form" (click)="goBack()"><span class="fa fa-times"></span></button></li>
+        </ul>
+    </nav>
+    <div class="event-form justify-content-center">
+        <div class="alert alert-success alert-fixed" id="success-alert" style="display: none; margin-top: 145px;">
+            <div type="button" class="close" data-dismiss="alert">x</div>
+            <strong>Success! </strong>
+            Form saved successfully. Your drafts can be found under My Ethics.
+        </div>
+        <div class="text-center" id="top">
+            <h3>OMB  Ethics -- Event Attendance Request Form</h3>
+            <h4>
+                (OMB Staff Use Only)
+                <a id="lnkIntro" class="btn" (click)="showModal('intro-popup')">
+                    <span class="fa fa-info-circle"></span>
+                </a>
+            </h4>
+
+            <!--Introduction Page-->
+            <div class="modal fade" id="intro-popup" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+                <div class="modal-admin modal-dialog" role="document">
+                    <div class="modal-content">
+                        <div class="modal-body">
+                            <div class="intro">
+                                
+                                    <h3>OMB  Ethics -- Event Attendance Request Form</h3>
+                                    <h4>
+                                        (OMB Staff Use Only)
+                                    </h4>
+                                    <p>
+                                        Federal ethics rules govern the ability of OMB employees to accept gifts – and a “gift” includes free admission, free meals, and/or travel and related expenses to attend events hosted by non-governmental sponsors. Such events include
+                                        (but are not limited to) banquets, conferences, or cocktail receptions. Accordingly, if you receive an invitation to attend such an event for free, you need pre-approval from the OMB General Counsel’s Office before accepting it. We
+                                        also ask that if you are invited to speak at an event – whether in your personal or official capacity – you seek advance approval using this portal, as many speaking engagements raise ethics issues that may not be immediately apparent.
+                                        All official speaking events will be sent to OMB Communications for coordination and clearance. Similarly, all events involving international travel will be sent to MOD for additional coordination and approval. You will receive separate
+                                        emails from Comms and MOD with appropriate follow-up and/or further coordination prior to approval.
+                                    </p>
+                                    <p>
+                                        For any event involving travel that will be paid for by a non-Federal entity, make sure that you attach the Travel Form to the event request. Please use this online form to request permission from the OMB General Counsel’s Office to accept an event invitation. It asks for all the information needed for us to consider your request. Accordingly, please answer the questions on the form completely and clearly. They key is that OGC and Comms need the information in this online form to respond to your request.
+                                    </p>
+                                    <p>
+                                        Please submit this form to OGC as soon as you receive an invitation, and at least one week before the request. Once the OMB General Counsel’s Office has reviewed your request, you can expect to receive an email with our response.
+                                    </p>
+                                    <p>
+                                        LATE REQUESTS: If you must submit a request for an event less than one week in advance, please first submit this form and then notify Laurie Adams of your urgent request.
+                                    </p>
+                                    <p>
+                                        <strong>The OMB General Counsel’s Office may not be able to provide guidance on short notice.</strong>
+                                    </p>
+                            </div>
+                        </div>
+                        <div class="modal-footer text-center">
+                            <a class="btn btn-success btn-ok" (click)="closeModal('intro-popup')" style="color: white !important;">OK</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <form [formGroup]="eventRequestForm" id="eventForm">
+                <input type="hidden" formControlName="id" />
+                <div *ngIf="eventRequestForm.invalid && isSubmitting" style="color: red; display: flex; flex-direction: column; align-items: center;">
+                    <h2 style="color: red;">Your submission has the following errors:</h2>
+                    <ul style="text-align: left; color: red; font-weight: 500;">
+                        <li *ngFor="let name of invalidControls">{{ errorMessage(name) }}</li>
+                        <li *ngIf="receivedInvitation.value && invitations.length < 1">Invitation is required.</li>
+                    </ul>
+                    <br />
+                    <p><b>Note:</b>&nbsp;&nbsp;Your form has been saved, but not submitted, please correct the errors and try again.</p>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">Attendee(s)</div>
+                    <div class="card-body">
+                        <p>Please enter details of the OMB official(s) who will be attending this event. You must 'Add' each official separately and answer the questions for each.</p>
+                    </div>
+                    <div class="list-group">
+                        <div *ngFor="let att of eventRequestAttendees.controls; let i=index" formArrayName="eventRequestAttendees">
+                            <app-attendee (delete)="deleteAttendee(i)" [attendeeForm]="att"></app-attendee>
+                        </div>
+                    </div>
+                    <mat-error *ngIf="eventRequestAttendees.hasError('noValue')" class="error non-form-field-error">
+                        <span>
+                            At least one attendee is
+                            <strong>required</strong>
+                        </span>
+                    </mat-error>
+                    <div class="list-group-item">
+                        <button mat-stroked-button (click)="newAttendee()" type="button"><mat-icon style="color: green; margin-right: 5px; margin-top: -3px;">add</mat-icon>Click here to add another attendee</button>
+                    </div>
+                </div>
+                <!-- End Attendees -->
+
+                <div class="card">
+                    <div class="card-header">Event Details</div>
+                    <div class="card-body grid-body">
+                        <div class="control-label required">Event Name</div>
+                        <mat-form-field appearance="outline">
+                            <input matInput type="text" formControlName="eventName" placeholder="" />
+                            <mat-error *ngIf="eventName.errors">
+                                <span *ngIf="eventName.errors.required">
+                                    Event Name is
+                                    <strong>required</strong>
+                                </span>
+                            </mat-error>
+                        </mat-form-field>
+                        <small>The name of the event</small>
+
+                        <div class="control-label required">Event Dates</div>
+                        <div class="control-group">
+                            <div class="kendo-form-field">
+                                <small class="floating-label">Event Start Date</small>
+                                <kendo-datepicker formControlName="eventStartDate"
+                                                  (valueChange)="setEventDateStart($event)" placeholder="Start Date" class="material-input form-input"
+                                                  [formatPlaceholder]="formatPlaceholder" [max]="eventStartDateMax" [min]="today">
+                                </kendo-datepicker>
+                                <mat-error *ngIf="eventStartDate.errors && (eventStartDate.dirty || eventStartDate.touched)"
+                                           class="kendo-error">
+                                    <span *ngIf="eventStartDate.errors.required">
+                                        Start Date is
+                                        <strong>required</strong>
+                                    </span>
+                                    <span *ngIf="eventStartDate.errors.maxError">
+                                        Start Date must be
+                                        <strong>before</strong>
+                                        End Date.
+                                    </span>
+                                    <span *ngIf="eventStartDate.errors.minError">
+                                        Start Date must be
+                                        <strong>after</strong>
+                                        today.
+                                    </span>
+                                </mat-error>
+                            </div>
+                            <div class="kendo-form-field">
+                                <small class="floating-label">Event End Date</small>
+                                <kendo-datepicker formControlName="eventEndDate" placeholder="End Date"
+                                                  class="material-input form-input" [formatPlaceholder]="formatPlaceholder" [min]="eventEndDateMin"
+                                                  (valueChange)="setEventDateEnd($event)">
+                                </kendo-datepicker>
+                                <mat-error *ngIf="eventEndDate.errors && (eventEndDate.dirty || eventEndDate.touched)"
+                                           class="kendo-error">
+                                    <span *ngIf="eventEndDate.errors.required">
+                                        End Date is
+                                        <strong>required</strong>
+                                    </span>
+                                    <span *ngIf="eventStartDate.errors.minError">
+                                        End Date must be
+                                        <strong>after</strong>
+                                        Start Date.
+                                    </span>
+                                </mat-error>
+                            </div>
+                        </div>
+                        <small>Enter a date range</small>
+
+                        <div class="control-label required">Location</div>
+                        <mat-form-field appearance="outline">
+                            <input matInput type="text" formControlName="eventLocation" placeholder="" />
+                            <mat-error *ngIf="eventLocation.errors">
+                                <span *ngIf="eventLocation.errors.required">
+                                    Event Location is
+                                    <strong>required</strong>
+                                </span>
+                            </mat-error>
+                        </mat-form-field>
+                        <small>&nbsp;</small>
+
+                        <div class="control-label required">Approximate # of Attendees</div>
+                        <mat-form-field appearance="outline" style="width: 50%;">
+                            <input matInput type="number" formControlName="approximateAttendees" placeholder="" />
+                            <mat-error *ngIf="approximateAttendees.errors">
+                                <span *ngIf="approximateAttendees.errors.required">
+                                    Approximate # of Attendees is
+                                    <strong>required</strong>
+                                </span>
+                            </mat-error>
+                        </mat-form-field>
+                        <small>&nbsp;</small>
+
+                        <div class="control-label required">Event Crowd and Description</div>
+                        <mat-form-field appearance="outline">
+                            <textarea matInput rows="4" formControlName="crowdDescription" placeholder=""></textarea>
+                            <mat-error *ngIf="crowdDescription.errors">
+                                <span *ngIf="crowdDescription.errors.required">
+                                    Crowd Description is
+                                    <strong>required</strong>
+                                </span>
+                            </mat-error>
+                        </mat-form-field>
+                        <small>Please provide a brief description of the number and backgrounds of persons attending the request. Please note attendance by Members of Congress or Hill staff.</small>
+
+                        <div class="control-label required">Is this a fund-raising event?</div>
+                        <div class="form-field">
+                            <mat-radio-group aria-label="Is this a fund-raising event?" formControlName="isFundraiser">
+                                <mat-radio-button [value]="true" style="padding: 5px 5px;">
+                                    Yes
+                                </mat-radio-button>
+                                <mat-radio-button [value]="false" style="padding: 5px 5px;">
+                                    No
+                                </mat-radio-button>
+                            </mat-radio-group>
+                            <mat-error *ngIf="isFundraiser.errors && isFundraiser.touched" class="error">
+                                <span *ngIf="isFundraiser.errors.required">
+                                    Is this a fund-raising event is
+                                    <strong>required</strong>
+                                </span>
+                            </mat-error>
+                        </div>
+                        <small>&nbsp;</small>
+
+                        <div class="control-label required">Will the event be open to the press?</div>
+                        <div class="form-field">
+                            <mat-radio-group aria-label="Will the event be open to the press?" formControlName="isOpenToMedia">
+                                <mat-radio-button [value]="true" style="padding: 5px 5px;">
+                                    Yes
+                                </mat-radio-button>
+                                <mat-radio-button [value]="false" style="padding: 5px 5px;">
+                                    No
+                                </mat-radio-button>
+                            </mat-radio-group>
+                            <mat-error *ngIf="isOpenToMedia.errors && isOpenToMedia.touched" class="error">
+                                <span *ngIf="isOpenToMedia.errors.required">
+                                    Will the event be open to the press is
+                                    <strong>required</strong>
+                                </span>
+                            </mat-error>
+                        </div>
+                        <small>&nbsp;</small>
+
+                        <div class="control-label required">Will there be Q&A?</div>
+                        <div class="form-field">
+                            <mat-radio-group aria-label="Will there be Q&A?" formControlName="isQAndA">
+                                <mat-radio-button [value]="true" style="padding: 5px 5px;">
+                                    Yes
+                                </mat-radio-button>
+                                <mat-radio-button [value]="false" style="padding: 5px 5px;">
+                                    No
+                                </mat-radio-button>
+                            </mat-radio-group>
+                            <mat-error *ngIf="isQAndA.errors && isQAndA.touched" class="error">
+                                <span *ngIf="isQAndA.errors.required">
+                                    Will there be Q&A is
+                                    <strong>required</strong>
+                                </span>
+                            </mat-error>
+                        </div>
+                        <small>&nbsp;</small>
+                        <div class="control-label required" *ngIf="isQAndA.value"></div>
+                        <mat-form-field appearance="outline" *ngIf="isQAndA.value">
+                            <textarea matInput rows="4" formControlName="moderatorsAndPanelists" placeholder=""></textarea>
+                            <mat-error *ngIf="moderatorsAndPanelists.errors">
+                                <span *ngIf="moderatorsAndPanelists.errors.required">
+                                    Moderators And Panelists is
+                                    <strong>required</strong>
+                                </span>
+                            </mat-error>
+                        </mat-form-field>
+                        <small *ngIf="isQAndA.value">If panel discussion, please list moderator and panelists.</small>
+
+                        <div class="control-label required">Will you travel outside the D.C. metro area for this event?</div>
+                        <div class="form-field">
+                            <mat-radio-group aria-label="Will you travel outside the D.C. metro area for this event?" formControlName="requiresTravel">
+                                <mat-radio-button [value]="true" style="padding: 5px 5px;">
+                                    Yes
+                                </mat-radio-button>
+                                <mat-radio-button [value]="false" style="padding: 5px 5px;">
+                                    No
+                                </mat-radio-button>
+                            </mat-radio-group>
+                            <mat-error *ngIf="requiresTravel.errors && requiresTravel.touched" class="error">
+                                <span *ngIf="requiresTravel.errors.required">
+                                    Will you travel outside the D.C. metro area for this event is
+                                    <strong>required</strong>
+                                </span>
+                            </mat-error>
+                        </div>
+                        <small>Will you travel outside the D.C. metro area for this event?</small>
+
+                        <div class="control-label required">International Travel</div>
+                        <div class="form-field">
+                            <mat-radio-group aria-label="International Travel" formControlName="internationalTravel">
+                                <mat-radio-button [value]="true" style="padding: 5px 5px;">
+                                    Yes
+                                </mat-radio-button>
+                                <mat-radio-button [value]="false" style="padding: 5px 5px;">
+                                    No
+                                </mat-radio-button>
+                            </mat-radio-group>
+                            <mat-error *ngIf="internationalTravel.errors && internationalTravel.touched" class="error">
+                                <span *ngIf="internationalTravel.errors.required">
+                                    International Travel is
+                                    <strong>required</strong>
+                                </span>
+                            </mat-error>
+                        </div>
+                        <small>&nbsp;</small>
+
+                        <div class="control-label required">Fair Market Value</div>
+                        <div class="kendo-form-field">
+                            <kendo-numerictextbox format="c2" formControlName="fairMarketValue">
+                            </kendo-numerictextbox>
+                            <mat-error *ngIf="fairMarketValue.errors && fairMarketValue.touched" class="kendo-error">
+                                <span *ngIf="fairMarketValue.errors.required">
+                                    Fair Market Value is
+                                    <strong>required</strong>
+                                </span>
+                            </mat-error>
+                        </div>
+                        <small>Please provide either (1) the ticket price for the event if available, or (2) the organizer's best estimate for a per-person share of the event cost. Please include refreshments, comped registration costs, "goody bags," and any other special event costs in this estimate.</small>
+
+                        <div class="control-label">What is being provided?</div>
+                        <mat-form-field appearance="outline">
+                            <input matInput type="text" formControlName="whatIsProvided" aria-label="What is being provided?" placeholder="" />
+                        </mat-form-field>
+                        <small>Please identify all items of value included in the Fair Market Value.</small>
+
+                        <div class="control-label required">Who is Paying?</div>
+                        <mat-form-field appearance="outline">
+                            <input matInput type="text" formControlName="whoIsPaying" placeholder="" />
+                            <mat-error *ngIf="whoIsPaying.errors && whoIsPaying.touched">
+                                <span *ngIf="whoIsPaying.errors.required">
+                                    Who is Paying is
+                                    <strong>required</strong>
+                                </span>
+                            </mat-error>
+                        </mat-form-field>
+                        <small>Please identify the person or entity paying for or providing all items of value included in the Fiar Market Value.</small>
+
+                        <div style="grid-column: 1 / span 2; width: 100%; text-align: left;">
+                            <div style="padding-bottom: 5px;">
+                                Please complete the <a class="link" (click)="getForm(1)">Outside Source Travel Form</a> and attach it to this request.
+                            </div>
+                            <app-upload [saveUrl]="uploadSaveUrl" [removeUrl]="uploadRemoveUrl" [guid]="newGuid" [files]="outsideSourceTravelForms" [type]="'OutsideSourceTravelForm'"
+                                        [restrictions]="restrictions" [foreignKey]="parentForeignKey" [isFormReadOnly]="false"
+                                        (download)="downloadFile($event)" class="hideprint">
+                            </app-upload>
+                        </div>
+                        <small>*** You are prohibited from asking anyone to pay for your travel. If a Non-Federal source has offered to pay for your travel, before accepting their offer you must obtain clearance from Counsel's Office.</small>
+                    </div>
+                </div>
+                <!--End Event Details-->
+                <!-- Invitation -->
+                <div class="card">
+                    <div class="card-header">Invitation</div>
+                    <div class="card-body grid-body">
+
+                        <div class="control-label required">Spouse of Guest Invited?</div>
+                        <div class="form-field">
+                            <mat-radio-group aria-label="Spouse of Guest Invited?" formControlName="guestsInvited">
+                                <mat-radio-button [value]="true" style="padding: 5px 5px;">
+                                    Yes
+                                </mat-radio-button>
+                                <mat-radio-button [value]="false" style="padding: 5px 5px;">
+                                    No
+                                </mat-radio-button>
+                            </mat-radio-group>
+                            <mat-error *ngIf="guestsInvited.errors && guestsInvited.touched" class="error">
+                                <span *ngIf="guestsInvited.errors.required">
+                                    Spouse or Guest Invited is
+                                    <strong>required</strong>
+                                </span>
+                            </mat-error>
+                        </div>
+                        <small>Does the invitation include your spouse or guest?</small>
+
+                        <div class="control-label required">Received Invitation?</div>
+                        <div class="form-field">
+                            <mat-radio-group aria-label="Received Invitation?" formControlName="receivedInvitation">
+                                <mat-radio-button [value]="true" style="padding: 5px 5px;">
+                                    Yes
+                                </mat-radio-button>
+                                <mat-radio-button [value]="false" style="padding: 5px 5px;">
+                                    No
+                                </mat-radio-button>
+                            </mat-radio-group>
+                            <mat-error *ngIf="receivedInvitation.errors && receivedInvitation.touched" class="error">
+                                <span *ngIf="receivedInvitation.errors.required">
+                                    Received Invitation is
+                                    <strong>required</strong>
+                                </span>
+                            </mat-error>
+                        </div>
+                        <small>Did you receive an invitation to this event? If so, you must attach it below.</small>
+
+                        <div style="grid-column: 1 / span 2; width: 100%; text-align: left; margin-bottom: 15px;">
+                            <app-upload [saveUrl]="uploadSaveUrl" [removeUrl]="uploadRemoveUrl" [guid]="newGuid" [files]="invitations" [type]="'Invitation'"
+                                        [restrictions]="restrictions" [foreignKey]="parentForeignKey" [isFormReadOnly]="false"
+                                        (download)="downloadFile($event)" (uploaded)="uploadComplete($event)" (fileRemoved)="removeFile($event)" class="hideprint">
+                            </app-upload>
+                            <mat-error *ngIf="receivedInvitation.value && invitations.length < 1" class="error">
+                                <span>
+                                    Invitation is
+                                    <strong>required</strong>
+                                </span>
+                            </mat-error>
+                        </div>
+                        <small>Please attach a copy of the event invitation you received. If there are any other documents, emails, talking points, slides and other relevant information associated with this event, please also attach them here.</small>
+
+                        <div style="grid-column: 1 / span 2; width: 100%; text-align: left;">
+                            Below, we are looking for <strong>three pieces of information</strong>.
+                            We need to know who invited you, who they're affiliated with, and who is hosting the request.
+                            It's OK if the answer to two or more is the same.
+                        </div>
+                        <div class="control-label" style="align-self: flex-end;">Registered Lobbyist?</div>
+
+                        <div class="control-label required">Individual Extending Invite</div>
+                        <mat-form-field appearance="outline">
+                            <input matInput type="text" formControlName="individualExtendingInvite" placeholder="" />
+                            <mat-error *ngIf="individualExtendingInvite.errors && individualExtendingInvite.touched">
+                                <span *ngIf="individualExtendingInvite.errors.required">
+                                    Individual Extending Invite is
+                                    <strong>required</strong>
+                                </span>
+                            </mat-error>
+                        </mat-form-field>
+                        <div class="form-field">
+                            <mat-radio-group aria-label="Is Individual Extending Invite a Registered Lobbyist?" formControlName="isIndividualLobbyist">
+                                <mat-radio-button [value]="true" style="padding: 5px 5px;">
+                                    Yes
+                                </mat-radio-button>
+                                <mat-radio-button [value]="false" style="padding: 5px 5px;">
+                                    No
+                                </mat-radio-button>
+                            </mat-radio-group>
+                            <mat-error *ngIf="isIndividualLobbyist.errors && isIndividualLobbyist.touched" class="error">
+                                <span *ngIf="isIndividualLobbyist.errors.required">
+                                    Registered Lobbyist is
+                                    <strong>required</strong>
+                                </span>
+                            </mat-error>
+                        </div>
+
+                        <div class="control-label required">Organization Extending Invite</div>
+                        <mat-form-field appearance="outline">
+                            <input matInput type="text" formControlName="orgExtendingInvite" placeholder="" />
+                            <mat-error *ngIf="orgExtendingInvite.errors && orgExtendingInvite.touched">
+                                <span *ngIf="orgExtendingInvite.errors.required">
+                                    Organization Extending Invite is
+                                    <strong>required</strong>
+                                </span>
+                            </mat-error>
+                        </mat-form-field>
+                        <div class="form-field">
+                            <mat-radio-group aria-label="Is Organization Extending Invite a Registered Lobbyist?" formControlName="isOrgLobbyist">
+                                <mat-radio-button [value]="true" style="padding: 5px 5px;">
+                                    Yes
+                                </mat-radio-button>
+                                <mat-radio-button [value]="false" style="padding: 5px 5px;">
+                                    No
+                                </mat-radio-button>
+                            </mat-radio-group>
+                            <mat-error *ngIf="isOrgLobbyist.errors && isOrgLobbyist.touched" class="error">
+                                <span *ngIf="isOrgLobbyist.errors.required">
+                                    Registered Lobbyist is
+                                    <strong>required</strong>
+                                </span>
+                            </mat-error>
+                        </div>
+
+                        <div class="control-label required">Type of Organization</div>
+                        <div style="display: flex; flex-direction: column;">
+                            <mat-button-toggle-group formControlName="orgTypes" aria-label="Type of Organization" multiple>
+                                <mat-button-toggle class="button-toggle" value="1">Non-Profit/501(c)(3)</mat-button-toggle>
+                                <mat-button-toggle class="button-toggle" value="2">Media Org.</mat-button-toggle>
+                                <mat-button-toggle class="button-toggle" value="4">Lobbying Org.</mat-button-toggle>
+                                <mat-button-toggle class="button-toggle" value="8">USG Entity</mat-button-toggle>
+                                <mat-button-toggle class="button-toggle" value="16">Foreign Gov.</mat-button-toggle>
+                            </mat-button-toggle-group>
+                            <mat-error *ngIf="(orgTypes.errors && orgTypes.touched)" class="error">
+                                <span *ngIf="orgTypes.errors.required">
+                                    Type of Organization is
+                                    <strong>required</strong>
+                                </span>
+                            </mat-error>
+                        </div>
+                        <mat-form-field appearance="outline" floatLabel="always">
+                            <mat-label>Other</mat-label>
+                            <input matInput type="text" formControlName="orgOther" placeholder="" />
+                        </mat-form-field>
+
+                        <div class="control-label required">Organization Sponsoring Event</div>
+                        <mat-form-field appearance="outline">
+                            <input matInput type="text" formControlName="orgHostingEvent" placeholder="" />
+                            <mat-error *ngIf="orgHostingEvent.errors && orgHostingEvent.touched">
+                                <span *ngIf="orgHostingEvent.errors.required">
+                                    Organization Sponsoring Event is
+                                    <strong>required</strong>
+                                </span>
+                            </mat-error>
+                        </mat-form-field>
+                        <div class="form-field">
+                            <mat-radio-group aria-label="Is Organization Sponsoring Event a Registered Lobbyist?" formControlName="isHostLobbyist">
+                                <mat-radio-button [value]="true" style="padding: 5px 5px;">
+                                    Yes
+                                </mat-radio-button>
+                                <mat-radio-button [value]="false" style="padding: 5px 5px;">
+                                    No
+                                </mat-radio-button>
+                            </mat-radio-group>
+                            <mat-error *ngIf="isHostLobbyist.errors && isHostLobbyist.touched" class="error">
+                                <span *ngIf="isHostLobbyist.errors.required">
+                                    Registered Lobbyist is
+                                    <strong>required</strong>
+                                </span>
+                            </mat-error>
+                        </div>
+
+                        <div class="control-label required">Type of Organization</div>
+                        <div style="display: flex; flex-direction: column;">
+                            <mat-button-toggle-group formControlName="hostOrgTypes" aria-label="Type of Organization" multiple>
+                                <mat-button-toggle class="button-toggle" value="1">Non-Profit/501(c)(3)</mat-button-toggle>
+                                <mat-button-toggle class="button-toggle" value="2">Media Org.</mat-button-toggle>
+                                <mat-button-toggle class="button-toggle" value="4">Lobbying Org.</mat-button-toggle>
+                                <mat-button-toggle class="button-toggle" value="8">USG Entity</mat-button-toggle>
+                                <mat-button-toggle class="button-toggle" value="16">Foreign Gov.</mat-button-toggle>
+                            </mat-button-toggle-group>
+                            <mat-error *ngIf="(hostOrgTypes.errors && hostOrgTypes.touched)" class="error">
+                                <span *ngIf="hostOrgTypes.errors.required">
+                                    Type of Organization is
+                                    <strong>required</strong>
+                                </span>
+                            </mat-error>
+                        </div>
+                        <mat-form-field appearance="outline" floatLabel="always">
+                            <mat-label>Other</mat-label>
+                            <input matInput type="text" formControlName="hostOther" placeholder="" />
+                        </mat-form-field>
+
+                    </div>
+                </div>
+                <!--End Invitation-->
+                <!-- Contacts and Additional Info-->
+                <div class="card">
+                    <div class="card-header">Contacts and Additional Info</div>
+                    <div class="card-body grid-body">
+                        <div class="control-label required">Event Contact Name</div>
+                        <mat-form-field appearance="outline">
+                            <input matInput type="text" formControlName="eventContactName" placeholder="" />
+                            <mat-error *ngIf="eventContactName.errors">
+                                <span *ngIf="eventContactName.errors.required">
+                                    Event Contact Name is
+                                    <strong>required</strong>
+                                </span>
+                            </mat-error>
+                        </mat-form-field>
+                        <small>Please provide a contact name at the event organizer with whom Counsel can follow-up for details.</small>
+
+                        <div class="control-label required">Event Contact Phone</div>
+                        <mat-form-field appearance="outline">
+                            <input matInput type="text" mask="(000) 000-0000" formControlName="eventContactPhone" placeholder="" />
+                            <mat-error *ngIf="eventContactPhone.errors">
+                                <span *ngIf="eventContactPhone.errors.required">
+                                    Event Contact Phone is
+                                    <strong>required</strong>
+                                </span>
+                            </mat-error>
+                        </mat-form-field>
+                        <small>Please provide a contact phone number at the event organizer with whom Counsel can follow-up for details.</small>
+
+                        <div class="control-label required">Event Contact Email</div>
+                        <mat-form-field appearance="outline">
+                            <input matInput type="text" formControlName="eventContactEmail" placeholder="" />
+                            <mat-error *ngIf="eventContactEmail.errors">
+                                <span *ngIf="eventContactEmail.errors.required">
+                                    Event Contact Email is
+                                    <strong>required</strong>
+                                </span>
+                            </mat-error>
+                        </mat-form-field>
+                        <small>Please provide a contact email at the event organizer with whom Counsel can follow-up for details.</small>
+
+                        <div class="control-label required">E-mail Address</div>
+                        <mat-form-field appearance="outline">
+                            <input matInput type="text" formControlName="contactEmail" placeholder="" />
+                            <mat-error *ngIf="contactEmail.errors">
+                                <span *ngIf="contactEmail.errors.required">
+                                    E-mail Address is
+                                    <strong>required</strong>
+                                </span>
+                            </mat-error>
+                        </mat-form-field>
+                        <small>&nbsp;</small>
+
+                        <div class="control-label required">Contact Number</div>
+                        <mat-form-field appearance="outline">
+                            <input matInput type="text" mask="(000) 000-0000" formControlName="contactNumber" placeholder="" />
+                            <mat-error *ngIf="contactNumber.errors">
+                                <span *ngIf="contactNumber.errors.required">
+                                    Contact Number is
+                                    <strong>required</strong>
+                                </span>
+                            </mat-error>
+                        </mat-form-field>
+                        <small>Your phone number or the phone number of the appropriate member of your staff.</small>
+
+                        <div class="control-label required">Component</div>
+                        <mat-form-field appearance="outline">
+                            <input matInput type="text" formControlName="contactComponent" placeholder="" />
+                            <mat-error *ngIf="contactComponent.errors">
+                                <span *ngIf="contactComponent.errors.required">
+                                    Component is
+                                    <strong>required</strong>
+                                </span>
+                            </mat-error>
+                        </mat-form-field>
+                        <small>&nbsp;</small>
+
+                        <div class="control-label">Additional Information or Clarifications</div>
+                        <mat-form-field appearance="outline">
+                            <textarea matInput rows="4" formControlName="additionalInformation" placeholder=""></textarea>
+                        </mat-form-field>
+                        <small>&nbsp;</small>
+                    </div>
+                </div>
+
+                <div class="button-row">
+                    <button mat-flat-button color="primary" *ngIf="canSubmit()" (click)="submitRequest(eventRequestForm)" type="button">Submit</button>
+                    <button mat-stroked-button type="button" color="primary" (click)="save()">Save</button>
+                    <button mat-stroked-button (click)="goBack()">Cancel</button>
+                    <button *ngIf="canDelete()" mat-flat-button color="warn" type="button" (click)="delete()" style="margin-left: 50px;">Delete</button>
+                </div>
+            </form>
+        </div>
+
+        <div class="modal fade" id="confirm-close" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header modal-header-danger">
+                        <div class="modal-title" style="font-size: 1.5em;"><i class="fa fa-exclamation-triangle" style="padding-right: 20px;"></i>Unsaved Changes Detected</div>
+                    </div>
+                    <div class="modal-body">
+                        <p>There are unsaved changes on this form, if you leave this page the changes will be lost.</p>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" mat-flat-button color="primary" style="float: left;" (click)="saveAndClose()">Save and Close</button>
+                        <button type="button" mat-stroked-button color="basic" data-dismiss="modal">Stay on Page</button>
+                        <button type="button" mat-flat-button color="warn" (click)="confirmClose()">Leave Page</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

@@ -9,14 +9,14 @@ namespace Mod.Ethics.Application.Dtos
 {
     public class TrainingDto : AuditedDtoBase
     {
-        public DateTime DateAndTime { get; set; }
-        public string Location { get; set; }
+        public string EmployeeStatus { get; set; }
+        public string EmployeeName { get; set; }
+        public string EmployeeUpn { get; set; }
         public string EthicsOfficial { get; set; }
-        public string Employee { get; set; }
-        public string EmployeesName { get; set; }
-        public int Year { get; set; }
+        public string Location { get; set; }
+        public DateTime TrainingDate { get; set; }
         public string TrainingType { get; set; }
-        public string Division { get; set; }
-        public bool Inactive { get; set; }
+        public int Year { get; set; }
+
     }
 }

@@ -1,7 +1,7 @@
 <div>
     <div class="drawer-header-row">
         <h1>
-            {{ form.employeesName }}
+            <a class="link" (click)="employeeClick(form.filer)">{{ form.employeesName }}</a>
         </h1>
         <div>
             {{ form.reportingStatus }} OGE Form 450 ({{ form.year }})
@@ -11,7 +11,7 @@
         <div class="label-over">
             <strong>Status:</strong>
             <span>
-                {{ form.formStatus }}
+                {{ form.formStatus }} <span *ngIf="form.formStatus == 'Declined'"> - {{ form.declineReason }}</span>
             </span>
         </div>
         <div>
@@ -46,7 +46,7 @@
         <div *ngIf="canEdit">
             <mat-form-field appearance="outline">
                 <mat-label>Due Date</mat-label>
-                <input matInput [matDatepicker]="dueDatePicker" [(ngModel)]="tempDueDate">
+                <input matInput [matDatepicker]="dueDatePicker" [(ngModel)]="form.dueDate">
                 <mat-datepicker-toggle matSuffix [for]="dueDatePicker"></mat-datepicker-toggle>
                 <mat-datepicker #dueDatePicker></mat-datepicker>
             </mat-form-field>
@@ -60,7 +60,7 @@
         <div *ngIf="canAssign">
             <mat-form-field appearance="outline" class="inline-form-field" style="margin-left: 15px;">
                 <mat-label>Assigned To</mat-label>
-                <mat-select [(ngModel)]="form.assignedToEmployeeId">
+                <mat-select [(ngModel)]="form.assignedToUpn">
                     <mat-option *ngFor="let reviewer of reviewers" [value]="reviewer.value">
                         {{ reviewer.text }}
                     </mat-option>
@@ -69,10 +69,11 @@
         </div>
     </div>
     <div class="drawer-row">
+        <button *ngIf="canEdit || canAssign" mat-flat-button type="button" color="primary" (click)="saveClick()">Save</button>
         <button mat-stroked-button type="button" color="primary" (click)="viewForm(form)"><mat-icon>description</mat-icon>View Form</button>
         <button *ngIf="canExtend" mat-stroked-button type="button" color="warn" (click)="extendForm(form)"><mat-icon>schedule</mat-icon>Extend</button>
         <button *ngIf="canEdit && canAssign && !isCertified(form)" mat-flat-button type="button" color="warn" (click)="cancelClick()">Cancel Form</button>
     </div>
 </div>
 
-<button *ngIf="canEdit || canAssign" mat-flat-button type="button" color="primary" (click)="saveClick()">Save</button>
+

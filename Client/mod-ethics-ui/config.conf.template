@@ -1,0 +1,5 @@
+location = /config {
+    default_type application/json;
+    return 200 '{"apiUrl": "${API_URL}"}';
+}
+

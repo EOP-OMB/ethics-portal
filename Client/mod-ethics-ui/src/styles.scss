@@ -1,6 +1,6 @@
 /* You can add global styles to this file, and also import other style files */
-@import "~bootstrap/dist/css/bootstrap.css";
-@import "~font-awesome/scss/font-awesome.scss";
+@import "bootstrap/dist/css/bootstrap.css";
+@import "font-awesome/scss/font-awesome.scss";
 
 /* Print Stuff  */
 @media print {
@@ -18,7 +18,18 @@
     }
 
     #ogeForm450 {
-        margin-top: 0px !important;
+        position: relative;
+        display: inline;
+        height: auto !important;
+        min-height: auto !important;
+        overflow: visible !important;
+        margin-bottom: 12000px;
+    }
+
+    textarea {
+        height: auto !important;
+        max-height: auto !important;
+        overflow: visible !important;
     }
 
     .hideprint {
@@ -31,6 +42,13 @@
 
     .mod-side-menu {
         display: none !important;
+    }
+
+    .mat-mdc-card {
+        position: relative;
+        display: block;
+        height: 100% !important;
+        overflow: visible;
     }
 
     .mod-side-menu-content {
@@ -80,30 +98,38 @@
         margin-top: 5px !important;
         margin-bottom: 2px !important;
     }
+
+    .mat-drawer-container {
+        height: 100%;
+        width: 100%;
+        background-color: white !important;
+        margin-bottom: 50px;
+    }
 }
 
 @page {
     size: 8.5in 11in;
-    margin: 1cm
+    margin: 1cm;
+    margin-bottom: 30mm !important;
 }
 
 /* Master Styles */
 h1 {
     color: #369;
-    font-family: Arial, Helvetica, sans-serif;
+    font-family: Roboto, "Helvetica Neue", sans-serif;
     font-size: 250%;
 }
 
 h2, h3 {
     color: #444;
-    font-family: Arial, Helvetica, sans-serif;
+    font-family: Roboto, "Helvetica Neue", sans-serif;
     font-weight: lighter;
 }
 
 /* . . . */
 /* everywhere else */
 * {
-    font-family: Arial, Helvetica, sans-serif;
+    font-family: Roboto, "Helvetica Neue", sans-serif;
 }
 
 body, html {
@@ -114,6 +140,7 @@ body {
     padding-bottom: 20px;
     display: block;
     margin: 0;
+    font-family: Roboto, "Helvetica Neue", sans-serif;
 }
 
 html {
@@ -205,10 +232,10 @@ a {
 
 .alert-fixed {
     position: fixed;
-    top: 70px;
-    left: 0px;
+    top: 0;
+    left: 20%;
     width: 60%;
-    margin-left: 20%;
+    margin-left: 100px;
     z-index: 9999;
     border-radius: 0px
 }
@@ -286,20 +313,21 @@ input[type="number"] {
     flex-direction: column;
     align-items: stretch;
     padding: 15px;
-    height: 89vh;
-    overflow: auto;
+    /*height: 85vh !important;*/
+    overflow: hidden;
 }
 
 .mat-drawer-container {
     height: 100%;
     width: 100%;
+    background-color: #f1f1f1;
 }
 
-.mat-typography {
+.mat-mdc-typography {
     padding-bottom: 0px !important;
 }
 
-/*.mat-form-field-infix {
+/*.mat-mdc-form-field-infix {
     min-width: 75px !important;
     width: auto !important;
     max-width: 180px !important;
@@ -323,10 +351,6 @@ legend {
     font-size: 2em;
 }
 
-.drawer-container {
-    height: 85vh !important;
-}   
-
 .drawer-header-row {
     display: flex;
     flex-direction: column;
@@ -345,14 +369,83 @@ legend {
     flex-direction: column;
 }
 
-.drawer-close {
-    margin-top: 15px !important;
-}
-
 .link {
     cursor: pointer;
 }
 
 .link:hover {
     color: #00AEEF;
+}
+
+// Use this to make a kendo input (bootstrap theme) look more like material
+.material-input {
+    margin: -12px 0 1.34375em 0 !important;
+    background-color: #fafcff !important;
+    border-radius: 5px !important;
+    width: auto !important;
+    height: 60px;
+}
+
+.material-input.k-disabled {
+    background-color: #f1f1f1 !important;
+}
+
+.floating-label {
+    margin-left: 8px;
+    z-index: 1;
+    margin-top: -4px;
+    background-color: white;
+    flex: 0;
+    color: rgba(0,0,0,.6);
+    font-size: 12px;
+    width: auto;
+    margin-right: auto;
+    padding: 0px 5px;
+    text-align: center;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    position: relative;
+}
+
+.modal-content {
+    margin-left: 100px;
+    margin-top: 70px;
+}
+
+.mat-drawer {
+    max-width: 650px;
+}
+
+.mat-mdc-card {
+    padding: 15px;
+}
+
+
+.widget {
+    display: flex;
+    flex: 1;
+    max-width: 350px;
+}
+
+.widget-row {
+    display: flex;
+    flex: 1;
+    justify-content: space-between;
+    gap: 15px;
+}
+
+.drawer-close {
+    position: absolute !important;
+    top: 0;
+    right: 20px;
+    color: red !important;
+    z-index: 1002 !important;
+}
+
+mat-radio-button > .mdc-form-field > .mdc-label {
+    margin-bottom: 0;
+}
+
+mat-checkbox > .mdc-form-field > .mdc-label {
+    margin-bottom: 0;
 }

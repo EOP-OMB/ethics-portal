@@ -1,17 +1,19 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
 import { EthicsTeamService } from '@app/shared/services/ethics-team.service';
 import { EthicsFormService } from '@portal/services/ethics-form.service';
-import { OGEForm450Service } from '@shared/services/oge-form-450.service';
-import { EventRequestService } from '@shared/services/event-request.service';
-import { TrainingService } from '@shared/services/training.service';
 import { CurrentUserService } from 'mod-framework';
-import { EventRequest } from '@shared/models/event-request.model';
-import { OgeForm450 } from '@shared/models/oge-form-450.model';
 import { WidgetData } from '@portal/models/widget-data.model';
-import { Training } from '@shared/models/training.model';
 import { EthicsForm } from '@portal/models/ethics-form.model';
 import { EthicsTeam } from '@shared/models/ethics-team.model';
+import { PortalService } from '@portal/services/portal.service';
+import { PortalData } from '@portal/models/portal-data.model';
+import { FormStatus } from '@shared/static/form-status.const';
+import { MatSelectionListChange } from '@angular/material/list';
+import { HttpResponse } from '@angular/common/http';
+import { MatDrawer } from '@angular/material/sidenav';
+import { TrainingService } from '@shared/services/training.service';
+import { Training } from '@shared/models/training.model';
 import { environment } from '@src/environments/environment';
 
 @Component({
@@ -21,155 +23,175 @@ import { environment } from '@src/environments/environment';
 })
 export class HomeViewComponent implements OnInit {
 
+    @ViewChild('drawer', { static: false })
+    drawer!: MatDrawer;
+
     public timeline: any[] = [];
     public options: any[] = [];
     public guidance: any[] = [];
+    myTraining: Training[] = null;
 
-    private pendingEvents: EventRequest[] = [];
-    private currentForm: OgeForm450 = new OgeForm450();
-
-    private widgets: WidgetData[] = [];
+    public widgets: WidgetData[] = [];
 
     public guidanceFiles: EthicsForm[] = [];
     public ethicsFormFiles: EthicsForm[] = [];
     public ethicsTeam: EthicsTeam[] = [];
-    
+
+    public data: PortalData = new PortalData();
+
+    saveUrl: string;
+    removeUrl: string;
+
     constructor(
-        private userService: CurrentUserService,
-        private trainingService: TrainingService,
-        //private timelineService: TimelineService,
-        private formService: OGEForm450Service,
-        private eventService: EventRequestService,
+        private portalService: PortalService,
         private ethicsFormService: EthicsFormService,
         private ethicsTeamService: EthicsTeamService,
+        private trainingService: TrainingService,
         private router: Router
     ) {
-        
+        this.saveUrl = environment.apiUrl + "/api/guidanceAttachment/upload";
+        this.removeUrl = environment.apiUrl + "/api/guidanceAttachment/remove";
     }
 
     ngOnInit(): void {
-        this.getForm();
-        //this.getTrainings();
-        //this.getEvents();
-
-        //this.getTimeline();
-        this.getGuidance();
+        this.loadData();
+        this.getForms();
         this.getEthicsTeam();
     }
 
-    getForm(): void {
-        this.formService
-            .getCurrentForm()
-            .then(form => {
-                this.currentForm = form;
+    loadData(): void {
+        this.portalService
+            .get(0)  // Can use 0 here as Get will just aggregate the HomeView object
+            .then(pd => {
+                this.data = pd;
                 this.set450Status();
-                //this.loadingComplete = true;
+                this.setTrainingWidget();
+                this.setEventWidget();
+                this.setOutsidePositionWidget();
             });
     }
 
     set450Status(): void {
         var widget = new WidgetData();
 
+        widget.title = "OGE Form 450";
         widget.actionText = "click to view";
         widget.sortOrder = 1;
+        widget.icon = "description";
+        widget.color = "blue";
 
-        if (this.currentForm) {
-            widget.id = this.currentForm.id;
+        if (this.data && this.data.current450Status != null) {
+            widget.id = this.data.id;
 
-            if (this.currentForm.formStatus == 'Certified') {
+            if (this.data.current450Status == FormStatus.CERTIFIED) {
                 widget.status = "CERTIFIED";
                 widget.statusColor = "text-success";
             }
-            else if (this.currentForm.formStatus == 'Submitted' || this.currentForm.formStatus == 'Re-submitted') {
+            else if (this.data.current450Status == FormStatus.SUBMITTED || this.data.current450Status == FormStatus.RE_SUBMITTED) {
                 widget.status = "SUBMITTED";
                 widget.statusColor = "text-primary";
             }
-            else if (this.currentForm.isOverdue) {
+            else if (this.data.isOverdue) {
                 widget.status = "OVERDUE";
                 widget.statusColor = "text-danger";
                 widget.actionText = "<i style='margin-right: 10px; font-size: 1.1em;' class='fa fa-warning text-danger'></i> Please submit your OGE 450 or request an extension";
             }
-            else {
+            else if (this.data.current450Status == FormStatus.DECLINED) {
+                widget.status = "DECLINED TO CERTIFY";
+                widget.statusColor = "text-info";
+            } else {
                 widget.status = "IN PROGRESS";
                 widget.statusColor = "text-info";
             }
         }
         else {
             widget.status = "NOT ASSIGNED";
+            widget.actionText = "please await instructions";
             widget.statusColor = "text-success";
         }
 
         this.widgets.push(widget);
     }
 
-    getTrainings(): void {
-        this.trainingService.getCurrentYear()
-            .then(result => {
-                var thisYearTraining = result;
+    setTrainingWidget(): void {
+        var widget = new WidgetData();
 
-                var annualTraining: Training = new Training();
-                var initialTraining: Training = new Training();
+        widget.actionText = "click to certify training";
+        widget.sortOrder = 2;
+        widget.icon = "balance";
+        widget.text = new Date().getFullYear().toString() + " Training";
+        widget.title = "Ethics Training";
+        widget.color = "orange";
 
-                var widget = new WidgetData();
+        if (this.data.currentTrainingId > 0) {
+            widget.id = this.data.currentTrainingId;
+            widget.status = "COMPLETE";
+            widget.statusColor = "text-success";
+        }
+        else {
+            widget.status = "INCOMPLETE";
+            widget.statusColor = "text-danger";
+        }
 
-                widget.actionText = "click to certify training";
-                widget.sortOrder = 2;
-
-                for (let tra of thisYearTraining) {
-                    if (tra.trainingType == "Annual")
-                        annualTraining = tra;
-                    else if (tra.trainingType == "Initial") {
-                        initialTraining = tra;
-                    }
-                }
-
-                // ToDo: Incorporate initial training.
-                //if (initialTraining && this.currentUser.requiresInitialTraining) {
-                //    var initials = result.filter(x => x.trainingType == "Initial");
-                //    this.initialTraining = initials.length > 0 ? initials[0] : null;
-                //}
-
-                widget.status = new Date().getFullYear().toString() + " Training";
-
-                if (annualTraining.id > 0) {
-                    widget.id = annualTraining.id;
-                    widget.status = "COMPLETE";
-                    widget.statusColor = "text-success";
-                }
-                else {
-                    widget.status = "INCOMPLETE";
-                    widget.statusColor = "text-danger";
-                }
-            });
+        this.widgets.push(widget);
     }
 
-    getEvents(): void {
-        this.eventService.getMyEvents().then(response => {
-            var pending = response.filter(x => x.status.includes('Open') == true);
+    setEventWidget(): void {
+        var widget = new WidgetData();
 
-            var widget = new WidgetData();
+        widget.title = "Event Clearance";
+        widget.actionText = "click to request new event";
+        widget.sortOrder = 3;
+        widget.icon = "event_available";
+        widget.color = "green";
 
-            widget.actionText = "click to launch app";
-            widget.sortOrder = 3;
+        var numPending = this.data.pendingEvents;
 
-            var numPending = pending.length;
+        if (numPending == 0)
+            widget.statusColor = "text-success";
+        else if (numPending < 3)
+            widget.statusColor = "text-info";
+        else if (numPending < 6)
+            widget.statusColor = "text-warning";
+        else
+            widget.statusColor = "text-danger";
 
-            if (numPending == 0)
-                widget.statusColor = "text-success";
-            else if (numPending < 3)
-                widget.statusColor = "text-info";
-            else if (numPending < 6)
-                widget.statusColor = "text-warning";
-            else
-                widget.statusColor = "text-danger";
+        widget.status = "PENDING"
+        widget.text = numPending.toString() + ((numPending == 1) ? " Event" : " Events");
 
-            widget.status = numPending.toString() + ((numPending == 1) ? " Event" : " Events");
-
-            this.widgets.push(widget);
-        });
+        this.widgets.push(widget);
     }
 
-    getGuidance(): void {
+    setOutsidePositionWidget(): void {
+        var widget = new WidgetData();
+
+        widget.actionText = "click to request new outside position";
+        widget.sortOrder = 4;
+        widget.icon = "work";
+        widget.text = "0 Positions";
+        widget.title = "Outside Positions";
+        widget.color = "dark-blue";
+
+        var numPending = this.data.pendingPositions;
+
+        if (numPending == 0)
+            widget.statusColor = "text-success";
+        else if (numPending < 3)
+            widget.statusColor = "text-info";
+        else if (numPending < 6)
+            widget.statusColor = "text-warning";
+        else
+            widget.statusColor = "text-danger";
+
+        widget.text = numPending.toString() + ((numPending == 1) ? " Position" : " Positions");
+
+        widget.status = "PENDING";
+        widget.statusColor = "text-success";
+       
+        this.widgets.push(widget);
+    }
+
+    getForms(): void {
         this.ethicsFormService.getAll()
             .then(result => {
                 var allForms = result;
@@ -186,31 +208,58 @@ export class HomeViewComponent implements OnInit {
             });
     }
 
-    getTimeline(): void {
-        //this.timelineService.get(this.maxTimeline)
-        //    .then(result => {
-        //        // Use the Type from the API to assign CssClass and Icon
-        //        this.timelineVm = result;
+    formSelected(form: EthicsForm): void {
+        //var form = selection.options[0].value as EthicsForm;
 
-        //        if (this.timelineVm.timeline) {
+        this.ethicsFormService.getFile(form.id).subscribe(async (event) => {
+            let data = event as HttpResponse<Blob>;
+            const downloadedFile = new Blob([data.body as BlobPart], {
+                type: data.body?.type
+            });
+            
+            if (downloadedFile.type != "") {
+                const a = document.createElement('a');
+                a.setAttribute('style', 'display:none;');
+                document.body.appendChild(a);
+                a.download = form.filename;
+                a.href = URL.createObjectURL(downloadedFile);
+                a.target = '_blank';
+                a.click();
+                document.body.removeChild(a);
+            }
+        });
+    }
 
-        //            for (let tl of this.timelineVm.timeline) {
-        //                if (tl.type == "OGEForm450") {
-        //                    tl.cssClass = "oge450Class";
-        //                    tl.icon = "fa-file-text";
-        //                }
-        //                else if (tl.type == "Training") {
-        //                    tl.cssClass = "trainingClass";
-        //                    tl.icon = "fa-balance-scale";
-        //                }
-        //                else if (tl.type == "Event") {
-        //                    tl.cssClass = "eventClass";
-        //                    tl.icon = "fa-calendar-check-o";
-        //                }
-        //            }
-        //        }
+    teamSelected(selection: MatSelectionListChange): void {
+        var employee = selection.options[0].value as EthicsTeam;
+        var mail = document.createElement("a");
+        mail.href = "mailto:" + employee.email;
+        mail.click();
+    }
+    
+    widgetClick(title: string): void {
+        
+        switch (title) {
+            case "OGE Form 450":
+                this.router.navigate(['/oge450/myform'])
+                break;
+            case "Event Clearance":
+                this.router.navigate(['/events/request/0'])
+                break;
+            case "Ethics Training":
+                this.trainingService.getMyTrainings().then(response => {
+                    this.myTraining = response;
+                    this.drawer.open();
+                });
+                
+                break;
+            case "Outside Positions":
+                this.router.navigate(['position/0']);
+                break;
+        }
+    }
 
-        //        this.doFilterTimeline();
-        //    });
+    drawerClosing(): void {
+        this.myTraining = null;
     }
 }

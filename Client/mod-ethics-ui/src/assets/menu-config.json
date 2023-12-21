@@ -7,8 +7,13 @@
             "shortName": "",
             "menuItems": [
                 {
-                    "text": "Profile",
+                    "text": "Home",
                     "icon": "home",
+                    "route": "home"
+                },
+                {
+                    "text": "My Ethics",
+                    "icon": "person",
                     "route": "profile"
                 },
                 {
@@ -21,22 +26,16 @@
                     "text": "Current 450",
                     "icon": "feed",
                     "route": "oge450/myform"
-                },
-                {
-                    "text": "Ethics Portal",
-                    "icon": "dashboard",
-                    "route": "oge450/portal"
                 }
             ]
         },
         {
-            "name": "ADMIN",
+            "name": "MANAGE",
             "shortName": "",
-            "allowedRoles": [ "Admin", "OGEReviewer", "OGESupport" ],
             "menuItems": [
                 {
                     "text": "Employees",
-                    "icon": "groups",
+                    "icon": "group",
                     "route": "admin/employees",
                     "allowedRoles": [ "Admin", "OGESupport" ]
                 },
@@ -44,31 +43,36 @@
                     "text": "Guidance",
                     "icon": "contact_support",
                     "route": "admin/guidance",
-                    "allowedRoles": [ "Admin", "OGESupport" ]
+                    "allowedRoles": [ "Admin" ]
                 },
                 {
-                    "text": "450 Dashboard",
-                    "icon": "verified",
+                    "text": "OGE Form 450",
+                    "icon": "library_books",
                     "route": "oge450/dashboard",
                     "allowedRoles": [ "Admin", "OGEReviewer", "OGESupport" ]
-                },
-                {
-                    "text": "All Forms",
-                    "icon": "library_books",
-                    "route": "admin/forms",
-                    "allowedRoles": [ "Admin", "OGESupport" ]
-                },
-                {
-                    "text": "All Extensions",
-                    "icon": "schedule",
-                    "route": "admin/extensions",
-                    "allowedRoles": [ "Admin", "OGESupport" ]
                 },
                 {
                     "text": "Event Requests",
                     "icon": "event_available",
                     "route": "events/dashboard",
-                    "allowedRoles": [ "Disabled" ]
+                    "allowedRoles": [ "Admin", "OGESupport", "EventReviewer" ]
+                },
+                {
+                    "text": "Training",
+                    "icon": "balance",
+                    "route": "admin/training",
+                    "allowedRoles": [ "Admin", "OGESupport" ]
+                },
+                {
+                    "text": "Outside Positions",
+                    "icon": "work",
+                    "route": "positions"
+                },
+                {
+                    "text": "Notifications",
+                    "icon": "mail",
+                    "route": "admin/notifications",
+                    "allowedRoles": [ "Admin" ]
                 },
                 {
                     "text": "Settings",

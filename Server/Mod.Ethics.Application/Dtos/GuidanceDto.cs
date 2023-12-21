@@ -7,7 +7,7 @@ namespace Mod.Ethics.Application.Dtos
 {
     public class GuidanceDto : AuditedDtoBase
     {
-        public int EmployeeId { get; set; }
+        public string EmployeeUpn { get; set; }
         public string GuidanceType { get; set; }
         public string Subject { get; set; }
         public string Text { get; set; }
@@ -18,6 +18,7 @@ namespace Mod.Ethics.Application.Dtos
         public string Summary { get; set; }
         public bool IsShared { get; set; }
         public Guid Guid { get; set; }
+        public bool HasAttachments { get; set; }
         public List<AttachmentDto> Attachments { get; set; }
         public EmployeeDto Employee { get; set; }
     }

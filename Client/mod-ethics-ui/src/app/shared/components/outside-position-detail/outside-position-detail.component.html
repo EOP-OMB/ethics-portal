@@ -1,0 +1,313 @@
+<div *ngIf="position">
+    <div class="row" style="padding-bottom: 10px;">
+        <div class="col-3">
+            <label class="control-label" style="vertical-align: bottom;">Position Title</label>
+        </div>
+        <div class="col-9">
+            {{position.positionTitle}}
+        </div>
+    </div>
+    <div class="row" style="padding-bottom: 10px;">
+        <div class="col-3">
+            <label class="control-label" style="vertical-align: bottom;">Status</label>
+        </div>
+        <div class="col-9">
+            {{position.status}}
+        </div>
+    </div>
+
+    <mat-accordion class="example-headers-align" multi>
+        <mat-expansion-panel [expanded]="true">
+            <mat-expansion-panel-header class='panel-header'>
+                <mat-panel-title>
+                    Employee Data
+                </mat-panel-title>
+            </mat-expansion-panel-header>
+
+            <div class="attendee">
+                <div class="row detail-row">
+                    <label>Employee's 'Name</label>
+                    <div>
+                        {{ position.employeeName }}
+                    </div>
+                </div>
+                <div class="row detail-row">
+                    <label>Supervisor</label>
+                    <div>
+                        {{ position.supervisorName }}
+                    </div>
+                </div>
+                <div class="row detail-row">
+                    <label>Phone</label>
+                    <div>
+                        {{ position.employeePhone }}
+                    </div>
+                </div>
+                <div class="row detail-row">
+                    <label>Email</label>
+                    <div>
+                        {{ position.employeeEmail }}
+                    </div>
+                </div>
+                <div class="row detail-row">
+                    <label>Office</label>
+                    <div>
+                        {{ position.departmentName }}
+                    </div>
+                </div>
+                <div class="row detail-row">
+                    <label>OMB Position Title</label>
+                    <div>
+                        {{ position.title }}
+                    </div>
+                </div>
+                <div class="row detail-row">
+                    <label>Annual Salary</label>
+                    <div>
+                        ${{ position.annualSalary }}
+                    </div>
+                </div>
+                <div class="row detail-row">
+                    <label>Filing Statuts</label>
+                    <div>
+                        {{ position.filerType }}
+                    </div>
+                </div>
+            </div>
+
+        </mat-expansion-panel>
+        <mat-expansion-panel [expanded]="false">
+            <mat-expansion-panel-header class='panel-header'>
+                <mat-panel-title>
+                    Outside Position Information
+                </mat-panel-title>
+            </mat-expansion-panel-header>
+
+            <div class="row detail-row">
+                <label>Position POC</label>
+                <div>
+                    {{ position.poc }}
+                </div>
+            </div>
+            <div class="row detail-row">
+                <label>Position POC Phone</label>
+                <div>
+                    {{ position.pocPhone }}
+                </div>
+            </div>
+            <div class="row detail-row">
+                <label>Position POC Email</label>
+                <div>
+                    {{ position.pocEmail }}
+                </div>
+            </div>
+            <div class="row detail-row">
+                <label>Posititon Title</label>
+                <div>
+                    {{ position.positionTitle }}
+                </div>
+            </div>
+            <div class="row detail-row">
+                <label>Organization Name</label>
+                <div>
+                    {{ position.organizationName }}
+                </div>
+            </div>
+            <div class="row detail-row">
+                <label>Periods of Employment</label>
+                <div>
+                    {{ position.periodsOfEmployment }}
+                </div>
+            </div>
+            <div class="row detail-row">
+                <label>Physical Location of Duties</label>
+                <div>
+                    {{ position.physicalLocation }}
+                </div>
+            </div>
+            <div class="row detail-row">
+                <label>Compensation</label>
+                <div>
+                    {{ position.isPaid ? 'Yes' : 'No' }}
+                </div>
+            </div>
+            <div class="row detail-row">
+                <label>Method of Compensation</label>
+                <div>
+                    {{ position.methodOfCompensation }}
+                </div>
+            </div>
+            <div class="row detail-row">
+                <label>Position Dates</label>
+                <div>
+                    {{ position.positionDates }}
+                </div>
+            </div>
+            <div class="row detail-row">
+                <label>Nature of Outside Position</label>
+                <div>
+                    {{ position.getTypeOfWorkDescription() }}
+                </div>
+            </div>
+            <div class="row detail-row">
+                <label>Duties or Services</label>
+                <div>
+                    {{ position.duties }}
+                </div>
+            </div>
+            <div class="row detail-row">
+                <label>Related to Official Duties</label>
+                <div>
+                    {{ position.isLikeOfficialDuties ? 'Yes' : 'No' }}
+                </div>
+            </div>
+            <div class="row detail-row" *ngIf="position.isLikeOfficialDuties">
+                <label>Describe Relationship</label>
+                <div>
+                    ${{ position.relationshipToDuties }}
+                </div>
+            </div>
+        </mat-expansion-panel>
+
+        <mat-expansion-panel [expanded]="false">
+            <mat-expansion-panel-header class='panel-header'>
+                <mat-panel-title>
+                    Additional Information
+                </mat-panel-title>
+                <mat-panel-description>
+                    Will the position:
+                </mat-panel-description>
+            </mat-expansion-panel-header>
+
+            <div class="row detail-row">
+                <label>Require Absence?</label>
+                <div>
+                    {{ position.requiresAbsence ? "Yes" : "No" }}
+                </div>
+            </div>
+
+            <div class="row detail-row">
+                <label>Involve Expenses?</label>
+                <div>
+                    {{ position.involveExpense ? "Yes" : "No" }}
+                </div>
+            </div>
+            <div class="row detail-row">
+                <label>Involve Use of Facilities?</label>
+                <div>
+                    {{ position.useOfFacilities ? "Yes" : "No" }}
+                </div>
+            </div>
+            <div class="row detail-row">
+                <label>Require Work for Federal Contractor or Grantee?</label>
+                <div>
+                    {{ position.requireDutiesContract ? "Yes" : "No" }}
+                </div>
+            </div>
+            <div class="row detail-row">
+                <label>Require Government Facilities?</label>
+                <div>
+                    {{ position.requiresDutiesFederal ? "Yes" : "No" }}
+                </div>
+            </div>
+            <div class="row detail-row">
+                <label>Involve Official Title or Representation</label>
+                <div>
+                    {{ position.involveOfficialTitle ? "Yes" : "No" }}
+                </div>
+            </div>
+            <div class="row detail-row">
+                <label>Sales Agent?</label>
+                <div>
+                    {{ position.involveDutiesSales ? "Yes" : "No" }}
+                </div>
+            </div>
+            <div class="row detail-row">
+                <label>Involve EOP Business Partner?</label>
+                <div>
+                    {{ position.involveOrg ? "Yes" : "No" }}
+                </div>
+            </div>
+        </mat-expansion-panel>
+
+        <mat-expansion-panel [expanded]="false">
+            <mat-expansion-panel-header class='panel-header'>
+                <mat-panel-title>
+                    Additional Remarks
+                </mat-panel-title>
+                <mat-panel-description>
+
+                </mat-panel-description>
+            </mat-expansion-panel-header>
+
+            <div class="row detail-row">
+                <div>
+                    {{ position.additionalRemarks }}
+                </div>
+            </div>
+        </mat-expansion-panel>
+
+        <mat-expansion-panel [expanded]="false" *ngIf="position.guidance">
+            <mat-expansion-panel-header class='panel-header'>
+                <mat-panel-title>
+                    Guidance
+                </mat-panel-title>
+                <mat-panel-description>
+
+                </mat-panel-description>
+            </mat-expansion-panel-header>
+
+            <div class="row detail-row">
+                <div [innerHtml]="position.guidance">
+                </div>
+            </div>
+        </mat-expansion-panel>
+
+        <mat-expansion-panel [expanded]="false">
+            <mat-expansion-panel-header class='panel-header'>
+                <mat-panel-title>
+                    Status History
+                </mat-panel-title>
+                <mat-panel-description>
+
+                </mat-panel-description>
+            </mat-expansion-panel-header>
+
+            <div class="row detail-row">
+                <div>
+                    <table mat-table [dataSource]="position.outsidePositionStatuses">
+                        <ng-container matColumnDef="createdTime">
+                            <th mat-header-cell *matHeaderCellDef> Date </th>
+                            <td mat-cell *matCellDef="let status"> {{ status.createdTime | date: 'MM/dd/yyyy h:mm a' }} </td>
+                        </ng-container>
+                        <ng-container matColumnDef="createdByName">
+                            <th mat-header-cell *matHeaderCellDef> User </th>
+                            <td mat-cell *matCellDef="let status"> {{ status.createdByName }} </td>
+                        </ng-container>
+                        <ng-container matColumnDef="action">
+                            <th mat-header-cell *matHeaderCellDef> Action </th>
+                            <td mat-cell *matCellDef="let status"> {{ status.action }} </td>
+                        </ng-container>
+                        <ng-container matColumnDef="comment">
+                            <th mat-header-cell *matHeaderCellDef> Reason </th>
+                            <td mat-cell *matCellDef="let status"> <span [innerHTML]="status.comment"></span> </td>
+                        </ng-container>
+                        <ng-container matColumnDef="status">
+                            <th mat-header-cell *matHeaderCellDef> Status </th>
+                            <td mat-cell *matCellDef="let status"> {{ status.status }} </td>
+                        </ng-container>
+
+                        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+                        <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+                    </table>
+                </div>
+            </div>
+        </mat-expansion-panel>
+    </mat-accordion>
+
+    <div class="row" style="padding-top: 20px;">
+        <div class="col-12">
+            <button mat-stroked-button type="button" color="primary" *ngIf="canEdit()" (click)="view()"><mat-icon>description</mat-icon>View Form</button>
+        </div>
+    </div>
+</div>

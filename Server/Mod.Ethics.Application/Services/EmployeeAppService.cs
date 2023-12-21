@@ -5,16 +5,12 @@ using Mod.Framework.Runtime.Session;
 using Mod.Framework.User.Entities;
 using Mod.Framework.User.Interfaces;
 using Mod.Ethics.Application.Dtos;
-using Mod.Ethics.Domain.Entities;
+using Mod.Ethics.Application.Constants;
 using Mod.Ethics.Domain.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Linq.Expressions;
 using System.Security;
-using System.Security.Cryptography.X509Certificates;
-using System.Text;
-using Mod.Framework.Runtime.Security;
 using Mod.Ethics.Domain.Enumerations;
 using Mod.Framework.Notifications.Domain.Interfaces;
 using System.Threading;
@@ -26,13 +22,11 @@ namespace Mod.Ethics.Application.Services
         private readonly INotificationTemplateRepository NotificationTemplateRepository;
         private readonly IOgeForm450AppService FormService;
 
-
         public EmployeeAppService(IEmployeeRepository repository, IOgeForm450AppService formService, INotificationTemplateRepository notificationTemplateRepo, ISettingsAppService settingsService, IOgeForm450Repository formRepository, IObjectMapper objectMapper, ILogger<IAppService> logger, IModSession session) : base(repository, settingsService, formRepository, objectMapper, logger, session)
         {
             this.NotificationTemplateRepository = notificationTemplateRepo;
             this.FormService = formService;
-
-            Permissions.CanUpdate = Session.Principal != null && (Session.Principal.IsInRole(Roles.EthicsAppAdmin) || Session.Principal.IsInRole(Roles.OGESupport));
+            Permissions.CanUpdate = Session.Principal == null || (Session.Principal.IsInRole(Roles.EthicsAppAdmin) || Session.Principal.IsInRole(Roles.OGESupport));
         }
 
         public override List<EmployeeDto> GetAll()
@@ -59,11 +53,13 @@ namespace Mod.Ethics.Application.Services
 
             var entity = Repository.GetIncluding(dto.Id, x => x.EmployeeAttributes);
 
+            entity.SetAttributeValue(EmployeeAttributes.AppointmentDate, dto.AppointmentDate);
             entity.SetAttributeValue(EmployeeAttributes.EthicsFilerType, dto.FilerType);
             entity.SetAttributeValue(EmployeeAttributes.EmployeeStatus, dto.EmployeeStatus);
             entity.SetAttributeValue(EmployeeAttributes.EthicsReportingStatus, dto.ReportingStatus);
             entity.SetAttributeValue(EmployeeAttributes.EmployeeType, dto.Type);
             entity.SetAttributeValue(EmployeeAttributes.EmployeeSubtype, dto.Subtype);
+            entity.SetAttributeValue(EmployeeAttributes.AppointmentDate, dto.AppointmentDate);
 
             if (entity.EmployeeAttributes == null)
                 entity.EmployeeAttributes = new List<EmployeeAttribute>();
@@ -86,7 +82,7 @@ namespace Mod.Ethics.Application.Services
             if (dueDate == null)
                 dueDate = Convert.ToDateTime(dto.DueDate);
 
-            FormService.GenerateNewForm(dto, dueDate.Value, settings.CurrentFilingYear, previousForm);
+            FormService.GenerateNewForm(dto, dueDate.Value, previousForm);
         }
 
         protected override void GetNotificationText(EmployeeDto dto)
@@ -111,7 +107,7 @@ namespace Mod.Ethics.Application.Services
         {
             var employee = Repository.GetNoFilter(id);
 
-            if (employee.Upn.ToLower() == this.Session.Principal.Upn.ToLower() || this.Session.Principal.IsInRole(Roles.OGEReviewer) || this.Session.Principal.IsInRole(Roles.EthicsAppAdmin) || this.Session.Principal.IsInRole(Roles.OGESupport))
+            if (employee.Upn.ToLower() == this.Session.Principal.Upn.ToLower() || this.Session.Principal.IsInRole(Roles.EventReviewer) || this.Session.Principal.IsInRole(Roles.OGEReviewer) || this.Session.Principal.IsInRole(Roles.EthicsAppAdmin) || this.Session.Principal.IsInRole(Roles.OGESupport))
             {
                 return PostMap(MapToDto(employee));
             }
@@ -119,11 +115,33 @@ namespace Mod.Ethics.Application.Services
                 return new EmployeeDto();
         }
 
+
+        public EmployeeDto GetByUpn(string upn)
+        {
+            var employee = Repository.GetByUpn(upn);
+
+            if (employee != null)
+            {
+                return PostMap(MapToDto(employee));
+            }
+            else
+                return null;
+        }
+
         public int Sync()
         {
             var settings = this.SettingsService.Get();
             var syncDate = DateTime.Now;
-            var employees = Repository.GetAllNoFilter(x => (x.Type == "EMP" || x.Type == "OGE" || x.Type == "CSULT" || x.Type == "POLITICAL") && ((x.Inactive && x.InactiveDate > settings.LastEmployeeSyncDate) || (x.CreatedTime > settings.LastEmployeeSyncDate)));
+            var employees = Repository.GetAllNoFilter(x =>
+                (x.Type != "CONT") &&
+                (
+                    x.Inactive && x.InactiveDate > settings.LastEmployeeSyncDate ||
+                    x.CreatedTime > settings.LastEmployeeSyncDate ||
+                    (
+                        !x.EmployeeAttributes.Any(ea => ea.Attribute == EmployeeAttributes.EthicsFilerType) &&
+                        x.Inactive == false
+                    )
+                ));
             var updates = 0;
 
             foreach (Employee emp in employees)
@@ -139,11 +157,7 @@ namespace Mod.Ethics.Application.Services
 
         private int SyncEmployee(SettingsDto settings, int updates, Employee emp)
         {
-            if (emp.Inactive && emp.InactiveDate > settings.LastEmployeeSyncDate)
-            {
-                updates = CancelEmployeeForms(settings, updates, emp);
-            }
-            else if (emp.CreatedTime > settings.LastEmployeeSyncDate)
+            if (!emp.Inactive)
             {
                 updates = SetEmployeeNotAssigned(updates, emp);
             }
@@ -160,33 +174,33 @@ namespace Mod.Ethics.Application.Services
                 emp.SetAttributeValue(EmployeeAttributes.EthicsFilerType, OgeForm450FilerTypes.NOT_ASSIGNED);
                 updates++;
                 Repository.SaveBulk(emp);
-            }
+            }            
 
             return updates;
         }
 
-        private int CancelEmployeeForms(SettingsDto settings, int employeesUpdated, Employee emp)
-        {
-            // Employee is now inactive, Cancel any outstanding forms and extension requests
-            //  Do not cancel submitted forms.  Per Laurie, they're still required to go through the certification process for their own reporting purposes. 08/25/2021
-            var forms = FormService.GetBy(x => x.FilerUpn == emp.Upn && x.FormStatus != OgeForm450Statuses.CERTIFIED && x.FormStatus != OgeForm450Statuses.SUBMITTED && x.FormStatus != OgeForm450Statuses.RE_SUBMITTED && x.FormStatus != OgeForm450Statuses.CANCELED && x.Year == settings.CurrentFilingYear);
+        //private int CancelEmployeeForms(SettingsDto settings, int employeesUpdated, Employee emp)
+        //{
+        //    // Employee is now inactive, Cancel any outstanding forms and extension requests
+        //    //  Do not cancel submitted forms.  Per Laurie, they're still required to go through the certification process for their own reporting purposes. 08/25/2021
+        //    var forms = FormService.GetBy(x => x.FilerUpn == emp.Upn && (x.FormStatus == OgeForm450Statuses.NOT_STARTED || x.FormStatus == OgeForm450Statuses.DRAFT || x.FormStatus == OgeForm450Statuses.MISSING_INFORMATION));
 
-            foreach (OgeForm450Dto form in forms)
-            {
-                // This will cancel extensions as well
-                form.FormStatus = OgeForm450Statuses.CANCELED;
-                employeesUpdated++;
-                FormService.Update(form);
-            }
+        //    foreach (OgeForm450Dto form in forms)
+        //    {
+        //        // This will cancel extensions as well
+        //        form.FormStatus = OgeForm450Statuses.CANCELED;
+        //        employeesUpdated++;
+        //        FormService.Update(form);
+        //    }
 
-            return employeesUpdated;
-        }
+        //    return employeesUpdated;
+        //}
 
         public EmployeeDto GetMyProfile()
         {
             if (Session.Principal != null)
             {
-                var emp = GetByIncluding(x => x.Upn.ToLower() == Session.Principal.Upn.ToLower(), y => y.EmployeeAttributes, z => z.ReportsTo).Single();
+                var emp = GetByIncluding(x => x.Upn.ToLower() == Session.Principal.Upn.ToLower(), y => y.EmployeeAttributes, z => z.ReportsTo, d => d.Department).Single();
 
                 return emp;
             }
@@ -197,7 +211,7 @@ namespace Mod.Ethics.Application.Services
         public List<EmployeeDto> Search(string query)
         {
             //var results = GetBy(x => x.DisplayName.Contains(query));
-            var results = GetByIncluding(x => x.DisplayName.Contains(query), y => y.EmployeeAttributes);
+            var results = GetByIncluding(x => x.DisplayName.Contains(query), y => y.EmployeeAttributes, z => z.ReportsTo);
 
             return results.ToList();
         }
@@ -222,8 +236,8 @@ namespace Mod.Ethics.Application.Services
         private void StartAnnualFiling()
         {
             var settings = SettingsService.Get();
-            var allForms = FormService.GetByIncluding(x => x.Year == settings.CurrentFilingYear, y => y.OgeForm450Statuses);
-            var inProcessForms = allForms.Where(x => x.FormStatus != OgeForm450Statuses.CERTIFIED && x.FormStatus != OgeForm450Statuses.CANCELED).ToList();
+            var allForms = FormService.GetByIncluding(x => true, y => y.OgeForm450Statuses);
+            var inProcessForms = allForms.Where(x => x.FormStatus != OgeForm450Statuses.CERTIFIED && x.FormStatus != OgeForm450Statuses.CANCELED && x.FormStatus != OgeForm450Statuses.DECLINED).ToList();
 
             // The filing year will move to settings.currentFilingYear + 1 
             settings.CurrentFilingYear += 1;
@@ -237,7 +251,7 @@ namespace Mod.Ethics.Application.Services
             // Any active form will stay active and prohibit a new Annual report from being created.
             // It is the discretion of the Admins whether to create a new form for them once their active one is certified
             // New forms will be a copy of the previous filing year's form if applicable
-            var emps = base.GetAll().Where(x => x.FilerType == OgeForm450FilerTypes.FORM_450_FILER && x.Inactive == false).ToList();
+            var emps = base.GetAll().Where(x => x.Type != "CONT" && x.FilerType == OgeForm450FilerTypes.FORM_450_FILER && x.Inactive == false).ToList();
 
             foreach (EmployeeDto emp in emps)
             {

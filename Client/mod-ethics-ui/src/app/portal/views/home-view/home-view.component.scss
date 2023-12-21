@@ -1,23 +1,112 @@
 :host {
     flex: 1;
     display: flex;
-    align-content: stretch;
+    align-items: center;
     flex-direction: column;
+    justify-content: stretch;
+    padding: 15px;
 }
 
 .widget-container {
     flex: 0;
     display: flex;
+    gap: 20px;
+    justify-content: space-between;
 }
 
 .card-container {
     flex: 0;
     display: flex;
+    gap: 20px;
+    justify-content: space-between;
 }
 
 .column {
     display: flex;
     flex-direction: column;
     flex: 1;
-    margin: 10px;
+}
+
+
+.drawer-container {
+    position: relative;
+}
+
+.details-drawer {
+    width: 425px;
+    padding: 15px;
+    margin: 15px 15px 15px 15px;
+}
+
+.drawer-close {
+    position: absolute;
+    top: 0;
+    right: 0;
+    color: red;
+    z-index: 1002;
+}
+
+.section-header {
+    font-size: 1.3em;
+    font-weight: 500;
+    padding-bottom: 15px;
+}
+
+.training-type-box {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
+    background-color: white;
+    padding: 15px;
+    align-items: center;
+    border-radius: 15px;
+}
+
+.training-type-box.disabled {
+    cursor: default !important;
+    background-color: #f8f8f8 !important;
+    box-shadow: none !important;
+}
+
+.training-type-box:hover {
+    cursor: pointer;
+    box-shadow: rgba(23, 188, 208, 0.8) 0px 2px 8px 0px;
+}
+
+.training-type-title {
+    font-size: 1.2em;
+    font-weight: 500;
+}
+
+.mat-mdc-form-field {
+    width: 100%;
+}
+
+
+.form-input {
+    margin-bottom: 0px !important;
+    height: 53px;
+    width: 100% !important;
+}
+
+.kendo-form-field {
+    width: 100%;
+    display: block;
+    margin: .25em 0;
+    text-align: left;
+    padding-bottom: 1.34375em;
+}
+
+.kendo-error {
+    font-size: .8em;
+    padding: 0 1em;
+    z-index: 999;
+    text-align: left !important;
+    display: block;
+    position: absolute;
+    box-sizing: border-box;
+    width: 100%;
+    overflow: hidden;
+    margin-top: 0.333em;
 }

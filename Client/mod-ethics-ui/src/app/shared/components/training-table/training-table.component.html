@@ -1,0 +1,95 @@
+<div class="filter-container">
+    <div class="filter-row">
+        <mat-form-field appearance="outline" style="flex-grow: 2;" class="inline-form-field" *ngIf="showColumn('employeeName')">
+            <mat-label>Filter by Name</mat-label>
+            <input [(ngModel)]="filter.employeeName" matInput placeholder="Filter by Name" (keyup)="search()">
+        </mat-form-field>
+        <mat-form-field appearance="outline" class="inline-form-field" *ngIf="showColumn('employeeStatus')">
+            <mat-label>Filter by Employee Status</mat-label>
+            <mat-select [(ngModel)]="filter.employeeStatus" (selectionChange)="search()">
+                <mat-option value="">
+                    All
+                </mat-option>
+                <mat-option value="Active">
+                    Active
+                </mat-option>
+                <mat-option value="Inactive">
+                    Inactive
+                </mat-option>
+            </mat-select>
+        </mat-form-field>
+        <mat-form-field appearance="outline" class="inline-form-field" *ngIf="showColumn('year')">
+            <mat-label>Filter by Year</mat-label>
+            <mat-select [(ngModel)]="filter.year" (selectionChange)="search()">
+                <mat-option [value]="0">
+                </mat-option>
+                <mat-option *ngFor="let yr of years" [value]="yr.value">
+                    {{ yr.text }}
+                </mat-option>
+            </mat-select>
+        </mat-form-field>
+        <mat-form-field appearance="outline" class="inline-form-field" *ngIf="showColumn('trainingType')">
+            <mat-label>Filter by Training Type</mat-label>
+            <mat-select [(ngModel)]="filter.trainingType" (selectionChange)="search()">
+                <mat-option value="">
+                    All
+                </mat-option>
+                <mat-option *ngFor="let tt of trainingTypes" [value]="tt.value">
+                    {{ tt.text }}
+                </mat-option>
+            </mat-select>
+        </mat-form-field>
+        <mat-form-field appearance="outline" class="inline-form-field" *ngIf="showColumn('ethicsOfficial')">
+            <mat-label>Filter by Ethics Official</mat-label>
+            <input [(ngModel)]="filter.ethicsOfficial" matInput placeholder="Filter by Ethics Official" (keyup)="search()">
+        </mat-form-field>
+        <mat-form-field appearance="outline" class="inline-form-field" *ngIf="showColumn('location')">
+            <mat-label>Filter by Location</mat-label>
+            <input [(ngModel)]="filter.location" matInput placeholder="Filter byLocation" (keyup)="search()">
+        </mat-form-field>
+    </div>
+    <button mat-flat-button aria-label="Reset Filters" (click)="resetFilters()" [color]="isFiltered() ? 'accent' : ''" class="filter-button" matTooltip="Reset Filters">
+        RESET
+    </button>
+</div>
+<button mat-button (click)="exportClick()">
+    <i class="fa fa-file-excel-o excel-button" title="Download (xlsx)"></i>
+</button>
+<button mat-button (click)="addTraining($event)" matTooltip="Add Training" *ngIf="canAdd"><mat-icon>add</mat-icon> Add Training</button>
+<mat-paginator #paginator [length]="totalData" [pageSizeOptions]="[15, 30, 45, 60]" pageSize="15"  showFirstLastButtons style="margin-top: -45px"></mat-paginator>
+<table mat-table [dataSource]="dataSource" matSort matSortDisableClear [matSortActive]="sortString" [matSortDirection]="sortOrder">
+    <ng-container matColumnDef="employeeName">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header> Name </th>
+        <td mat-cell *matCellDef="let training"> {{ training.employeeName }} </td>
+    </ng-container>
+    <ng-container matColumnDef="employeeStatus">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header> Employee Status </th>
+        <td mat-cell *matCellDef="let training"> {{ training.employeeStatus }} </td>
+    </ng-container>
+    <ng-container matColumnDef="year">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header> Year </th>
+        <td mat-cell *matCellDef="let training"> {{ training.year }} </td>
+    </ng-container>
+    <ng-container matColumnDef="trainingType">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header> Training Type </th>
+        <td mat-cell *matCellDef="let training"> {{ training.trainingType }} </td>
+    </ng-container>
+    <ng-container matColumnDef="ethicsOfficial">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header> Official </th>
+        <td mat-cell *matCellDef="let training"> {{ training.ethicsOfficial }} </td>
+    </ng-container>
+    <ng-container matColumnDef="location">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header> Location </th>
+        <td mat-cell *matCellDef="let training">
+            {{ training.location }}
+        </td>
+    </ng-container>
+    <ng-container matColumnDef="trainingDate">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>Date Attended</th>
+        <td mat-cell *matCellDef="let training"> {{ training.trainingDate | date:'MM/dd/yyyy' }} </td>
+    </ng-container>
+
+    <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+    <tr mat-row *matRowDef="let row; columns: displayedColumns;" (click)="rowSelected(row)"></tr>
+</table>
+<app-training-export-table #exportTable [data]="exportData" hidden="hidden"></app-training-export-table>

@@ -34,7 +34,7 @@ export class OgeForm450 extends DtoBase {
 
     reportableInformationList: ReportableInformation[] = [];
 
-    dueDate: string = "";
+    dueDate: Date = new Date();
 
     isRejected: boolean = false;
     rejectionNotes: string = "";
@@ -49,16 +49,22 @@ export class OgeForm450 extends DtoBase {
     submittedPaperCopy: boolean = false;
     isSubmitting: boolean = false;
     substantiveReviewer: string = "";
+    substantiveReviewerUpn: string = "";
+    reviewStatus: string = "";
     isBlank: boolean = false;
     isUnchanged: boolean = false;
     employeeEmail: string = "";
 
     formFlags: string = "";
-    assignedToEmployeeId: number = 0;
+    assignedToUpn: string = "";
     assignedTo: string = "";
 
+    privateComments: string = "";
+    declineReason: string = "";
+    reasonOther: string = "";
+
     public get dueDateString(): string | null {
-        return Helper.formatDate(Helper.getDate(this.dueDate));
+        return Helper.formatDate(this.dueDate);
     }
 
     public get dateSubmitted(): Date | null {

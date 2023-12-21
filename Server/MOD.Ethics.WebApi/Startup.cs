@@ -1,10 +1,11 @@
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http.Features;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.IdentityModel.Logging;
-using Mod.Ethics.Application;
+using Mod.Ethics.Application.Constants;
 using Mod.Ethics.Infrastructure.Dependency;
 using Mod.Framework.Runtime.Security;
 using Mod.Framework.WebApi.Extensions;
@@ -38,11 +39,19 @@ namespace Mod.Ethics.WebApi
             groups = Environment.GetEnvironmentVariable("MOD_Ethics_SupportGroups").Split(';', ',');
             applicationRoles.Roles.Add(new Role(Roles.OGESupport, groups));
 
+            groups = Environment.GetEnvironmentVariable("MOD_Ethics_EventReviewerGroups").Split(';', ',');
+            applicationRoles.Roles.Add(new Role(Roles.EventReviewer, groups));
+
             services.AddModAspNetCore(options =>
             {
                 options.ApplicationRoles = applicationRoles;
             });
             IdentityModelEventSource.ShowPII = true; //Add this line
+
+            services.Configure<FormOptions>(o => {
+                o.MultipartBodyLengthLimit = 1024 * 1024 * 1024;
+            });
+
             services.AddEthics();
         }
 
@@ -53,6 +62,12 @@ namespace Mod.Ethics.WebApi
             {
                 app.UseDeveloperExceptionPage();
             }
+
+            if (Framework.Configuration.ConfigurationManager.Secrets.Exists("APP_BASE_PATH"))
+            {
+                _ = app.UsePathBase(Framework.Configuration.ConfigurationManager.Secrets["APP_BASE_PATH"]);
+            }
+
 
             app.UseModAspNetCore();
         }

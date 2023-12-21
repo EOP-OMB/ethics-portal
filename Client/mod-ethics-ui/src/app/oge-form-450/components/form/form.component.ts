@@ -76,7 +76,17 @@ export class FormComponent implements OnInit, OnChanges, AfterViewInit {
     }
 
     ngOnInit(): void {
-        // 
+        $("#partI_Examples").collapse('show');
+        $("#partII_Examples").collapse('show');
+        $("#partIII_Examples").collapse('show');
+        $("#partIV_Examples").collapse('show');
+        $("#partV_Examples").collapse('show');
+
+        $("#partI_Instructions").collapse('show');
+        $("#partII_Instructions").collapse('show');
+        $("#partIII_Instructions").collapse('show');
+        $("#partIV_Instructions").collapse('show');
+        $("#partV_Instructions").collapse('show');
     }
 
     scrollTo(hash: string): void {
@@ -122,8 +132,6 @@ export class FormComponent implements OnInit, OnChanges, AfterViewInit {
         if (changes.form && changes.form.currentValue) {
             this.tempReviewDate = this.form.dateOfSubstantiveReview;
 
-            this.initializePopovers();
-
             this.assetsAndIncome = this.form.reportableInformationList.filter(x => x.infoType === InfoType.AssetsAndIncome);
             this.liabilities = this.form.reportableInformationList.filter(x => x.infoType === InfoType.Liabilities);
             this.outsidePositions = this.form.reportableInformationList.filter(x => x.infoType === InfoType.OutsidePositions);
@@ -135,7 +143,7 @@ export class FormComponent implements OnInit, OnChanges, AfterViewInit {
 
             this.disableForm();
 
-            if (this.form.submittedPaperCopy && (this.form.formStatus == FormStatus.SUBMITTED || this.form.formStatus == FormStatus.RE_SUBMITTED || this.form.formStatus == FormStatus.CERTIFIED)) {
+            if (this.form.submittedPaperCopy) {
                 this.showWatermark = true;
             }
         }
@@ -144,6 +152,12 @@ export class FormComponent implements OnInit, OnChanges, AfterViewInit {
     ngAfterViewInit() {
         var headerHtml = $('#pageHeader').html();
         $('.header').html(headerHtml);
+
+        if (this.mode != "COMPARE" && this.form.formStatus == FormStatus.NOT_STARTED && this.form.filer == this.userService.user.upn) {
+            $('#intro-popup').modal();
+        }
+
+        this.initializePopovers();
     }
 
     public get newEntrant(): string {
@@ -198,11 +212,11 @@ export class FormComponent implements OnInit, OnChanges, AfterViewInit {
     }
 
     initializePopovers(): void {
-        $('#lnkPartI').popover({ container: 'body', html: true, content: function () { return $('#partI_Instructions').html(); }, sanitize: false });
-        $('#lnkPartII').popover({ container: 'body', html: true, content: function () { return $('#partII_Instructions').html(); }, sanitize: false });
-        $('#lnkPartIII').popover({ container: 'body', html: true, content: function () { return $('#partIII_Instructions').html(); }, sanitize: false });
-        $('#lnkPartIV').popover({ container: 'body', html: true, content: function () { return $('#partIV_Instructions').html(); }, sanitize: false });
-        $('#lnkPartV').popover({ container: 'body', html: true, content: function () { return $('#partV_Instructions').html(); }, sanitize: false });
+        //$('#lnkPartI').popover({ container: 'body', html: true, content: function () { return $('#partI_Instructions').html(); }, sanitize: false });
+        //$('#lnkPartII').popover({ container: 'body', html: true, content: function () { return $('#partII_Instructions').html(); }, sanitize: false });
+        //$('#lnkPartIII').popover({ container: 'body', html: true, content: function () { return $('#partIII_Instructions').html(); }, sanitize: false });
+        //$('#lnkPartIV').popover({ container: 'body', html: true, content: function () { return $('#partIV_Instructions').html(); }, sanitize: false });
+        //$('#lnkPartV').popover({ container: 'body', html: true, content: function () { return $('#partV_Instructions').html(); }, sanitize: false });
 
         $('#lnkPartIExample').popover({ container: 'body', html: true, content: function () { return $('#partIExample').html(); }, sanitize: false });
         $('#lnkPartIIExample').popover({ container: 'body', html: true, content: function () { return $('#partIIExample').html(); }, sanitize: false });
@@ -210,11 +224,19 @@ export class FormComponent implements OnInit, OnChanges, AfterViewInit {
         $('#lnkPartIVExample').popover({ container: 'body', html: true, content: function () { return $('#partIVExample').html(); }, sanitize: false });
         $('#lnkPartVExample').popover({ container: 'body', html: true, content: function () { return $('#partVExample').html(); }, sanitize: false });
 
-        $('#partI_Examples').html($('#partIExample').html());
-        $('#partII_Examples').html($('#partIIExample').html());
-        $('#partIII_Examples').html($('#partIIIExample').html());
-        $('#partIV_Examples').html($('#partIVExample').html());
-        $('#partV_Examples').html($('#partVExample').html());
+        if (this.mode != "COMPARE") {
+            $('#instructionsI').html($('#partI_Instructions').html());
+            $('#instructionsII').html($('#partII_Instructions').html());
+            $('#instructionsIII').html($('#partIII_Instructions').html());
+            $('#instructionsIV').html($('#partIV_Instructions').html());
+            $('#instructionsV').html($('#partV_Instructions').html());
+
+            $('#partI_Examples').html($('#partIExample').html());
+            $('#partII_Examples').html($('#partIIExample').html());
+            $('#partIII_Examples').html($('#partIIIExample').html());
+            $('#partIV_Examples').html($('#partIVExample').html());
+            $('#partV_Examples').html($('#partVExample').html());
+        }
     };
 
     public isDirty(): boolean {
@@ -312,10 +334,27 @@ export class FormComponent implements OnInit, OnChanges, AfterViewInit {
 
     reviewComplete(): void {
         if (this.canReview()) {
+            this.form.substantiveReviewerUpn = this.userService.user.upn;
             this.form.substantiveReviewer = this.userService.user.displayName;
+            this.form.dateOfSubstantiveReview = this.tempReviewDate;
+            this.form.formStatus = 'In Review';
+            
+            this.save(false, false);
+        }
+    }
+
+    markReadyToCertify(): void {
+        if (this.canReview()) {
+            this.form.formStatus = 'Ready to Certify';
 
             this.save(false, false);
         }
+    }
+
+    submitPaper(): void {
+        this.form.submittedPaperCopy = true;
+        this.form.isSubmitting = true;
+        this.save(true, true);
     }
 
     certifyPaper(): void {
@@ -326,28 +365,40 @@ export class FormComponent implements OnInit, OnChanges, AfterViewInit {
     }
 
     reject(): void {
-        if (this.canCertify()) {
+        if (this.canCertifyAll()) {
             this.form.isRejected = true;
             this.save(false, true);
         }
     }
 
+    get isMyForm(): boolean {
+        return (this.form.filer == this.userService.user.upn);
+    }
+
     canSubmit(): boolean {
-        var ret = (this.form.formStatus == FormStatus.NOT_STARTED || this.form.formStatus == FormStatus.DRAFT || this.form.formStatus == FormStatus.MISSING_INFORMATION) && (this.form.filer == this.userService.user.upn) && this.mode != "COMPARE";
+        var ret = (this.form.formStatus == FormStatus.NOT_STARTED || this.form.formStatus == FormStatus.DRAFT || this.form.formStatus == FormStatus.MISSING_INFORMATION) && this.isMyForm && this.mode != "COMPARE";
 
         return ret;
     }
 
     isSubmitted(): boolean {
-        return (this.form.formStatus == FormStatus.SUBMITTED || this.form.formStatus == FormStatus.RE_SUBMITTED);
+        return (this.form.formStatus == FormStatus.SUBMITTED || this.form.formStatus == FormStatus.RE_SUBMITTED || this.form.formStatus == FormStatus.IN_REVIEW || this.form.formStatus == FormStatus.READY_TO_CERT);
     }
 
     canReview(): boolean {
-        return this.isSubmitted() && (((this.isReviewer || this.isSupport) && (this.form.filer != this.userService.user.upn || environment.debug)) || this.isAdmin) && this.mode != "COMPARE";
+        return this.isSubmitted() && (this.isReviewer || this.canSupport() || this.isAdmin) && (!this.isMyForm || environment.debug) && this.mode != "COMPARE";
+    }
+
+    canSupport(): boolean {
+        return this.isSupport && this.form.reportingStatus == ReportingStatus.ANNUAL && this.form.isBlank;
     }
 
     canCertify(): boolean {
-        return this.isSubmitted() && ((this.isReviewer && (this.form.filer != this.userService.user.upn || environment.debug)) || this.isAdmin) && this.mode != "COMPARE";
+        return this.isSubmitted() && (this.isReviewer || this.isAdmin || this.canSupport()) && (!this.isMyForm || environment.debug) && this.mode != "COMPARE";
+    }
+
+    canCertifyAll(): boolean {
+        return this.isSubmitted() && (this.isReviewer || this.isAdmin) && (!this.isMyForm || environment.debug) && this.mode != "COMPARE";
     }
 
     canSubmitPaper(): boolean {
@@ -363,11 +414,19 @@ export class FormComponent implements OnInit, OnChanges, AfterViewInit {
     }
 
     canSave(): boolean {
-        return this.canSubmit() || this.canCertify();
+        return this.canSubmit() || this.canCertifyAll() || this.canLeavePrivateComment();
+    }
+
+    canLeavePrivateComment() {
+        return this.isReviewer || this.isAdmin;
+    }
+
+    canDecline() {
+        return this.canCertifyAll();
     }
 
     canEdit(): boolean {
-        var ret = (this.canCertify() || !(this.form.formStatus == FormStatus.SUBMITTED || this.form.formStatus == FormStatus.RE_SUBMITTED || this.form.formStatus == FormStatus.CERTIFIED)) && this.mode != "COMPARE";
+        var ret = (this.canCertifyAll() || !(this.isSubmitted() || this.form.formStatus == FormStatus.CERTIFIED || this.form.formStatus == FormStatus.CANCELED || this.form.formStatus == FormStatus.DECLINED)) && this.mode != "COMPARE";
 
         return ret;
     }
@@ -389,6 +448,7 @@ export class FormComponent implements OnInit, OnChanges, AfterViewInit {
             this.toggleModal("review-date-not-set", "show");
         }
         else {
+            this.form.dateOfSubstantiveReview = this.tempReviewDate;
             this.toggleModal("review-date-not-set", "hide");
             this.toggleModal("confirm-certify", "show");
         }
@@ -397,6 +457,13 @@ export class FormComponent implements OnInit, OnChanges, AfterViewInit {
     useToday() {
         this.tempReviewDate = new Date();
         this.promptCertify();
+    }
+
+    decline() {
+        if (this.canDecline()) {
+            this.form.formStatus = FormStatus.DECLINED;
+            this.save(false, true);
+        }
     }
 }
 

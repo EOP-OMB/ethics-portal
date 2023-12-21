@@ -1,12 +1,11 @@
 ﻿using Microsoft.Extensions.Logging;
 using Mod.Ethics.Application.Dtos;
-using Mod.Ethics.Domain.Entities;
 using Mod.Ethics.Domain.Enumerations;
 using Mod.Ethics.Domain.Interfaces;
 using Mod.Framework.Application;
 using Mod.Framework.Application.ObjectMapping;
-using Mod.Framework.Domain.Repositories;
 using Mod.Framework.Runtime.Session;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -42,7 +41,7 @@ namespace Mod.Ethics.Application.Services
             var unique = forms.Select(x => new { upn = x.Filer }).Distinct();
             report.NumberOfElectronicFilers = unique.Count();
 
-            report.RequiredForms = forms.Where(x => x.DueDate.Year >= year).Count();
+            report.RequiredForms = forms.Where(x => Convert.ToDateTime(x.DueDate).Year == year).Count();
 
             List<OgeForm450Dto> filedAlternativeForms = GetFiledAlternativeForms(year, forms);
             report.FiledAlternativeForms = filedAlternativeForms.Count();
@@ -53,7 +52,7 @@ namespace Mod.Ethics.Application.Services
             var filedIds = filedAlternativeForms.Select(x => x.Id).ToList();
             filedIds.AddRange(filedForms.Select(x => x.Id).ToList());
 
-            var notFiled = forms.Where(x => !filedIds.Contains(x.Id)).ToList();
+            var notFiled = forms.Where(x => Convert.ToDateTime(x.DueDate).Year == year && !filedIds.Contains(x.Id)).ToList();
             report.RequiredVsFiled = notFiled;
 
             report.NonYearFilings = GetNonYearFilings(year, forms);
@@ -80,7 +79,7 @@ namespace Mod.Ethics.Application.Services
             canceledForms = Service.GetBy(x => x.DueDate.Year == year && !x.FormStatus.ToLower().Contains("expired") && x.FormStatus == OgeForm450Statuses.CANCELED);
 
             // Widdle down forms to either Due this year or filed this year
-            forms = forms.Where(x => x.DueDate.Year == year ||
+            forms = forms.Where(x => Convert.ToDateTime(x.DueDate).Year == year ||
                                     (x.DateReceivedByAgency != null && x.DateReceivedByAgency.Value.Year == year && !x.SubmittedPaperCopy) ||
                                     (x.DateOfReviewerSignature != null && x.DateOfReviewerSignature.Value.Year == year && x.SubmittedPaperCopy)).ToList();
 
@@ -113,13 +112,14 @@ namespace Mod.Ethics.Application.Services
         {
             return forms.Where(x =>
                                                                 (x.FormStatus == OgeForm450Statuses.CERTIFIED && x.DateOfReviewerSignature != null && x.DateOfReviewerSignature.Value.Year == year) ||
-                                                                (x.FormStatus == OgeForm450Statuses.CANCELED && x.DateCanceled != null && x.DateCanceled.Value.Year == year)
+                                                                (x.FormStatus == OgeForm450Statuses.CANCELED && x.DateCanceled != null && x.DateCanceled.Value.Year == year) ||
+                                                                (x.FormStatus == OgeForm450Statuses.DECLINED && x.DateDeclined != null && x.DateDeclined.Value.Year == year)
                                                            ).ToList();
         }
 
         private static List<OgeForm450Dto> GetNonYearFilings(int year, List<OgeForm450Dto> forms)
         {
-            return forms.Where(x => x.DueDate.Year != year && x.FormStatus == OgeForm450Statuses.CERTIFIED).ToList();
+            return forms.Where(x => Convert.ToDateTime(x.DueDate).Year != year && x.FormStatus == OgeForm450Statuses.CERTIFIED).ToList();
         }
 
         private static List<OgeForm450Dto> GetFiledForms(int year, List<OgeForm450Dto> forms)
@@ -132,7 +132,7 @@ namespace Mod.Ethics.Application.Services
 
             // Based off Submitted Date not Due Date.
             // 
-            return forms.Where(x => x.DateReceivedByAgency != null && x.DateReceivedByAgency.Value.Year == year && !x.SubmittedPaperCopy && x.FormStatus == OgeForm450Statuses.CERTIFIED).ToList();
+            return forms.Where(x => x.DateReceivedByAgency != null && x.DateReceivedByAgency.Value.Year == year && !x.SubmittedPaperCopy && (x.FormStatus == OgeForm450Statuses.CERTIFIED || x.FormStatus == OgeForm450Statuses.SUBMITTED || x.FormStatus == OgeForm450Statuses.IN_REVIEW || x.FormStatus == OgeForm450Statuses.READY_TO_CERT || x.FormStatus == OgeForm450Statuses.DECLINED)).ToList();
         }
 
         private static void ProcessClosedReports(List<EmployeeListDto> employees, List<OgeForm450Dto> forms, IEnumerable<OgeForm450Dto> canceledForms, EoyReportDto report)
@@ -145,7 +145,7 @@ namespace Mod.Ethics.Application.Services
                 if (employee != null)
                 {
                     // Include those that were due before an employee left OMB
-                    if (form.DueDate < employee.InactiveDate)
+                    if (Convert.ToDateTime(form.DueDate) < employee.InactiveDate)
                     {
                         // Unless it was cancled in error and employee was reassigned a form.
                         var reassignedForm = forms.Where(x => x.Filer.ToLower() == employee.Upn.ToLower() && x.Year == form.Year).FirstOrDefault();

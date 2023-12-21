@@ -1,6 +1,7 @@
 ﻿using Mod.Ethics.Application.Dtos;
 using Mod.Ethics.Domain.Entities;
 using Mod.Ethics.Domain.Enumerations;
+using Mod.Ethics.Domain.Views;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -22,13 +23,24 @@ namespace Mod.Ethics.Application.Mapping
                 .ForMember(dto => dto.FormFlags, opt => opt.Ignore())
                 .AfterMap((src, dto) => FinalizeMap(src, dto));
 
+            CreateMap<OgeForm450Table, OgeForm450Dto>()
+                .ForMember(dto => dto.Filer, opt => opt.MapFrom(src => src.FilerUpn))
+                .ForMember(dto => dto.IsOverdue, opt => opt.MapFrom(src => IsOverdue(src)))
+                .ForMember(dto => dto.IsUnchanged, opt => opt.MapFrom(src => (src.FormFlags & (int)OgeForm450Flags.Unchanged) == (int)OgeForm450Flags.Unchanged))
+                .ForMember(dto => dto.SubmittedPaperCopy, opt => opt.MapFrom(src => (src.FormFlags & (int)OgeForm450Flags.SubmittedPaperCopy) == (int)OgeForm450Flags.SubmittedPaperCopy))
+                .ForMember(dto => dto.FormFlags, opt => opt.Ignore())
+                .ForMember(dto => dto.DateOfEmployeeSignature, opt => opt.MapFrom(src => src.DateSubmitted))
+                .ForMember(dto => dto.DateReceivedByAgency, opt => opt.MapFrom(src => src.DateSubmitted))
+                .AfterMap((src, dto) => FinalizeMap(src, dto));
+
             CreateMap<OgeForm450Dto, OgeForm450>()
                 .BeforeMap((dto, entity) => BeforeMap(dto, entity))
                 .ForMember(entity => entity.FilerUpn, opt => opt.MapFrom(dto => dto.Filer))
-                .ForMember(entity => entity.ReportableInformation, opt => opt.MapFrom(dto => dto.ReportableInformationList))
+                .ForMember(entity => entity.ReportableInformation, opt => opt.Ignore()) //MapFrom(dto => dto.ReportableInformationList))  // This is done manually in Update.
                 .ForMember(entity => entity.SgeMailingAddress, opt => opt.MapFrom(dto => dto.MailingAddress))
                 .ForMember(entity => entity.DaysExtended, opt => opt.Ignore())      // Do not map DaysExtended, this is handled specifically upon Extension approval and not through Form Update
-                .ForMember(entity => entity.FormFlags, opt => opt.MapFrom(dto => GetFormFlags(dto)));
+                .ForMember(entity => entity.FormFlags, opt => opt.MapFrom(dto => GetFormFlags(dto)))
+                .ForMember(entity => entity.Year, opt => opt.MapFrom(dto => DateTime.Now.Year));
 
             CreateMap<OgeForm450ReportableInformation, ReportableInformationDto>()
                 .ForMember(dto => dto.InfoType, opt => opt.MapFrom(src => src.Type))
@@ -54,6 +66,9 @@ namespace Mod.Ethics.Application.Mapping
                 else if (newStatus.Status == OgeForm450Statuses.SUBMITTED || newStatus.Status == OgeForm450Statuses.RE_SUBMITTED)
                 {
                     newStatus.CreatedBy = dto.EmployeeSignature;
+                } else if (newStatus.Status == OgeForm450Statuses.DECLINED)
+                {
+                    newStatus.Comment = dto.DeclineReason == "Other" ? "Other - " + dto.ReasonOther : dto.DeclineReason;
                 }
 
                 entity.OgeForm450Statuses.Add(newStatus);
@@ -64,7 +79,7 @@ namespace Mod.Ethics.Application.Mapping
         {
             var flags = 0;
 
-            if (dto.SubmittedPaperCopy && (dto.FormStatus == OgeForm450Statuses.SUBMITTED || dto.FormStatus == OgeForm450Statuses.RE_SUBMITTED || dto.FormStatus == OgeForm450Statuses.CERTIFIED))
+            if (dto.SubmittedPaperCopy)
             {
                 flags += (int)OgeForm450Flags.SubmittedPaperCopy;
                 dto.SubmittedPaperCopy = true;
@@ -78,28 +93,29 @@ namespace Mod.Ethics.Application.Mapping
             return flags;
         }
 
-        private static void FinalizeMap(OgeForm450 src, OgeForm450Dto dto)
+        private static void FinalizeMap(OgeForm450Base src, OgeForm450Dto dto)
         {
             if (src.OgeForm450Statuses != null)
             {
                 var statuses = src.OgeForm450Statuses.ToList();
 
                 dto.DateReceivedByAgency = GetStatusDate(OgeForm450Statuses.SUBMITTED, statuses);
-                dto.DateOfEmployeeSignature = dto.DateReceivedByAgency;
+                dto.DateOfEmployeeSignature = dto.SubmittedPaperCopy ? null : dto.DateReceivedByAgency;
                 dto.DateOfReviewerSignature = GetStatusDate(OgeForm450Statuses.CERTIFIED, statuses);
                 dto.ReSubmittedDate = GetStatusDate(OgeForm450Statuses.RE_SUBMITTED, statuses);
                 dto.DateCanceled = GetStatusDate(OgeForm450Statuses.CANCELED, statuses);
-
+                dto.DateDeclined = GetStatusDate(OgeForm450Statuses.DECLINED, statuses);
+                dto.DeclineReason = GetStatusComments(OgeForm450Statuses.DECLINED, statuses);
                 dto.ReviewingOfficialSignature = GetStatusBy(OgeForm450Statuses.CERTIFIED, statuses);
-                dto.EmployeeSignature = GetStatusBy(OgeForm450Statuses.SUBMITTED, statuses);
+                dto.EmployeeSignature = dto.SubmittedPaperCopy ? "" : GetStatusBy(OgeForm450Statuses.SUBMITTED, statuses);
                 //dto.CommentsOfReviewingOfficial = GetStatusComments(OgeForm450Statuses.CERTIFIED, statuses);
             }
 
             var flags = "";
 
-            dto.IsBlank = !(dto.HasAssetsOrIncome || dto.HasLiabilities || dto.HasOutsidePositions || dto.HasAgreementsOrArrangements || dto.HasGiftsOrTravelReimbursements) && !dto.SubmittedPaperCopy && (dto.FormStatus == OgeForm450Statuses.SUBMITTED || dto.FormStatus == OgeForm450Statuses.RE_SUBMITTED || dto.FormStatus == OgeForm450Statuses.CERTIFIED);
+            dto.IsBlank = !(dto.HasAssetsOrIncome || dto.HasLiabilities || dto.HasOutsidePositions || dto.HasAgreementsOrArrangements || dto.HasGiftsOrTravelReimbursements) && !dto.SubmittedPaperCopy && dto.IsUserFinished();
 
-            if (dto.SubmittedPaperCopy && (dto.FormStatus == OgeForm450Statuses.SUBMITTED || dto.FormStatus == OgeForm450Statuses.RE_SUBMITTED || dto.FormStatus == OgeForm450Statuses.CERTIFIED))
+            if (dto.SubmittedPaperCopy)
             {
                 flags += OgeForm450TextFlags.PAPER_COPY + "|";
                 dto.SubmittedPaperCopy = true;
@@ -122,7 +138,7 @@ namespace Mod.Ethics.Application.Mapping
             dto.FormFlags = flags;
         }
 
-        private static bool IsOverdue(OgeForm450 src)
+        private static bool IsOverdue(OgeForm450Base src)
         {
             var status = src.FormStatus;
 

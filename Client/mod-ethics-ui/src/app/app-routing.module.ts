@@ -16,6 +16,10 @@ const routes: Routes = [
         loadChildren: () => import('./events/events.module').then(m => m.EventsModule),
     },
     {
+        path: 'portal',
+        loadChildren: () => import('./portal/portal.module').then(m => m.PortalModule),
+    },
+    {
         path: 'admin',
         loadChildren: () => import('./admin/admin.module').then(m => m.AdminModule),
         canActivate: [RoleGuardService],

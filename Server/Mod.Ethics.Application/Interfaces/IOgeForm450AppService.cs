@@ -1,4 +1,5 @@
-﻿using Mod.Ethics.Application.Dtos;
+﻿using Microsoft.AspNetCore.Mvc;
+using Mod.Ethics.Application.Dtos;
 using Mod.Ethics.Domain.Entities;
 using Mod.Framework.Application;
 using Mod.Framework.User.Entities;
@@ -14,8 +15,11 @@ namespace Mod.Ethics.Application.Services
         IEnumerable<OgeForm450Dto> GetMyForms();
         OgeForm450Dto GetPreviousForm(int id);
         IEnumerable<OgeForm450Dto> GetReviewableForms();
-        OgeForm450Dto GenerateNewForm(EmployeeDto emp, DateTime dueDate, int year, OgeForm450 previousForm = null);
+        OgeForm450Dto GenerateNewForm(EmployeeDto emp, DateTime dueDate, OgeForm450 previousForm = null);
         void Extend(ExtensionRequestDto extension);
-        IEnumerable<OgeForm450Dto> GetFormsByEmployee(int employeeId);
+        IEnumerable<OgeForm450Dto> GetFormsByEmployee(string upn);
+        OgeForm450Summary GetSummary();
+        OgeForm450StatusChart GetStatusChart();
+        ActionResult<OgeForm450> AssignForm(int id, string assignedToUpn);
     }
 }

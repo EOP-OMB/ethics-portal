@@ -13,6 +13,8 @@ namespace Mod.Ethics.Application.Services
         List<EmployeeListDto> Search(string query);
 
         List<EmployeeListDto> GetReviewers();
+        List<EmployeeListDto> GetEventReviewers();
         List<EmployeeListDto> GetAllIncludeInactive();
+        List<EmployeeListDto> GetAllNoFilter();
     }
 }

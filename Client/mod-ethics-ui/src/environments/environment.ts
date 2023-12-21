@@ -6,8 +6,6 @@ export const environment = {
     production: false,
     apiUrl: "https://localhost:44374",
     debug: true,
-    portalUrl: "https://ethics.staging.omb.gov/",
-    eventsUrl: "https://ethics.staging.omb.gov/events",
     portfolioUrl: "https://portfolio.staging.omb.gov/portfolio/"
 };
 

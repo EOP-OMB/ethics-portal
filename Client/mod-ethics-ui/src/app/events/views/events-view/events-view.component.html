@@ -1,0 +1,30 @@
+<mat-drawer-container>
+    <mat-drawer #drawer mode="over" position="end" class="details-drawer" (closedStart)="drawerClosing()" [opened]="false" [autoFocus]="false">
+        <div class="drawer-container">
+            <button mat-icon-button type="button" (click)="this.drawer.close()" class="drawer-close"><mat-icon>close</mat-icon></button>
+            <div *ngIf="selectedEvent">
+                <app-event-request-detail [event]="selectedEvent"[reviewers]="reviewers" (saved)="eventSaved($event)"></app-event-request-detail>
+            </div>
+        </div>
+    </mat-drawer>
+    <mat-drawer-content>
+        <div class="view-container">
+            <mat-card>
+                <div class="widget-row">
+                    <div class="widget">
+                        <app-widget [data]="openWidget" icon="calendar_today" (widgetClick)="openClicked()"></app-widget>
+                    </div>
+                    <div class="widget">
+                        <app-widget [data]="upcomingWidget" icon="upcoming" (widgetClick)="upcommingClicked()"></app-widget>
+                    </div>
+                    <div class="widget">
+                        <app-widget [data]="assignedWidget" icon="perm_contact_calendar" (widgetClick)="assignedClicked()"></app-widget>
+                    </div>
+                </div>
+                <div style="padding-top: 20px;">
+                    <app-event-request-table #table key="events" [reviewers]="reviewers" [pageSizeOptions]="[15, 30, 45, 60]" (rowSelect)="onEventSelect($event)"></app-event-request-table>
+                </div>
+            </mat-card>
+        </div>
+    </mat-drawer-content>
+</mat-drawer-container>

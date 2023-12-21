@@ -1,24 +1,24 @@
 ﻿using Microsoft.Extensions.Logging;
 using Mod.Ethics.Application.Dtos;
+using Mod.Ethics.Application.Constants;
 using Mod.Ethics.Domain.Entities;
 using Mod.Ethics.Domain.Enumerations;
 using Mod.Ethics.Domain.Interfaces;
 using Mod.Framework.Application;
 using Mod.Framework.Application.ObjectMapping;
-using Mod.Framework.Domain.Repositories;
 using Mod.Framework.Runtime.Session;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Mod.Ethics.Domain;
 using System.Security;
 using Mod.Framework.User.Interfaces;
 using Mod.Framework.User.Entities;
-using Mod.Framework.Runtime.Security;
-using Mod.Ethics.Domain.Helpers;
 using Mod.Framework.Notifications.Domain.Services;
 using Mod.Framework.Notifications.Domain.Entities;
 using System.Linq.Expressions;
+using Microsoft.AspNetCore.Mvc;
+using Mod.Framework.Configuration;
+using Mod.Framework.Domain.Entities;
 
 namespace Mod.Ethics.Application.Services
 {
@@ -35,12 +35,13 @@ namespace Mod.Ethics.Application.Services
         private readonly INotificationDomService NotificationService;
 
         private new readonly IOgeForm450Repository Repository;
+        private readonly IOgeForm450ExtensionRequestRepository ExtensionRepository;
 
         private readonly List<EmployeeListDto> Reviewers;
 
         private List<Notification> _pendingEmails;
 
-        public OgeForm450AppService(IOgeForm450Repository repository, INotificationDomService notificationService, ISettingsAppService settingsService, IEmployeeRepository employeeRepo, IEmployeeListAppService employeeService, IObjectMapper objectMapper, ILogger<IAppService> logger, IModSession session) : base(repository, objectMapper, logger, session)
+        public OgeForm450AppService(IOgeForm450Repository repository, INotificationDomService notificationService, ISettingsAppService settingsService, IEmployeeRepository employeeRepo, IEmployeeListAppService employeeService, IObjectMapper objectMapper, ILogger<IAppService> logger, IModSession session, IOgeForm450ExtensionRequestRepository extensionRepo) : base(repository, objectMapper, logger, session)
         {
             SettingsService = settingsService;
             EmployeeRepository = employeeRepo;
@@ -48,6 +49,7 @@ namespace Mod.Ethics.Application.Services
             NotificationService = notificationService;
 
             Reviewers = employeeService.GetReviewers();
+            ExtensionRepository = extensionRepo;
         }
 
         public override IEnumerable<OgeForm450Dto> GetAll()
@@ -68,7 +70,9 @@ namespace Mod.Ethics.Application.Services
         {
             var form = GetIncluding(id, x => x.OgeForm450Statuses, y => y.ReportableInformation);
             var prev = GetPreviousForm(form.Year, form.Filer);
-            SetReportableInformation(form, prev);
+            
+            if (form != null)
+                SetReportableInformation(form, prev);
 
             return form;
         }
@@ -76,9 +80,11 @@ namespace Mod.Ethics.Application.Services
         public OgeForm450Dto GetCurrentForm()
         {
             var settings = SettingsService.Get();
-            var list = GetByIncluding(x => x.FilerUpn.ToLower() == Session.UserId.ToLower() && x.FormStatus != OgeForm450Statuses.CANCELED && x.Year == settings.CurrentFilingYear, y => y.OgeForm450Statuses, z => z.ReportableInformation);
+            var form = GetByIncluding(x => x.FilerUpn.ToLower() == Session.UserId.ToLower() && x.FormStatus != OgeForm450Statuses.CANCELED, y => y.OgeForm450Statuses, z => z.ReportableInformation).OrderByDescending(x => Convert.ToDateTime(x.DueDate)).FirstOrDefault();
+            if (form != null)
+                SetReportableInformation(form, null);
 
-            return list.OrderByDescending(x => x.DueDate).FirstOrDefault();
+            return form;
         }
 
         public IEnumerable<OgeForm450Dto> GetMyForms()
@@ -88,10 +94,9 @@ namespace Mod.Ethics.Application.Services
             return list;
         }
 
-        public IEnumerable<OgeForm450Dto> GetFormsByEmployee(int employeeId)
+        public IEnumerable<OgeForm450Dto> GetFormsByEmployee(string upn)
         {
-            var emp = EmployeeRepository.GetNoFilter(employeeId);
-            var list = GetByIncluding(x => x.FilerUpn == emp.Upn, y => y.OgeForm450Statuses).ToList();
+            var list = GetByIncluding(x => x.FilerUpn == upn, y => y.OgeForm450Statuses).ToList();
 
             return list;
         }
@@ -116,7 +121,8 @@ namespace Mod.Ethics.Application.Services
                     // Has a previous form, go ahead and use the already canned functions to get that form with the included information
                     // could combine this step and the GetPreviousForm above, but re-used functions where availble.
                     form = GetIncluding(prev.Id, x => x.OgeForm450Statuses, y => y.ReportableInformation);
-                    SetReportableInformation(form, null);
+                    if (form != null)
+                        SetReportableInformation(form, null);
                 }
                 else
                 {
@@ -135,7 +141,10 @@ namespace Mod.Ethics.Application.Services
 
         public IEnumerable<OgeForm450Dto> GetReviewableForms()
         {
-            var list = GetByIncluding(x => x.FormStatus == OgeForm450Statuses.SUBMITTED ||
+            var list = GetByIncluding(x =>
+                    x.FormStatus == OgeForm450Statuses.IN_REVIEW ||
+                    x.FormStatus == OgeForm450Statuses.READY_TO_CERT ||
+                    x.FormStatus == OgeForm450Statuses.SUBMITTED ||
                     x.FormStatus == OgeForm450Statuses.RE_SUBMITTED ||
                     x.FormStatus == OgeForm450Statuses.NOT_STARTED ||
                     x.FormStatus == OgeForm450Statuses.DRAFT ||
@@ -150,12 +159,12 @@ namespace Mod.Ethics.Application.Services
 
             if (flag == "unchanged")
             {
-                formsToCertify = formsToCertify.Where(x => x.IsUnchanged == true && (x.FormStatus == OgeForm450Statuses.SUBMITTED || x.FormStatus == OgeForm450Statuses.RE_SUBMITTED)).ToList();
+                formsToCertify = formsToCertify.Where(x => x.IsUnchanged == true && this.IsSubmitted(x)).ToList();
             } 
             else if (flag == "blank")
             {
                 // Added constraint of only certifying ANNUAL forms per Laurie's request 7/11/2019 -SBK
-                formsToCertify = formsToCertify.Where(x => x.IsBlank == true && x.ReportingStatus == OgeForm450ReportingStatuses.ANNUAL && (x.FormStatus == OgeForm450Statuses.SUBMITTED || x.FormStatus == OgeForm450Statuses.RE_SUBMITTED)).ToList();
+                formsToCertify = formsToCertify.Where(x => x.IsBlank == true && x.ReportingStatus == OgeForm450ReportingStatuses.ANNUAL && this.IsSubmitted(x)).ToList();
             }
 
             foreach (OgeForm450Dto form in formsToCertify)
@@ -165,6 +174,16 @@ namespace Mod.Ethics.Application.Services
             }
 
             return formsToCertify;
+        }
+
+        private bool IsSubmitted(OgeForm450Dto form)
+        {
+            return (form.FormStatus == OgeForm450Statuses.SUBMITTED || form.FormStatus == OgeForm450Statuses.RE_SUBMITTED || form.FormStatus == OgeForm450Statuses.IN_REVIEW || form.FormStatus == OgeForm450Statuses.READY_TO_CERT);
+        }
+
+        private bool IsSubmitted(OgeForm450 form)
+        {
+            return (form.FormStatus == OgeForm450Statuses.SUBMITTED || form.FormStatus == OgeForm450Statuses.RE_SUBMITTED || form.FormStatus == OgeForm450Statuses.IN_REVIEW || form.FormStatus == OgeForm450Statuses.READY_TO_CERT);
         }
 
         public override OgeForm450Dto Create(OgeForm450Dto dto)
@@ -178,7 +197,7 @@ namespace Mod.Ethics.Application.Services
 
         // When Creating from employee save:
         // dueDate = emp.DueDate ?? GetNextBusinessDay(DateTime.Now, 30);
-        public OgeForm450Dto GenerateNewForm(EmployeeDto emp, DateTime dueDate, int year, OgeForm450 previousForm = null)
+        public OgeForm450Dto GenerateNewForm(EmployeeDto emp, DateTime dueDate, OgeForm450 previousForm = null)
         {
             var form = new OgeForm450();
 
@@ -197,13 +216,12 @@ namespace Mod.Ethics.Application.Services
             form.DueDate = dueDate;
             form.FormStatus = OgeForm450Statuses.NOT_STARTED;
             form.ReportingStatus = emp.ReportingStatus;
-            form.Title = emp.DisplayName + " (" + year.ToString() + ")";
+            form.Title = emp.DisplayName + " (" + DateTime.Now.Year.ToString() + ")";
             form.WorkPhone = emp.MobilePhone;
             form.PositionTitle = emp.Title;
 
-            form.Year = year;
             form.CorrelationId = Guid.NewGuid().ToString();
-            form.FormFlags += (int)OgeForm450Flags.SubmittedPaperCopy;
+            form.FormFlags = 0;
 
             if (previousForm != null)
             {
@@ -256,12 +274,12 @@ namespace Mod.Ethics.Application.Services
 
             if (form.ReportingStatus == OgeForm450ReportingStatuses.NEW_ENTRANT)
             {
-                var notification = NotificationService.CreateNotification((int)NotificationTypes.FormNewEntrant, form.EmailAddress, dict, emp.NewEntrantEmailText);
+                var notification = NotificationService.CreateNotification((int)NotificationTypes.FormNewEntrant, form.EmailAddress, dict, emp.NewEntrantEmailText, "");
                 NotificationService.AddNotification(notification);
             }
             else if (form.ReportingStatus == OgeForm450ReportingStatuses.ANNUAL)
             {
-                var notification = NotificationService.CreateNotification((int)NotificationTypes.FormNewAnnual, form.EmailAddress, dict, emp.AnnualEmailText);
+                var notification = NotificationService.CreateNotification((int)NotificationTypes.FormNewAnnual, form.EmailAddress, dict, emp.AnnualEmailText, "");
                 NotificationService.AddNotification(notification);
             }
         }
@@ -272,7 +290,7 @@ namespace Mod.Ethics.Application.Services
                 throw new SecurityException("Access denied.  Cannot update object of type " + typeof(OgeForm450).Name);
 
             var e = new CrudEventArgs<OgeForm450Dto, OgeForm450>();
-            var entity = Repository.GetIncluding(dto.Id, y => y.OgeForm450Statuses);
+            var entity = Repository.GetIncluding(dto.Id, y => y.OgeForm450Statuses, z => z.ReportableInformation);
 
             e.Entity = entity;
             e.Dto = dto;
@@ -293,6 +311,48 @@ namespace Mod.Ethics.Application.Services
             return e.Dto;
         }
 
+        protected override void MapToEntity(OgeForm450Dto updateInput, OgeForm450 entity)
+        {
+            base.MapToEntity(updateInput, entity);
+
+            // Handle Updates/Deletes
+            foreach (var ri in entity.ReportableInformation)
+            {
+                var dto = updateInput.ReportableInformationList.FirstOrDefault(x => x.Id == ri.Id);
+                if (dto is null)
+                {
+                    // Reportable Info was removed
+                    ri.IsDeleted = true;
+                }
+                else
+                {
+                    MapReportableInformation(dto, ri);
+                }
+            }
+
+            // Handle Adds
+            foreach (var riDto in updateInput.ReportableInformationList)
+            {
+                if (riDto.Id == 0)
+                {
+                    var ri = new OgeForm450ReportableInformation();
+
+                    MapReportableInformation(riDto, ri);
+
+                    entity.ReportableInformation.Add(ri);
+                }
+            }
+        }
+
+        private void MapReportableInformation(ReportableInformationDto dto, OgeForm450ReportableInformation ri)
+        {
+            ri.Type = dto.InfoType;
+            ri.Name = dto.Name;
+            ri.Description = dto.Description;
+            ri.AdditionalInfo = dto.AdditionalInfo;
+            ri.NoLongerHeld = dto.NoLongerHeld;
+        }
+
         protected override void OnBeforeUpdate(CrudEventArgs<OgeForm450Dto, OgeForm450> e)
         {
             var filer = EmployeeRepository.GetAllNoFilter(x => x.Upn.ToLower() == e.Dto.Filer.ToLower()).Single();
@@ -303,13 +363,28 @@ namespace Mod.Ethics.Application.Services
             e.Cancel = !CanSave(filer, e.Entity);
             e.Dto.ClearEmptyReportableInformation();
 
+            if (!e.Dto.HasAssetsOrIncome)
+                e.Dto.ReportableInformationList.Where(x => x.InfoType == ReportableInformationType.AssetsAndIncome).ToList().ForEach(x => x.IsDeleted = true);
+
+            if (!e.Dto.HasAgreementsOrArrangements)
+                e.Dto.ReportableInformationList.Where(x => x.InfoType == ReportableInformationType.AgreementsOrArrangements).ToList().ForEach(x => x.IsDeleted = true);
+
+            if (!e.Dto.HasOutsidePositions)
+                e.Dto.ReportableInformationList.Where(x => x.InfoType == ReportableInformationType.OutsidePositions).ToList().ForEach(x => x.IsDeleted = true);
+
+            if (!e.Dto.HasGiftsOrTravelReimbursements)
+                e.Dto.ReportableInformationList.Where(x => x.InfoType == ReportableInformationType.GiftsOrTravelReimbursements).ToList().ForEach(x => x.IsDeleted = true);
+
+            if (!e.Dto.HasLiabilities)
+                e.Dto.ReportableInformationList.Where(x => x.InfoType == ReportableInformationType.Liabilities).ToList().ForEach(x => x.IsDeleted = true);
+
             if (!e.Cancel)
             {
                 // We can save, run the rest of the checks
                 RunUpdateChecks(e);
                 CheckForSubmission(e, filer, dict);
 
-                if ((e.Dto.FormStatus == OgeForm450Statuses.NOT_STARTED || string.IsNullOrEmpty(e.Dto.FormStatus)) && e.Dto.DueDate == e.Entity.DueDate && Session.Principal.Upn.ToLower() == filer.Upn.ToLower())
+                if ((e.Dto.FormStatus == OgeForm450Statuses.NOT_STARTED || string.IsNullOrEmpty(e.Dto.FormStatus)) && Convert.ToDateTime(e.Dto.DueDate) == e.Entity.DueDate && Session.Principal.Upn.ToLower() == filer.Upn.ToLower())
                 {
                     // If the form is being saved for the first time (ie status is "Not Started"), update it to Draft
                     // Only if it's the filer making the change and not an admin changing the due date.
@@ -337,7 +412,7 @@ namespace Mod.Ethics.Application.Services
 
         private void CheckForSubmission(CrudEventArgs<OgeForm450Dto, OgeForm450> e, Employee filer, Dictionary<string, string> dict)
         {
-            if (Session.Principal.Upn.ToLower() == filer.Upn.ToLower() && e.Dto.IsSubmitting == true)
+            if ((Session.Principal.Upn.ToLower() == filer.Upn.ToLower() || e.Dto.SubmittedPaperCopy) && e.Dto.IsSubmitting == true)
             {
                 // If the Employee signed the form, stamp the date/time and update the FormStatus to Submitted
                 if (e.Entity.FormStatus == OgeForm450Statuses.MISSING_INFORMATION)
@@ -350,16 +425,20 @@ namespace Mod.Ethics.Application.Services
                 {
                     // First Submission
                     e.Dto.FormStatus = OgeForm450Statuses.SUBMITTED;
-                    e.Dto.DateOfEmployeeSignature = DateTime.Now.Date;
-                    e.Dto.EmployeeSignature = Session.Principal.DisplayName;
+                    if (!e.Dto.SubmittedPaperCopy)
+                    {
+                        e.Dto.EmployeeSignature = Session.Principal.DisplayName;
+                        e.Dto.DateOfEmployeeSignature = DateTime.Now.Date;
+                    }
+
                     e.Dto.DateReceivedByAgency = DateTime.Now;
                 }
 
                 e.Dto.IsUnchanged = CompareVsPreviousForm(e.Dto);
 
-                var notification = NotificationService.CreateNotification((int)NotificationTypes.FormSubmitted, Session.Principal.EmailAddress, dict);
+                var notification = NotificationService.CreateNotification((int)NotificationTypes.FormSubmitted, Session.Principal.EmailAddress, dict, "");
                 _pendingEmails.Add(notification);
-                notification = NotificationService.CreateNotification((int)NotificationTypes.FormConfirmation, filer.EmailAddress, dict);
+                notification = NotificationService.CreateNotification((int)NotificationTypes.FormConfirmation, filer.EmailAddress, dict, "");
                 _pendingEmails.Add(notification);
             }
         }
@@ -372,7 +451,7 @@ namespace Mod.Ethics.Application.Services
                 {
                     e.Dto.FormStatus = OgeForm450Statuses.MISSING_INFORMATION;
 
-                    var notification = NotificationService.CreateNotification((int)NotificationTypes.FormMissingInformation, filer.EmailAddress, dict);
+                    var notification = NotificationService.CreateNotification((int)NotificationTypes.FormMissingInformation, filer.EmailAddress, dict, "");
                     _pendingEmails.Add(notification);
                 }
 
@@ -383,8 +462,14 @@ namespace Mod.Ethics.Application.Services
                     // If the reviewing official signed the form, stamp the date/time and update the FormStatus to Certified
                     e.Dto.DateOfReviewerSignature = DateTime.Now;
                     e.Dto.FormStatus = OgeForm450Statuses.CERTIFIED;
+                    
+                    if (e.Dto.SubmittedPaperCopy)
+                    {
+                        // if we're certifying a Paper Copy, Insert Note
+                        e.Dto.CommentsOfReviewingOfficial = "Certification based on filer’s paper submission.\r\n" + e.Dto.CommentsOfReviewingOfficial;
+                    }
 
-                    var notification = NotificationService.CreateNotification((int)NotificationTypes.FormCertified, filer.EmailAddress, dict);
+                    var notification = NotificationService.CreateNotification((int)NotificationTypes.FormCertified, filer.EmailAddress, dict, "");
                     _pendingEmails.Add(notification);
                 }
             }
@@ -393,10 +478,10 @@ namespace Mod.Ethics.Application.Services
 
         private void RunUpdateChecks(CrudEventArgs<OgeForm450Dto, OgeForm450> e)
         {
-            if ((e.Dto.DaysExtended != e.Entity.DaysExtended && e.Dto.DueDate != e.Entity.DueDate) || (e.Dto.DueDate != e.Entity.DueDate && !Session.Principal.IsInRole(Roles.EthicsAppAdmin)))
+            if ((e.Dto.DaysExtended != e.Entity.DaysExtended && Convert.ToDateTime(e.Dto.DueDate) != e.Entity.DueDate) || (Convert.ToDateTime(e.Dto.DueDate) != e.Entity.DueDate && !Session.Principal.IsInRole(Roles.EthicsAppAdmin)))
             {
                 // if here, form has been extended after form was loaded and subsequently saved.  Use the old item's due date.
-                e.Dto.DueDate = e.Entity.DueDate;
+                e.Dto.DueDate = e.Entity.DueDate.ToShortDateString();
             }
 
             // Set status back to old item (do not update FormStatus, or DaysExtended, set elsewhere)
@@ -414,23 +499,48 @@ namespace Mod.Ethics.Application.Services
                     RemoveExtensions(e.Dto.Id);
                 }
             }
-
-            e.Dto.DaysExtended = e.Entity.DaysExtended;
         }
 
         protected override void OnUpdated(CrudEventArgs<OgeForm450Dto, OgeForm450> e)
         {
+            if (e.Entity.FormStatus == OgeForm450Statuses.CERTIFIED)
+            {
+                // Update Last 450 File Date
+                var emp = EmployeeRepository.GetByUpn(e.Entity.FilerUpn);
+                if (emp != null)
+                {
+                    emp.SetAttributeValue(EmployeeAttributes.Last450Date, e.Dto.DateOfReviewerSignature.ToString());
+                    EmployeeRepository.SaveChanges();
+                }
+
+                // Clear all Pending Extensions
+                var extensions = ExtensionRepository.GetAll(x => x.Status == ExtensionRequestStatuses.PENDING);
+
+                if (extensions.Count > 0)
+                {
+                    foreach (OgeForm450ExtensionRequest ext in extensions)
+                    {
+                        ext.Status = ExtensionRequestStatuses.CANCELED;
+                    }
+
+                    ExtensionRepository.SaveChanges();
+                }
+            }
+
             foreach (Notification n in _pendingEmails)
             {
                 NotificationService.AddNotification(n);
             }
+
+            e.Dto.ReportableInformationList = e.Dto.ReportableInformationList.Where(x => !x.IsDeleted).ToList();
+            SetReportableInformation(e.Dto, null);
         }
 
         private bool CanSave(Employee filer, OgeForm450 oldForm)
         {
             // can save this form if it's the user's form or if user is an admin or reviewer
             var canUserSave = (Session.Principal.Upn == filer.Upn.ToLower() && (oldForm.FormStatus == OgeForm450Statuses.DRAFT || oldForm.FormStatus == OgeForm450Statuses.NOT_STARTED || oldForm.FormStatus == OgeForm450Statuses.MISSING_INFORMATION));
-            var canReviewerSave = Session.Principal.IsInRole(Roles.OGEReviewer) && (oldForm.FormStatus == OgeForm450Statuses.SUBMITTED || oldForm.FormStatus == OgeForm450Statuses.RE_SUBMITTED);
+            var canReviewerSave = Session.Principal.IsInRole(Roles.OGEReviewer) && this.IsSubmitted(oldForm);
 
             return canUserSave || canReviewerSave || Session.Principal.IsInRole(Roles.EthicsAppAdmin) || Session.Principal.IsInRole(Roles.OGESupport);
         }
@@ -484,27 +594,16 @@ namespace Mod.Ethics.Application.Services
         {
             dto = base.PostMap(dto);
 
-            var reviewer = Reviewers.Where(x => x.Id == dto.AssignedToEmployeeId).FirstOrDefault();
-            dto.AssignedTo = reviewer != null ? reviewer.DisplayName : "";
-
             return dto;
-        }
-
-        private string GetEmployeeName(int employeeId)
-        {
-            var empName = "Not Assigned";
-
-            if (employeeId > 0)
-            {
-                var emp = EmployeeRepository.Get(employeeId);
-                empName = emp.DisplayName;
-            }
-
-            return empName;
         }
 
         private static void SetReportableInformation(OgeForm450Dto form, OgeForm450Dto compareForm)
         {
+            if (form.ReportableInformationList == null)
+            {
+                form.ReportableInformationList = new List<ReportableInformationDto>();
+            }
+
             var count = form.ReportableInformationList.Count(x => x.InfoType == ReportableInformationType.AssetsAndIncome);
             for (int i = count; i < CalcMin(MIN_ASSETS, form, compareForm, ReportableInformationType.AssetsAndIncome); i++)
                 form.ReportableInformationList.Add(new ReportableInformationDto(ReportableInformationType.AssetsAndIncome));
@@ -537,7 +636,7 @@ namespace Mod.Ethics.Application.Services
 
         public void Extend(ExtensionRequestDto extension)
         {
-            var form = Repository.GetIncluding(extension.OGEForm450Id, x => x.OgeForm450Statuses);
+            var form = Repository.GetIncluding(extension.OgeForm450Id, x => x.OgeForm450Statuses);
 
             form.DueDate = extension.ExtensionDate;
             form.DaysExtended += extension.DaysRequested;
@@ -560,7 +659,7 @@ namespace Mod.Ethics.Application.Services
             dict.Add("Filer", dto.EmployeesName);
             dict.Add("ReviewerNote", dto.CommentsOfReviewingOfficial);
             dict.Add("RejectionNotes", dto.RejectionNotes);
-            dict.Add("DueDate", dto.DueDate.ToShortDateString());
+            dict.Add("DueDate", Convert.ToDateTime(dto.DueDate).ToShortDateString());
 
             return dict;
         }
@@ -588,6 +687,52 @@ namespace Mod.Ethics.Application.Services
             }
 
             Repository.Update(form); 
+        }
+
+        public OgeForm450Summary GetSummary()
+        {
+            var summary = new OgeForm450Summary();
+
+            summary.SubmittedForms = Repository.GetAll(x => x.FormStatus == OgeForm450Statuses.SUBMITTED || x.FormStatus == OgeForm450Statuses.RE_SUBMITTED).Count();
+            summary.Extensions = ExtensionRepository.GetAll(x => x.Status == ExtensionRequestStatuses.PENDING).Count();
+            summary.OverdueForms = Repository.GetAll(x => x.DueDate <=  DateTime.Now && (x.FormStatus == OgeForm450Statuses.NOT_STARTED || x.FormStatus == OgeForm450Statuses.DRAFT || x.FormStatus == OgeForm450Statuses.MISSING_INFORMATION)).Count();
+            summary.ReadyToCertify = Repository.GetAll(x => x.FormStatus == OgeForm450Statuses.READY_TO_CERT).Count();
+
+            return summary;
+        }
+
+        public ActionResult<OgeForm450> AssignForm(int id, string assignedToUpn)
+        {
+            var form = Repository.Get(id);
+            var employee = assignedToUpn == null ? null : Reviewers.Where(x => x.Upn.ToLower() == assignedToUpn.ToLower()).FirstOrDefault();
+            form.AssignedToUpn = assignedToUpn;
+            form.AssignedTo = employee?.DisplayName;
+            return Repository.Save(form);
+        }
+
+        public OgeForm450StatusChart GetStatusChart()
+        {
+            var data = new OgeForm450StatusChart();
+
+            data.Labels = new List<string>(new string[] { "Not-Started", "Draft", "Missing Information", "Overdue", "Submitted", "Certified" });
+
+            var settings = SettingsService.Get();
+
+            var forms = GetBy(x => x.CreatedTime.Year == DateTime.Now.Year);
+
+            var notStarted = forms.Where(x => x.FormStatus == OgeForm450Statuses.NOT_STARTED).Count();
+            var draft = forms.Where(x => x.FormStatus == OgeForm450Statuses.DRAFT).Count();
+            var missingInfo = forms.Where(x => x.FormStatus == OgeForm450Statuses.MISSING_INFORMATION).Count();
+            var overdue = forms.Where(x => x.IsOverdue == true).Count();
+            var submitted = forms.Where(x => x.FormStatus == OgeForm450Statuses.SUBMITTED || x.FormStatus == OgeForm450Statuses.RE_SUBMITTED).Count();
+            var certified = forms.Where(x => x.FormStatus == OgeForm450Statuses.CERTIFIED).Count();
+            var inReview = forms.Where(x => x.FormStatus == OgeForm450Statuses.IN_REVIEW).Count();
+            var readyToCert = forms.Where(x => x.FormStatus == OgeForm450Statuses.READY_TO_CERT).Count();
+            var declined = forms.Where(x => x.FormStatus == OgeForm450Statuses.DECLINED).Count();
+
+            data.Data = new List<int>(new int[] { notStarted, draft, missingInfo, overdue, inReview + readyToCert + submitted, certified + declined });
+
+            return data;
         }
     }
 }

@@ -1,1 +1,30 @@
-<p>event-request-view works!</p>
+<!--<div (window:beforeunload)="confirmClose()"></div>-->
+<div class="event-view" *ngIf="request">
+    <mat-card class="event-card">
+        <div id="event">
+            <app-event-request-form [request]="request"></app-event-request-form>
+            <div class="alert alert-success alert-fixed" id="success-alert" style="display: none; margin-top: 145px;">
+                <div type="button" class="close" data-dismiss="alert">x</div>
+                <strong>Success! </strong>
+                Event Request saved successfully.
+            </div>
+        </div>
+    </mat-card>
+</div>
+<!--<div class="modal fade" id="confirm-close" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header modal-header-danger">
+                <div class="modal-title" style="font-size: 1.5em;"><i class="fa fa-exclamation-triangle" style="padding-right: 20px;"></i>Unsaved Changes Detected</div>
+            </div>
+            <div class="modal-body">
+                <p>There are unsaved changes on this form, if you leave this page the changes will be lost.</p>
+            </div>
+            <div class="modal-footer">
+                <div type="button" class="btn btn-primary" style="float: left;" (click)="saveAndClose()">Save and Close</div>
+                <div type="button" class="btn btn-default" data-dismiss="modal">Stay on Page</div>
+                <div class="btn btn-danger btn-ok" (click)="confirmClose()">Leave Page</div>
+            </div>
+        </div>
+    </div>
+</div>-->

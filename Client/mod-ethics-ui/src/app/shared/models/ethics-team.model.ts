@@ -1,8 +1,8 @@
 import { DtoBase } from "mod-framework";
 
 export class EthicsTeam extends DtoBase {
+    name: string = "";
     title: string = "";
-    position: string = "";
     org: string = "";
     branch: string = "";
     email: string = "";
@@ -10,4 +10,5 @@ export class EthicsTeam extends DtoBase {
     cellPhone: string = "";
     isUser: boolean = true;
     employeeId: number = 0;
+    sortOrder: number = 0;
 }

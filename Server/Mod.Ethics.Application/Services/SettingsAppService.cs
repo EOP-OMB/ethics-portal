@@ -1,16 +1,13 @@
 ﻿using Microsoft.Extensions.Logging;
 using Mod.Ethics.Application.Dtos;
 using Mod.Ethics.Domain.Entities;
-using Mod.Ethics.Domain.Enumerations;
 using Mod.Ethics.Domain.Interfaces;
 using Mod.Framework.Application;
 using Mod.Framework.Application.ObjectMapping;
 using Mod.Framework.Runtime.Session;
-using Mod.Framework.User.Entities;
 using Mod.Framework.User.Interfaces;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading;
 
 namespace Mod.Ethics.Application.Services
 {

@@ -12,6 +12,7 @@ namespace Mod.Ethics.Domain.Entities
     public class Guidance : FullAuditedEntity
     {
         public int EmployeeId { get; set; }
+        public string EmployeeUpn { get; set; }
         public string GuidanceType { get; set; }
         public string Subject { get; set; }
         public string Text { get; set; }

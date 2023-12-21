@@ -13,27 +13,45 @@ namespace Mod.Ethics.WebApi.Controllers
     [Authorize]
     public class EventRequestController : CrudControllerBase<EventRequestDto, EventRequest>
     {
-        public EventRequestController(ILogger<EventRequestController> logger, IEventRequestAppService service) : base(logger, service)
-        {
+        private EventRequestTableAppService TableService { get; }
+        new readonly IEventRequestAppService Service;
 
+        public EventRequestController(ILogger<EventRequestController> logger, IEventRequestAppService service, EventRequestTableAppService tableService) : base(logger, service)
+        {
+            TableService = tableService;
+            Service = service;
         }
 
-        [HttpGet("MyEvents")]
-        public virtual ActionResult<List<EventRequestDto>> MyEvents()
+        [HttpGet("GetTable")]
+        public virtual ActionResult<TableBase<EventRequestDto>> GetTable(int page, int pageSize, string sort, string sortDirection, string filter)
         {
-            return StatusCode(501);
-        }
-
-        [HttpGet("OpenEvents")]
-        public virtual ActionResult<List<EventRequestDto>> OpenEvents()
-        {
-            return StatusCode(501);
+            return TableService.Get(page, pageSize, sort, sortDirection, filter);
         }
 
         [HttpGet("resendemail/{id}")]
         public virtual ActionResult ResendEmail(int id)
         {
-            return StatusCode(501);
+            Service.ResendAssignmentEmail(id);
+
+            return Ok();
+        }
+
+        [HttpGet("GetSummary")]
+        public virtual ActionResult<EventRequestSummary> GetSummary()
+        {
+            return Service.GetSummary();
+        }
+
+        [HttpGet("GetByEmployee/{upn}")]
+        public virtual ActionResult<List<EventRequestDto>> GetByEmployee(string upn)
+        {
+            return Json(Service.GetByEmployee(upn));
+        }
+
+        [HttpGet("GetYearOverYearChart")]
+        public virtual ActionResult<EventsRequestChart> GetYearOverYearChart()
+        {
+            return Service.GetYearOverYearChart();
         }
     }
 }

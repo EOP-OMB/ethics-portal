@@ -10,14 +10,9 @@
     padding: 15px;
 }
 
-.widget {
-    display: flex;
-    flex: 0 0 33.333%;
-    padding: 5px;
-}
-
 .details-drawer {
     margin: 15px 15px 15px 15px;
+    min-width: 400px;
 }
 
 .drawer-header {
@@ -26,13 +21,7 @@
     align-items: center;
 }
 
-.mat-form-field {
+.mat-mdc-form-field {
     flex: 1;
     padding-right: 15px;
-}
-
-.widget-row {
-    display: flex;
-    flex: 1;
-    flex-wrap: wrap;
 }

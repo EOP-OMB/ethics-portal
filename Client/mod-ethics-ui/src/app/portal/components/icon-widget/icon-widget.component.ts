@@ -1,4 +1,4 @@
-import { Component, ElementRef, Input, OnInit, ViewChild } from '@angular/core';
+import { Component, ElementRef, EventEmitter, Input, OnInit, Output, ViewChild } from '@angular/core';
 
 @Component({
     selector: 'app-icon-widget',
@@ -6,10 +6,6 @@ import { Component, ElementRef, Input, OnInit, ViewChild } from '@angular/core';
     styleUrls: ['./icon-widget.component.scss']
 })
 export class IconWidgetComponent implements OnInit {
-
-    @Input()
-    id: number = 0;
-
     @Input()
     title: string = "";
 
@@ -34,6 +30,9 @@ export class IconWidgetComponent implements OnInit {
     @Input()
     actionText: string = "";
 
+    @Output()
+    widgetClick: EventEmitter<string> = new EventEmitter<string>();
+
     @ViewChild('iconDiv', { static: true }) iconDiv: ElementRef | undefined;
 
     constructor() { }
@@ -43,8 +42,8 @@ export class IconWidgetComponent implements OnInit {
             this.iconDiv.nativeElement.setAttribute('data-background-color', this.color);
     }
 
-    public widgetClick(type: string, id: number): void {
-
+    public onClick(): void {
+        this.widgetClick.emit(this.title);
     }
 
     public get danger(): string {

@@ -1,0 +1,832 @@
+<div *ngIf="position">
+    <nav class="navbar navbar-light navbar-expand-sm justify-content-sm-center fixed-top">
+        <ul class="navbar-nav">
+            <li class="nav-item" *ngIf="canSave()"><button id="btnSave" class="btn btn-primary nav-icon" data-toggle="tooltip" title="Save Draft" (click)="save(false)" [disabled]="!isDirty()" type="button"><span class="fa fa-save"></span></button></li>
+            <li class="nav-item"><button class="btn btn-default nav-icon" data-toggle="tooltip" title="Print Form" (click)="print()" type="button"><span class="fa fa-print"></span></button></li>
+            <li style="flex:2;">&nbsp;</li>
+            <li class="nav-item"><button class="btn btn-danger nav-icon invert" data-toggle="tooltip" title="Close Form" (click)="goBack()" type="button"><span class="fa fa-times"></span></button></li>
+        </ul>
+    </nav>
+
+    <!--Introduction Page-->
+    <div class="modal" id="intro-popup" tabindex="-1" role="dialog" aria-hidden="true">
+        <div class="modal-admin modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-body">
+                    <div class="intro">
+                        <h3 class="text-center">Supplemental Standards of Ethical Conduct for Employees of the Office of Management and Budget</h3>
+                        <p style="padding-top: 15px; font-weight: bold;">&sect;8701.101</p>
+                        <p>
+                            In accordance with 5 CFR 2635.105, the regulations in this part apply to the employees of the Office of Management and Budget and supplement the Standards of Ethical Conduct for Employees of the Executive Branch contained in 5 CFR part 2635. In addition to the standards in 5 CFR part 2635 and this part, OMB employees are subject to the executive branch financial disclosure regulations contained in 5 CFR part 2634.
+                        </p>
+                        <p style="font-weight: bold;">&sect;8701.102</p>
+                        <p>
+                            <b>(a)</b> Before engaging in outside employment with or without compensation, an employee of the Office of Management and Budget, other than a special Government employee, must obtain the written approval of his or her division or office head, the General Counsel, and the Designated Agency Ethics Official (DAEO). Requests for approval shall be forwarded through normal supervisory channels to the division or office head, who shall forward the request to the General Counsel, to be forwarded with their successive approvals to the DAEO. The request for approval shall include, at a minimum, the following:
+                        </p>
+                        <p style="padding-left: 25px;">
+                            <b>(1)</b> A statement of the name of the person, group, or other organization for whom the work is to be performed; the type of work to be performed; and the proposed hours of work and approximate dates of employment; and
+                        </p>
+                        <p style="padding-left: 25px;">
+                            <b>(2)</b> A statement that the outside employment will not depend on information obtained as a result of the employee's official Government position and that no official duty time or Government property, resources, or facilities not available to the general public will be used in connection with the outside employment.
+                        </p>
+                        <p>
+                            <b>(b)</b> Approval shall be granted only upon a determination that the outside employment is not expected to involve conduct prohibited by statute or Federal regulation, including 5 CFR part 2635.
+                        </p>
+                        <p>
+                            <b>(c)</b> For purposes of this section, “employment” means any form of non-Federal employment or business relationship involving the provision of personal services by the employee. It includes, but is not limited to, personal services as an officer, director, employee, agent, attorney, consultant, contractor, general partner, trustee, teacher or speaker. It includes writing when done under an arrangement with another person for production or publication of the written product. It does not, however, include participation in the activities of a nonprofit charitable, religious, professional, social, fraternal, educational, recreational, public service, or civic organization, unless such activities involve the provision of professional services or advice or are for compensation other than reimbursement of expenses.
+                        </p>
+                    </div>
+                </div>
+                <div class="modal-footer justify-content-center">
+                    <button type="button" class="btn btn-success" data-dismiss="modal">OK</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="employmentFormContainer" class="container form-start">
+        <div class="text-center">
+            <h3>OMB  Ethics -- Request to Engage in Outside Employment or Activity</h3>
+            <h4>
+                (OMB Staff Use Only)
+                <a id="lnkIntro" class="btn" data-toggle="modal" data-target="#intro-popup">
+                    <i class="fa fa-info-circle"></i>
+                </a>
+            </h4>
+        </div>
+
+        <div *ngIf="opForm.invalid && isSubmitting" style="color: red; display: flex; flex-direction: column; align-items: center;">
+            <h2 style="color: red;">Your submission has the following errors:</h2>
+            <ul style="text-align: left; color: red; font-weight: 500;">
+                <li *ngFor="let name of invalidControls">{{ errorMessage(name) }}</li>
+            </ul>
+            <br />
+            <p><b>Note:</b>&nbsp;&nbsp;Your form has been saved, but not submitted, please correct the errors and try again.</p>
+        </div>
+
+        <form id="employmentForm" [formGroup]="opForm" (ngSubmit)="save(true)">
+            <input type="hidden" formControlName="id" />
+            <input type="hidden" formControlName="status" />
+            <!-- Employee Info -->
+            <div class="card">
+                <div class="card-header">Employee Data</div>
+                <div class="card-body grid-body">
+                    <div class="control-label required">Employee's Name</div>
+                    <mat-form-field appearance="outline">
+                        <input required title="Employee's Name" type="text" matInput formControlName="employeeName" />
+                        <mat-error *ngIf="employeeName.errors">
+                            <span *ngIf="employeeName.errors.required">
+                                Employee Name is
+                                <strong>required</strong>
+                            </span>
+                        </mat-error>
+                    </mat-form-field>
+                    <small>The requesting employee's name.</small>
+
+                    <div class="control-label required">Supervisor</div>
+
+                    <div style="display: flex; gap: 15px; width: 100%;">
+                        <div style="display: flex; flex-direction: column; align-items: flex-start; width: 100% !important;">
+                            <app-people-picker style="flex: 1;" formControlName="supervisor" (onPeoplePicked)="supervisorSelect($event)"></app-people-picker>
+                            <input required type="hidden" formControlName="supervisorName" />
+                            <input required type="hidden" formControlName="supervisorUpn" />
+                            <mat-error *ngIf="!supervisor.value && !managerNa.value && supervisor.touched" class="error" style="margin-top: -20px;">
+                                <span>
+                                    Supervisor is
+                                    <strong>required</strong>
+                                </span>
+                            </mat-error>
+                        </div>
+                        <button *ngIf="supervisor.value" mat-stroked-button type="button" color="warn" style="cursor: pointer; align-self: flex-start; justify-self: flex-end;" (click)="clearSupervisor()" title="Change Supervisor">Change</button>
+                        <mat-checkbox *ngIf="!supervisor.value" formControlName="managerNa">N/A</mat-checkbox>
+                    </div>
+
+
+                    <!--<mat-form-field appearance="outline">
+                <input required title="Employee's Supervisor" type="text" matInput formControlName="supervisorName" />
+                <mat-error *ngIf="supervisorName.errors">
+                    <span *ngIf="supervisorName.errors.required">
+                        Supervisor is
+                        <strong>required</strong>
+                    </span>
+                </mat-error>
+            </mat-form-field>-->
+                    <small>Name of employee's approving division head, office head, or other member of employee's chain of command authorized to approve this request.</small>
+
+                    <div class="control-label required">Phone</div>
+                    <mat-form-field appearance="outline">
+                        <input matInput type="text" mask="(000) 000-0000" title="Employee's Phone Number" formControlName="employeePhone" required />
+                        <mat-error *ngIf="employeePhone.errors">
+                            <span *ngIf="employeePhone.errors.required">
+                                Phone is
+                                <strong>required</strong>
+                            </span>
+                        </mat-error>
+                    </mat-form-field>
+                    <small>The requesting employee's phone number.</small>
+
+                    <div class="control-label required">Email</div>
+                    <mat-form-field appearance="outline">
+                        <input required title="Employee's Email Address" type="text" matInput formControlName="employeeEmail" />
+                        <mat-error *ngIf="employeeEmail.errors">
+                            <span *ngIf="employeeEmail.errors.required">
+                                Employee Email is
+                                <strong>required</strong>
+                            </span>
+                        </mat-error>
+                    </mat-form-field>
+                    <small>The requesting employee's e-mail address.</small>
+
+                    <div class="control-label required">Office</div>
+                    <mat-form-field appearance="outline">
+                        <input required title="Employee's Office" type="text" matInput formControlName="departmentName" />
+                        <mat-error *ngIf="departmentName.errors">
+                            <span *ngIf="departmentName.errors.required">
+                                Office is
+                                <strong>required</strong>
+                            </span>
+                        </mat-error>
+                    </mat-form-field>
+                    <small>&nbsp;</small>
+
+                    <div class="control-label required">OMB Position Title</div>
+                    <mat-form-field appearance="outline">
+                        <div class="input-group">
+                            <input required title="OMB Position Title" type="text" matInput formControlName="title" />
+                        </div>
+                        <mat-error *ngIf="title.errors">
+                            <span *ngIf="title.errors.required">
+                                OMB Position Title is
+                                <strong>required</strong>
+                            </span>
+                        </mat-error>
+                    </mat-form-field>
+                    <small>&nbsp;</small>
+
+                    <div class="control-label required">Annual Salary</div>
+
+                    <div class="kendo-form-field">
+                        <kendo-numerictextbox format="c0" formControlName="annualSalary">
+                        </kendo-numerictextbox>
+                        <mat-error *ngIf="annualSalary.errors && annualSalary.touched" class="kendo-error">
+                            <span *ngIf="annualSalary.errors.required">
+                                Annual Salary is
+                                <strong>required</strong>
+                            </span>
+                        </mat-error>
+                    </div>
+                    <small>The requesting employee's annual salary.</small>
+
+                    <div class="control-label required">Filing Status</div>
+                    <div class="form-field">
+                        <mat-radio-group aria-label="Select an option" formControlName="filerType">
+                            <mat-radio-button value="278 Filer">278</mat-radio-button>
+                            <mat-radio-button value="450 Filer">450</mat-radio-button>
+                            <mat-radio-button value="Not Assigned">N/A</mat-radio-button>
+                        </mat-radio-group>
+                        <mat-error *ngIf="filerType.errors && filerType.touched">
+                            <span *ngIf="filerType.errors.required">
+                                Filer Type is
+                                <strong>required</strong>
+                            </span>
+                        </mat-error>
+                    </div>
+                    <small>Do you file an OGE FInancial Disclosure Form?</small>
+                </div>
+            </div>
+
+            <!-- End Employee Info -->
+            <!-- Outside Position Details -->
+            <div class="card">
+                <div class="card-header">Outside Position Information</div>
+                <div class="card-body grid-body">
+
+                    <div class="control-label required">Position POC</div>
+                    <mat-form-field appearance="outline">
+                        <input required title="Position POC" type="text" matInput formControlName="poc" />
+                        <mat-error *ngIf="poc.errors">
+                            <span *ngIf="poc.errors.required">
+                                Position POC is
+                                <strong>required</strong>
+                            </span>
+                        </mat-error>
+                    </mat-form-field>
+                    <small>The name of the employer, activity POC or organization's name.</small>
+
+                    <div class="control-label required">Position POC Phone</div>
+                    <mat-form-field appearance="outline">
+                        <input matInput type="text" mask="(000) 000-0000" title="Position POC Phone" formControlName="pocPhone" required />
+                        <mat-error *ngIf="pocPhone.errors">
+                            <span *ngIf="pocPhone.errors.required">
+                                Position POC Phone is
+                                <strong>required</strong>
+                            </span>
+                        </mat-error>
+                    </mat-form-field>
+                    <small>&nbsp;</small>
+
+                    <div class="control-label required">Position POC Email</div>
+                    <mat-form-field appearance="outline">
+                        <input required title="Position POC Email" type="text" matInput formControlName="pocEmail" />
+                        <mat-error *ngIf="pocEmail.errors">
+                            <span *ngIf="pocEmail.errors.required">
+                                Position POC Email is
+                                <strong>required</strong>
+                            </span>
+                        </mat-error>
+                    </mat-form-field>
+                    <small>&nbsp;</small>
+
+                    <div class="control-label required">Position Title</div>
+                    <mat-form-field appearance="outline">
+                        <input required title="Position Title" type="text" matInput formControlName="positionTitle" />
+                        <mat-error *ngIf="positionTitle.errors">
+                            <span *ngIf="positionTitle.errors.required">
+                                Position Title is
+                                <strong>required</strong>
+                            </span>
+                        </mat-error>
+                    </mat-form-field>
+                    <small>&nbsp;</small>
+
+                    <div class="control-label required">Organization Name</div>
+                    <mat-form-field appearance="outline">
+                        <input required title="Organization Name" type="text" matInput formControlName="organizationName" />
+                        <mat-error *ngIf="organizationName.errors">
+                            <span *ngIf="organizationName.errors.required">
+                                Organization Name is
+                                <strong>required</strong>
+                            </span>
+                        </mat-error>
+                    </mat-form-field>
+                    <small>The organization with which you request to hold a position</small>
+
+                    <div class="control-label required">Periods of Employment</div>
+                    <mat-form-field appearance="outline">
+                        <input required title="Periods of Employment" type="text" matInput formControlName="periodsOfEmployment" />
+                        <mat-error *ngIf="periodsOfEmployment.errors">
+                            <span *ngIf="periodsOfEmployment.errors.required">
+                                Periods of Employment is
+                                <strong>required</strong>
+                            </span>
+                        </mat-error>
+                    </mat-form-field>
+                    <small>Days per week, hours per day</small>
+
+                    <div class="control-label required">Physical Location of Duties</div>
+                    <mat-form-field appearance="outline">
+                        <input required title="Physical Location" type="text" matInput formControlName="physicalLocation" />
+                        <mat-error *ngIf="physicalLocation.errors">
+                            <span *ngIf="physicalLocation.errors.required">
+                                Physical Location of Duties is
+                                <strong>required</strong>
+                            </span>
+                        </mat-error>
+                    </mat-form-field>
+                    <small>&nbsp;</small>
+
+                    <div class="control-label required">Compensation</div>
+                    <div class="form-field">
+                        <mat-radio-group aria-label="Compensation" formControlName="isPaid">
+                            <mat-radio-button [value]="true">Yes</mat-radio-button>
+                            <mat-radio-button [value]="false">No</mat-radio-button>
+                        </mat-radio-group>
+                        <mat-error *ngIf="isPaid.errors && isPaid.touched">
+                            <span *ngIf="isPaid.errors.required">
+                                Compensation is
+                                <strong>required</strong>
+                            </span>
+                        </mat-error>
+                    </div>
+                    <small>
+                        Will you be compensated for this position?<br />
+                        <b>PLEASE NOTE:</b> Presidential appointees are prohibited
+                        from receiving earned income from outside employment
+                        with very limited exceptions. [see endnote]
+                    </small>
+
+
+                    <div class="control-label required">Method of Compensation</div>
+                    <mat-form-field appearance="outline">
+                        <textarea rows="4" required title="Method of Compensation" type="text" matInput formControlName="methodOfCompensation"></textarea>
+                        <mat-error *ngIf="methodOfCompensation.errors">
+                            <span *ngIf="methodOfCompensation.errors.required">
+                                Method of Compensation is
+                                <strong>required</strong>
+                            </span>
+                        </mat-error>
+                    </mat-form-field>
+                    <small>Salary? Fee (hourly, contingency, performance-based, etc.)? Honorarium? Expense reimbursement (travel, production costs, etc)? Other? Volunteer? Please explain as necessary.</small>
+
+                    <div class="control-label required">Position Dates</div>
+                    <div class="form-group">
+                        <div class="control-group">
+                            <div class="kendo-form-field">
+                                <small class="floating-label">Start Date</small>
+                                <kendo-datepicker required formControlName="startDate"
+                                                  (valueChange)="setPositionDateStart($event)" placeholder="Start Date" class="material-input form-input"
+                                                  [formatPlaceholder]="formatPlaceholder" [max]="eventStartDateMax" [min]="today">
+                                </kendo-datepicker>
+                                <mat-error *ngIf="startDate.errors && (startDate.dirty || startDate.touched)"
+                                           class="kendo-error">
+                                    <span *ngIf="startDate.errors.required">
+                                        Start Date is
+                                        <strong>required</strong>
+                                    </span>
+                                    <span *ngIf="startDate.errors.maxError">
+                                        Start Date must be
+                                        <strong>before</strong>
+                                        End Date.
+                                    </span>
+                                    <span *ngIf="startDate.errors.minError">
+                                        Start Date must be
+                                        <strong>after</strong>
+                                        today.
+                                    </span>
+                                </mat-error>
+                            </div>
+                            <div class="kendo-form-field">
+                                <small class="floating-label">End Date</small>
+                                <kendo-datepicker formControlName="endDate"
+                                                  (valueChange)="setPositionDateEnd($event)" placeholder="End Date" class="material-input form-input"
+                                                  [formatPlaceholder]="formatPlaceholder" [min]="positionEndDateMin">
+                                </kendo-datepicker>
+                                <mat-error *ngIf="endDate.errors && (endDate.dirty || endDate.touched)"
+                                           class="kendo-error">
+                                    <span *ngIf="endDate.errors.minError">
+                                        End Date must be
+                                        <strong>after</strong>
+                                        Start Date.
+                                    </span>
+                                </mat-error>
+                            </div>
+                        </div>
+                    </div>
+                    <small>Approximate dates of employment or participation. Add end date if known.</small>
+
+                    <div class="control-label required">Nature of Outside Position</div>
+                    <div class="form-field">
+                        <input type="hidden" formControlName="typeOfWork" min="1" />
+                        <mat-checkbox *ngFor="let work of workTypes" (change)="updateTypeOfWork($event)" [value]="work.value" [checked]="isTypeOfWork(work.value)" [disabled]="!canSave()">{{work.text}}</mat-checkbox>
+                        <mat-error *ngIf="typeOfWork.errors && typeOfWork.touched">
+                            <span *ngIf="typeOfWork.errors.min">
+                                Nature of Outisde Position is
+                                <strong>required</strong>
+                            </span>
+                        </mat-error>
+                    </div>
+                    <small>Indicate the type of activity for which you request approval.</small>
+
+                    <div class="control-label required">Duties or Services</div>
+                    <mat-form-field appearance="outline">
+                        <textarea required title="OMB Duties" type="text" rows="4" matInput formControlName="duties"></textarea>
+                        <mat-error *ngIf="duties.errors">
+                            <span *ngIf="duties.errors.required">
+                                Duties or Services is
+                                <strong>required</strong>
+                            </span>
+                        </mat-error>
+                    </mat-form-field>
+                    <small>Describe, in detail, the specific duties and responsibilities to be performed in this position — including any services to be provided, types of clients to be served, written or other products to be produced, types of advice to be given, and expected interactions with the Federal government.</small>
+
+                    <div class="control-label required">Related to Official Duties</div>
+                    <div class="form-field" appearance="outline">
+                        <mat-radio-group aria-label="Relation to Official Duties" formControlName="isLikeOfficialDuties">
+                            <mat-radio-button [value]="true">Yes</mat-radio-button>
+                            <mat-radio-button [value]="false">No</mat-radio-button>
+                        </mat-radio-group>
+                        <mat-error *ngIf="isLikeOfficialDuties.errors && isLikeOfficialDuties.touched">
+                            <span *ngIf="isLikeOfficialDuties.errors.required">
+                                Related to Official Duties is
+                                <strong>required</strong>
+                            </span>
+                        </mat-error>
+                    </div>
+                    <small>Is there a relationship between your official duties and the outside position?</small>
+
+                    <div class="control-label required" *ngIf="isLikeOfficialDuties.value">Describe Relationship</div>
+                    <mat-form-field appearance="outline" *ngIf="isLikeOfficialDuties.value">
+                        <textarea required title="OMB Duties" type="text" rows="4" matInput formControlName="relationshipToDuties"></textarea>
+                        <mat-error *ngIf="relationshipToDuties.errors && relationshipToDuties.touched">
+                            <span *ngIf="relationshipToDuties.errors.required">
+                                Describe Relationship is
+                                <strong>required</strong>
+                            </span>
+                        </mat-error>
+                    </mat-form-field>
+                    <small *ngIf="isLikeOfficialDuties.value">Please describe the relationship between your official duties and the outside position.</small>
+
+                    <div class="row" style="padding: 15px;">
+                        <p>
+                            <b>NOTE:</b>&nbsp;&nbsp;Presidential appointees are subject to an additional restriction pertaining to outside earned income. Under Section 102 of Executive Order 12674, a political
+                            appointee who is appointed by the President to a full-time non-career position in the executive branch is prohibited from receiving any earned income for any
+                            outside employment or activity performed during that Presidential appointment. Appointees in the following positions are exempt from this ban:
+                        </p>
+                        <ul>
+                            <li>
+                                a position filled under the authority of 3 U.S.C. § 105 or 3 U.S.C. § 107(a) for which the rate of basic pay is less than that for GS-9, step 1 of the General
+                                Schedule (currently $56,233);
+                            </li>
+                            <li>
+                                a position, within a White House operating unit, that is designated as not normally subject to change as a result of a Presidential transition (e.g., EXR
+                                staff);
+                            </li>
+                            <li>
+                                a position within the uniformed services; and
+                            </li>
+                            <li>
+                                a position in which a member of the foreign service is serving that does not require advice and consent of the Senate.
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="card">
+                <div class="card-header">Additional Information</div>
+                <div class="card-body grid-body">
+                    <div class="row" style="padding: 0 0 15px 15px;">
+                        <b>ADDITIONAL INFORMATION</b>&nbsp;&nbsp;- will the position: (If yes, please explain in Additional Remarks.)
+                    </div>
+
+                    <div class="control-label required">Require Absence?</div>
+                    <div class="form-field">
+                        <mat-radio-group aria-label="Require Absence" formControlName="requiresAbsence">
+                            <mat-radio-button [value]="true">Yes</mat-radio-button>
+                            <mat-radio-button [value]="false">No</mat-radio-button>
+                        </mat-radio-group>
+                        <mat-error *ngIf="requiresAbsence.errors && requiresAbsence.touched">
+                            <span *ngIf="requiresAbsence.errors.required">
+                                Require Absence is
+                                <strong>required</strong>
+                            </span>
+                        </mat-error>
+                    </div>
+                    <small>Require absences during normal duty hours?</small>
+
+                    <div class="control-label required">Involve Expenses?</div>
+                    <div class="form-field">
+                        <mat-radio-group aria-label="Involve Expenses" formControlName="involveExpense">
+                            <mat-radio-button [value]="true">Yes</mat-radio-button>
+                            <mat-radio-button [value]="false">No</mat-radio-button>
+                        </mat-radio-group>
+                        <mat-error *ngIf="involveExpense.errors && involveExpense.touched">
+                            <span *ngIf="involveExpense.errors.required">
+                                Involve Expenses is
+                                <strong>required</strong>
+                            </span>
+                        </mat-error>
+                    </div>
+                    <small>Involve any expense to WHO/EOP?</small>
+
+                    <div class="control-label required">Involve Use of Facilities?</div>
+                    <div class="form-field">
+                        <mat-radio-group aria-label="Invole Use of Facilities" formControlName="useOfFacilities">
+                            <mat-radio-button [value]="true">Yes</mat-radio-button>
+                            <mat-radio-button [value]="false">No</mat-radio-button>
+                        </mat-radio-group>
+                        <mat-error *ngIf="useOfFacilities.errors && useOfFacilities.touched">
+                            <span *ngIf="useOfFacilities.errors.required">
+                                Involve Use of Facilities is
+                                <strong>required</strong>
+                            </span>
+                        </mat-error>
+                    </div>
+                    <small>Involve use of OMB/EOP facilities, property, or manpower?</small>
+
+                    <div class="control-label required">Require Work for Federal Contractor or Grantee?</div>
+                    <div class="form-field">
+                        <mat-radio-group aria-label="Require Work for Federal Contractor or Grantee" formControlName="requireDutiesContract">
+                            <mat-radio-button [value]="true">Yes</mat-radio-button>
+                            <mat-radio-button [value]="false">No</mat-radio-button>
+                        </mat-radio-group>
+                        <mat-error *ngIf="requireDutiesContract.errors && requireDutiesContract.touched">
+                            <span *ngIf="requireDutiesContract.errors.required">
+                                Require Work for Federal Contractor or Grantee is
+                                <strong>required</strong>
+                            </span>
+                        </mat-error>
+                    </div>
+                    <small>Require work for an e ntity that has a Federal contract or grant?</small>
+
+                    <div class="control-label required">Require Government Facilities?</div>
+                    <div class="form-field">
+                        <mat-radio-group aria-label="Require Government Facilities" formControlName="requiresDutiesFederal">
+                            <mat-radio-button [value]="true">Yes</mat-radio-button>
+                            <mat-radio-button [value]="false">No</mat-radio-button>
+                        </mat-radio-group>
+                        <mat-error *ngIf="requiresDutiesFederal.errors && requiresDutiesFederal.touched">
+                            <span *ngIf="requiresDutiesFederal.errors.required">
+                                Require Government Facilities is
+                                <strong>required</strong>
+                            </span>
+                        </mat-error>
+                    </div>
+                    <small>Require performance of duties at a Federal government location?</small>
+
+                    <div class="control-label required">Involve Official Title or Representation?</div>
+                    <div class="form-field">
+                        <mat-radio-group aria-label="Involve Official Title or Representation" formControlName="involveOfficialTitle">
+                            <mat-radio-button [value]="true">Yes</mat-radio-button>
+                            <mat-radio-button [value]="false">No</mat-radio-button>
+                        </mat-radio-group>
+                        <mat-error *ngIf="involveOfficialTitle.errors && involveOfficialTitle.touched">
+                            <span *ngIf="involveOfficialTitle.errors.required">
+                                Involve Official Title or Representation is
+                                <strong>required</strong>
+                            </span>
+                        </mat-error>
+                    </div>
+                    <small>Involve the use of official title or representation before any Federal agency?</small>
+
+                    <div class="control-label required">Sales Agent?</div>
+                    <div class="form-field">
+                        <mat-radio-group aria-label="Sales Agent" formControlName="involveDutiesSales">
+                            <mat-radio-button [value]="true">Yes</mat-radio-button>
+                            <mat-radio-button [value]="false">No</mat-radio-button>
+                        </mat-radio-group>
+                        <mat-error *ngIf="involveDutiesSales.errors && involveDutiesSales.touched">
+                            <span *ngIf="involveDutiesSales.errors.required">
+                                Sales Agent is
+                                <strong>required</strong>
+                            </span>
+                        </mat-error>
+                    </div>
+                    <small>Involve work as a sales agent for the purpose of personal commercial solicitation of Federal agencies or personnel?</small>
+
+                    <div class="control-label required">Involve EOP Business Partner?</div>
+                    <div class="form-field">
+                        <mat-radio-group aria-label="Involve EOP Business Partner" formControlName="involveOrg">
+                            <mat-radio-button [value]="true">Yes</mat-radio-button>
+                            <mat-radio-button [value]="false">No</mat-radio-button>
+                        </mat-radio-group>
+                        <mat-error *ngIf="involveOrg.errors && involveOrg.touched">
+                            <span *ngIf="involveOrg.errors.required">
+                                Involve EOP Business Partner is
+                                <strong>required</strong>
+                            </span>
+                        </mat-error>
+                    </div>
+                    <small>
+                        Involve any entity that is engaged, or is endeavoring to engage, in any business
+                        transactions or relationships with EOP, OMB, or any other EOP component?
+                    </small>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">Additional Remarks &amp; Attachments</div>
+                <div class="card-body grid-body">
+                    <div class="control-label">Additional Remarks</div>
+                    <mat-form-field appearance="outline">
+                        <textarea title="Additional Remarks" type="text" rows="12" matInput formControlName="additionalRemarks"></textarea>
+                    </mat-form-field>
+                    <small>Describe in detail any additional information requested above or anything else you deem pertinent to this outside position.</small>
+
+                    <div class="control-label">Attachments</div>
+                    <app-upload [saveUrl]="uploadSaveUrl" [removeUrl]="uploadRemoveUrl" [guid]="newGuid" [files]="attachments" [type]="'Relevant'" style="width: 100%;"
+                                [restrictions]="restrictions" [foreignKey]="parentForeignKey" [isFormReadOnly]="false"
+                                (download)="downloadFile($event)" class="hideprint">
+                    </app-upload>
+                    <small>Attach any relevant documents.</small>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">Employee Certification</div>
+                <div class="card-body">
+
+                    <div class="row" style="padding: 0 15px 15px 15px;">
+                        <small>
+                            I certify that I have read and understand the Memorandum on Outside Employment and Activity and that the statements made and information provided on
+                            this form are complete and accurate to the best of my knowledge. I understand that I am performing this activity in my personal capacity and that my participation
+                            is not derived from my Federal position, title or authority; and will not occur on official time nor involve the expenditure of appropriated funds. The outside
+                            employment does not depend on information obtained as a result of my Government employment.
+                        </small>
+                    </div>
+
+                    <div *ngIf="position.employeeSignature" style="display: flex;width: 100%; justify-content: space-between; padding: 0 15px 0px 15px; font-size: 75%;">
+                        <div style="flex: 2;">Employee Signature</div>
+                        <div style="text-align: left;">Date</div>
+                    </div>
+
+                    <div *ngIf="position.employeeSignature" class="outer-box">
+                        <div class="inner-box" style="flex: 2;">{{ position.employeeSignature }}</div>
+                        <div class="inner-box">{{ position.submittedDate | date: 'MM/dd/yyyy' }}</div>
+                    </div>
+
+                    <div class="row text-center button-row hideprint" style="padding: 15px 15px 0 15px;">
+                        <button *ngIf="canSubmit()" mat-flat-button color="primary" type="submit">Submit</button>
+                        <button *ngIf="canSave()" mat-stroked-button color="primary" type="button" (click)="save()">Save</button>
+                        <!--<button mat-stroked-button color="basic" type="button" (click)="goBack()">Cancel</button>-->
+                        <button *ngIf="canDelete()" mat-flat-button color="warn" type="button" (click)="delete()" style="margin-left: 50px;">Delete</button>
+                    </div>
+                    <div class="row" style="padding: 15px 15px 0 15px">
+                        <small>
+                            <b>NOTE:</b>&nbsp;&nbsp;APPROVAL OF AN OUTSIDE ACTIVITY DOES NOT RELEASE YOU FROM A CONTINUING LEGAL OBLIGATION TO DISQUALIFY YOURSELF FROM OFFICIAL
+                            ASSIGNMENTS AFFECTING YOUR OUTSIDE EMPLOYER OR THE ENTITY TO WHICH YOU ARE PROVIDING PERSONAL SERVICES. WHILE PERFORMING AN APPROVED
+                            OUTSIDE ACTIVITY, ANY ACTIONS TAKEN IN CONFLICT WITH APPLICABLE ETHICS LAWS MAY SUBJECT YOU TO CRIMINAL PROSECUTION OR DISCIPLINARY
+                            PROCEEDINGS.
+                        </small>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card hideprint" *ngIf="showReviewSecion()">
+                <div class="card-header">Review / Recommendation</div>
+                <div class="card-body" style="display: flex; flex-direction: column;">
+                    <div clsas="text-center">
+                        <b>Supervisor Instructions</b>
+                    </div>
+                    <small style="margin-bottom: 15px;">
+                        An employee seeking approval for an outside activity has a duty, and a supervisor has an obligation, first and foremost to the
+                        White House Office (WHO) and the successful accomplishment of its mission. If the outside activity is approved, it is part of your
+                        supervisory responsibilities to monitor the employee’s compliance with applicable ethics laws and regulations by making sure the
+                        employee’s outside employment or activity does not interfere with WHO’s mission and that the employee does not misuse
+                        government property or time to conduct his or her outside employment or activity.
+                    </small>
+
+                    <div class="instructions" *ngIf="showInstructions">
+                        <small style="margin-bottom: 15px;">
+                            An outside activity conflicts with official duties if it is prohibited by statute or regulation; or it would require the employee’s
+                            recusal from matters so central or critical to the performance of his or her official duties that the employee’s ability to perform
+                            the duties of his or her position would be materially impaired. <b>
+                                Such a recusal would likely be required where the outside activity
+                                involves an employer or entity that does business with the White House Office or any entity within the Executive Office of the
+                                President,
+                            </b> or where the employer or entity is regulated by, receives grants or other benefits from, <b>
+                                or is otherwise substantially
+                                impacted by the programs, policies and operations of the White House Office or Executive Office of the President.
+                            </b>
+                        </small>
+                        <b>Consideration Factors</b>
+                        <small style="margin-bottom: 15px;">Consider the following when reviewing this request:</small>
+                        <ul style="margin-bottom: 15px;">
+                            <li>
+                                <small>
+                                    Do the circumstances indicate that the invitation to engage in the activity was extended to the employee primarily
+                                    because of their official position rather than inherent expertise on the particular subject matter? If yes, contact your
+                                    ethics official before approving the request.
+                                </small>
+                            </li>
+                            <li>
+                                <small>
+                                    Was the invitation to engage in the activity extended to the employee, directly or indirectly, by a person or entity who
+                                    has interests that may be affected substantially by the performance or nonperformance of the employee’s official
+                                    duties? If yes, contact your official before approving the request.
+                                </small>
+                            </li>
+                            <li>
+                                <small>
+                                    Will the information conveyed through the activity draw substantially on ideas or official data that are nonpublic
+                                    information? If yes, contact your ethics official before approving the request.
+                                </small>
+                            </li>
+                            <li>
+                                <small>
+                                    Does the subject matter relate to any matter(s) to which the employee is presently assigned or has been assigned during
+                                    the previous one-year period; or to any ongoing or announced procurement, policy, program or operation of WHO or
+                                    EOP? If yes, contact your ethics official before approving the request.
+                                </small>
+                            </li>
+                            <li>
+                                <small>
+                                    Is the employee involved in any official matter involving the outside entity (e.g., as a contracting officer’s representative,
+                                    source selection team member, or making any substantive decision regarding the entity in his or her official capacity)?
+                                    This will likely constitute an activity that conflicts with the official duties of the employee, and CANNOT be approved.
+                                </small>
+                            </li>
+                        </ul>
+                        <b>Consultation with Ethics Officials</b>
+                        <small style="margin-bottom: 15px;">
+                            Before approving or disapproving a request that involves a person or entity who does business with the White House Office, any
+                            component of the EOP, or with the Federal government, contact your ethics official to discuss the matter. Outside employment or
+                            activity must not interfere with the employee’s official duties. An excessive amount of time dedicated to an outside activity could
+                            constitute interference if it impacts an employee’s official duty performance
+                        </small>
+                        <b>Official Duty Recommendation</b>
+                        <small style="margin-bottom: 15px;">
+                            If you determine that the subject area of the activity is too closely related to the employee’s official duty, and the activity is not
+                            appropriate as an outside activity, a separate analysis must be conducted before consideration should be given to whether or not
+                            the activity would be more appropriately performed as an official duty. You must conclude that the employee seeking approval
+                            to engage in the activity in their official capacity is the appropriate person to represent the White House Office or the Executive
+                            Office of the President with respect to that subject matter. However, if the employee is involved in any official matter involving
+                            the outside entity (e.g., as a contracting officer’s representative or source selection team member, or making any substantive
+                            decision regarding the entity in his or her official capacity), this will likely constitute an activity that conflicts with the official
+                            duties of the employee and will not be approved by your ethics official. Consult your ethics official before approving such a
+                            request or for additional guidance.
+                        </small>
+                    </div>
+
+                    <div class="text-center button-row hideprint" style="margin-bottom: 15px;">
+                        <button mat-stroked-button type="button" (click)="showInstructions = !showInstructions">{{ showInstructions ? "Show Less" : "Show More" }}</button>
+                    </div>
+
+                    <div>
+                        <div class="grid-body hideprint" *ngIf="canApproveManager()">
+                            <div class="control-label">Reason</div>
+                            <mat-form-field appearance="outline">
+                                <textarea title="Reason " type="text" rows="6" matInput formControlName="guidance"></textarea>
+                            </mat-form-field>
+                            <small>If you disapprove of this request, you must provide a reason.'</small>
+                        </div>
+                        <div *ngIf="canApproveEthics() || position.guidance">
+                            <div class="control-label">Reason / Guidance</div>
+                            <kendo-editor formControlName="guidance" style="height: 300px; width: 100%;">
+                            </kendo-editor>
+                            <div style="padding-top: 5px; margin-bottom: 15px;">
+                                <small style="padding-left: 15px;">* If you disapprove of this request, you must provide a reason. If you're approving, you may leave guidance here.</small>
+                            </div>
+                        </div>
+
+                        <div class="text-center button-row" style="padding-bottom: 15px;">
+                            <button *ngIf="canApprove()" mat-flat-button color="primary" type="button" (click)="approve()">Approve</button>
+                            <button *ngIf="canApprove()" mat-flat-button color="warn" type="button" (click)="deny()" [disabled]="!guidance.value">Disapprove</button>
+                            <button *ngIf="canCancel()" mat-stroked-button color="warn" type="button" (click)="cancelRequest()" class="hideprint">Cancel Request</button>
+                        </div>
+                    </div>
+
+                    <small>
+                        <b>NOTE:</b> Presidential appointees are subject to an additional restriction pertaining to outside earned income. Under Section 102 of Executive Order 12674, a political
+                        appointee who is appointed by the President to a full-time non-career position in the executive branch is prohibited from receiving any earned income for any
+                        outside employment or activity performed during that Presidential appointment. Appointees in the following positions are exempt from this ban:
+                    </small>
+                    <ul>
+                        <li>
+                            <small>
+                                a position filled under the authority of 3 U.S.C. § 105 or 3 U.S.C. § 107(a) for which the rate of basic pay is less than that for GS-9, step 1 of the General
+                                Schedule (currently $56,233);
+                            </small>
+                        </li>
+                        <li>
+                            <small>
+                                a position, within a White House operating unit, that is designated as not normally subject to change as a result of a Presidential transition (e.g., EXR
+                                staff);
+                            </small>
+                        </li>
+                        <li>
+                            <small>
+                                a position within the uniformed services; and
+                            </small>
+                        </li>
+                        <li>
+                            <small>
+                                a position in which a member of the foreign service is serving that does not require advice and consent of the Senate.
+                            </small>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            <div class="card">
+                <div class="card-header">Status History</div>
+                <div class="card-body" style="display: flex; flex-direction: column;">
+                    <table mat-table [dataSource]="position.outsidePositionStatuses">
+                        <ng-container matColumnDef="createdTime">
+                            <th mat-header-cell *matHeaderCellDef> Date </th>
+                            <td mat-cell *matCellDef="let status"> {{ status.createdTime | date: 'MM/dd/yyyy h:mm a' }} </td>
+                        </ng-container>
+                        <ng-container matColumnDef="createdByName">
+                            <th mat-header-cell *matHeaderCellDef> User </th>
+                            <td mat-cell *matCellDef="let status"> {{ status.createdByName }} </td>
+                        </ng-container>
+                        <ng-container matColumnDef="action">
+                            <th mat-header-cell *matHeaderCellDef> Action </th>
+                            <td mat-cell *matCellDef="let status"> {{ status.action }} </td>
+                        </ng-container>
+                        <ng-container matColumnDef="comment">
+                            <th mat-header-cell *matHeaderCellDef> Reason </th>
+                            <td mat-cell *matCellDef="let status"> <span [innerHTML]="status.comment"></span></td>
+                        </ng-container>
+                        <ng-container matColumnDef="status">
+                            <th mat-header-cell *matHeaderCellDef> Status </th>
+                            <td mat-cell *matCellDef="let status"> {{ status.status }} </td>
+                        </ng-container>
+
+                        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+                        <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+                    </table>
+                </div>
+            </div>
+        </form>
+    </div>
+
+    <div class="modal fade" id="confirm-close" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header modal-header-danger">
+                    <div class="modal-title" style="font-size: 1.5em;"><i class="fa fa-exclamation-triangle" style="padding-right: 20px;"></i>Unsaved Changes Detected</div>
+                </div>
+                <div class="modal-body">
+                    <p>There are unsaved changes on this form, if you leave this page the changes will be lost.</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" mat-flat-button color="primary" style="float: left;" (click)="saveAndClose()">Save and Close</button>
+                    <button type="button" mat-stroked-button color="basic" data-dismiss="modal">Stay on Page</button>
+                    <button type="button" mat-flat-button color="warn" (click)="confirmClose()">Leave Page</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!--<div *ngIf="event && !canSave()">
+    <event-request-detail [eventId]="position.id" (close)="confirmClose($event)"></event-request-detail>
+</div>-->

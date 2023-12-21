@@ -1,15 +1,15 @@
 ﻿using Microsoft.Extensions.Logging;
+using Mod.Ethics.Application.Constants;
 using Mod.Ethics.Application.Dtos;
 using Mod.Ethics.Domain.Entities;
 using Mod.Ethics.Domain.Enumerations;
 using Mod.Ethics.Domain.Interfaces;
 using Mod.Framework.Application;
 using Mod.Framework.Application.ObjectMapping;
-using Mod.Framework.Attachments.Dtos;
-using Mod.Framework.Domain.Repositories;
 using Mod.Framework.Notifications.Domain.Services;
 using Mod.Framework.Runtime.Session;
 using Mod.Framework.User.Interfaces;
+using Mod.Framework.User.Repositories;
 using System.Collections.Generic;
 using System.Linq;
 using System.Security;
@@ -24,9 +24,9 @@ namespace Mod.Ethics.Application.Services
         private readonly ISettingsAppService SettingsAppService;
         private readonly IGuidanceAttachmentRepository AttachmentRepository;
 
-        public GuidanceAppService(IGuidanceRepository repository, ISettingsAppService settingsService, IGuidanceAttachmentRepository attachmentRepository, INotificationDomService notificationService, IEmployeeAppService employeeService, IEmployeeListAppService employeeListService, IObjectMapper objectMapper, ILogger<IAppService> logger, IModSession session) : base(repository, objectMapper, logger, session)
+        public GuidanceAppService(IGuidanceRepository repository, ISettingsAppService settingsService, IGuidanceAttachmentRepository attachmentRepository, INotificationDomService notificationService, IEmployeeAppService employeeService, IEmployeeListAppService employeeListAppService, IObjectMapper objectMapper, ILogger<IAppService> logger, IModSession session) : base(repository, objectMapper, logger, session)
         {
-            EmployeeListAppService = employeeListService;
+            EmployeeListAppService = employeeListAppService;
             EmployeeAppService = employeeService;
             NotificationService = notificationService;
             SettingsAppService = settingsService;
@@ -48,38 +48,58 @@ namespace Mod.Ethics.Application.Services
 
             var guidance = PostMap(MapToDto(entity));
 
-            guidance.Employee = EmployeeAppService.Get(guidance.EmployeeId);
+            guidance.Employee = EmployeeAppService.GetByUpn(guidance.EmployeeUpn);
 
             return guidance;
         }
 
+        protected override GuidanceDto PostMap(GuidanceDto dto)
+        {
+            dto.HasAttachments = dto.Attachments.Any();
+
+            return dto;
+        }
+
         public override IEnumerable<GuidanceDto> GetAll()
         {
-            var guidances = base.GetAll();
-            var employeeIds = guidances.Select(x => x.EmployeeId).Distinct();
+            if (!Permissions.CanRead)
+                throw new SecurityException("Access denied.  Cannot read object of type " + typeof(Guidance).Name);
 
-            var employees = EmployeeListAppService.GetBy(x => employeeIds.Contains(x.Id));
+            var guidances = Repository.GetAllIncluding(this.Permissions.PermissionFilter, x => x.Attachments);
+            var employees = EmployeeListAppService.GetAllNoFilter();
 
-            var dtos = from g in guidances 
-                       join emp in employees 
-                       on g.EmployeeId equals emp.Id 
-                       select new GuidanceDto() { 
-                           Id = g.Id, 
-                           EmployeeId = g.EmployeeId, 
-                           GuidanceType = g.GuidanceType, 
-                           Subject = g.Subject, 
-                           Text = g.Text, 
-                           EmployeeName = emp.DisplayName, 
-                           FilerType = emp.FilerType,
+            var dtos = from g in guidances
+                       join emp in employees
+                       on g.EmployeeUpn.ToLower() equals emp.Upn.ToLower()
+                       join creator in employees
+                       on g.CreatedBy.ToLower() equals creator.Upn.ToLower()
+                       select new GuidanceDto() {
+                           Id = g.Id,
+                           EmployeeUpn = g.EmployeeUpn.ToLower(),
+                           GuidanceType = g.GuidanceType,
+                           Subject = g.Subject,
+                           Text = g.Text,
+                           EmployeeName = emp?.DisplayName,
+                           FilerType = emp?.FilerType,
+                           CreatedBy = creator?.DisplayName,
                            CreatedTime = g.CreatedTime,
                            ModifiedTime = g.ModifiedTime,
                            Summary = g.Summary,
                            DateOfGuidance = g.DateOfGuidance,
-                           Guid = g.Guid
+                           Guid = g.Guid,
+                           HasAttachments = g.Attachments?.Count > 0
                        };
 
             return dtos;
         }
+
+        public IEnumerable<GuidanceDto> GetByEmployee(string employeeUpn)
+        {
+            var guidances = base.GetByIncluding(x => x.EmployeeUpn.ToLower() == employeeUpn.ToLower(), y => y.Attachments);
+
+            return guidances;
+        }
+
         protected override void OnCreated(CrudEventArgs<GuidanceDto, Guidance> e)
         {
             SaveAttachments(e);
@@ -89,6 +109,9 @@ namespace Mod.Ethics.Application.Services
         {
             var attachments = AttachmentRepository.GetAll(x => x.AttachedToGuid == e.Dto.Guid);
 
+            if (e.Entity.Attachments is null)
+                e.Entity.Attachments = new List<GuidanceAttachment>();
+
             attachments.ForEach(x => e.Entity.Attachments.Add(x));
 
             Repository.Save(e.Entity);
@@ -96,6 +119,7 @@ namespace Mod.Ethics.Application.Services
 
         public override GuidanceDto Create(GuidanceDto dto)
         {
+            dto.EmployeeName = dto.Employee.DisplayName;
             var retDto = base.Create(dto);
 
             SendNotification(retDto);
@@ -106,7 +130,7 @@ namespace Mod.Ethics.Application.Services
         private void SendNotification(GuidanceDto dto)
         {
             var dict = GetEmailData(dto);
-            var emp = EmployeeAppService.Get(dto.EmployeeId);
+            var emp = EmployeeAppService.GetByUpn(dto.EmployeeUpn);
 
             var recipient = dto.NotifyEmployee ? emp.EmailAddress : "";
 
@@ -116,12 +140,13 @@ namespace Mod.Ethics.Application.Services
                 recipient = dict["Cc"] != null ? dict["Cc"] : Session.Principal.EmailAddress;
             }
 
-            var notification = NotificationService.CreateNotification((int)NotificationTypes.GuidanceGiven, recipient, dict);
+            var notification = NotificationService.CreateNotification((int)NotificationTypes.GuidanceGiven, recipient, dict, "");
             NotificationService.AddNotification(notification);
         }
 
         public override GuidanceDto Update(GuidanceDto dto)
         {
+            dto.EmployeeName = dto.Employee.DisplayName;
             var retDto = base.Update(dto);
 
             SendNotification(retDto);
@@ -168,8 +193,5 @@ namespace Mod.Ethics.Application.Services
 
             return dict;
         }
-
-
-
     }
 }

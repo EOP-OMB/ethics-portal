@@ -1,9 +1,26 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>net5.0</TargetFramework>
+    <TargetFramework>net8.0</TargetFramework>
     <Configurations>Debug;Release;Prod;Stage</Configurations>
   </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Remove="EfCore\Migrations\**" />
+    <EmbeddedResource Remove="EfCore\Migrations\**" />
+    <None Remove="EfCore\Migrations\**" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="8.0.0" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Analyzers" Version="8.0.0" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Proxies" Version="8.0.0" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="8.0.0" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="8.0.0">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+  </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\..\Framework\Server\Mod.Framework.Attachments\Mod.Framework.Attachments.csproj" />
@@ -12,21 +29,6 @@
     <ProjectReference Include="..\..\Framework\Server\Mod.Framework.Serilog\Mod.Framework.Serilog.csproj" />
     <ProjectReference Include="..\..\Framework\Server\Mod.Framework\Mod.Framework.csproj" />
     <ProjectReference Include="..\Mod.Ethics.Application\Mod.Ethics.Application.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="EfCore\Migrations\" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="5.0.13" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore.Analyzers" Version="5.0.13" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore.Proxies" Version="5.0.13" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="5.0.13" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="5.0.13">
-      <PrivateAssets>all</PrivateAssets>
-      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-    </PackageReference>
   </ItemGroup>
 
 </Project>

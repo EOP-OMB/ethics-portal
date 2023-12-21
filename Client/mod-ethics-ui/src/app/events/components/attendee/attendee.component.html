@@ -1,0 +1,166 @@
+<form [formGroup]="attendeeForm">
+    <input type="hidden" formControlName="id" />
+    <input type="hidden" formControlName="attachmentGuid" />
+    <input type="hidden" formControlName="attendeeAttachments" />
+
+    <div class="list-group-item grid-body">
+        <div class="control-label required">Name of Attendee</div>
+        <div style="display: flex; flex-direction: column; align-items: flex-start; width: 100% !important;">
+            <app-people-picker formControlName="employee" (onPeoplePicked)="employeeSelect($event)"></app-people-picker>
+            <mat-error *ngIf="!employee.value && employee.touched" class="error" style="margin-top: -20px;">
+                <span>
+                    Name of Attendee is
+                    <strong>required</strong>
+                </span>
+            </mat-error>
+            <a style="cursor: pointer; z-index: 1001; margin-top: -15px;" (click)="assignMe()" *ngIf="!amIGoing()">I am going</a>
+        </div>
+        <button mat-button type="button" style="cursor: pointer; color: red; align-self: flex-start; justify-self: flex-end;" (click)="removeAttendee()" title="Remove Attendee"><mat-icon>close</mat-icon></button>
+
+        <div class="control-label required">Name of Supervisor</div>
+        <mat-form-field appearance="outline">
+            <input matInput type="text" formControlName="nameOfSupervisor" placeholder="" />
+            <mat-error *ngIf="nameOfSupervisor.errors">
+                <span>
+                    Name of Supervisor is
+                    <strong>required</strong>
+                </span>
+            </mat-error>
+        </mat-form-field>
+        <small>&nbsp;</small>
+
+        <div class="control-label required">Has your supervisor been informed of this request?</div>
+        <div class="form-field">
+            <mat-radio-group aria-label="Has your supervisor been informed of this request?" formControlName="informedSupervisor">
+                <mat-radio-button [value]="true" style="padding: 5px 5px;">
+                    Yes
+                </mat-radio-button>
+                <mat-radio-button [value]="false" style="padding: 5px 5px;">
+                    No
+                </mat-radio-button>
+            </mat-radio-group>
+            <mat-error *ngIf="informedSupervisor.errors && informedSupervisor.touched" class="error">
+                <span *ngIf="informedSupervisor.errors.required">
+                    Has your supervisor been informed of this request is
+                    <strong>required</strong>
+                </span>
+            </mat-error>
+        </div>
+        <small>&nbsp;</small>
+
+        <div class="control-label required">Political or career employee?</div>
+        <div class="form-field">
+            <mat-radio-group aria-label="Political or career employee?" formControlName="employeeType">
+                <mat-radio-button value="Political" style="padding: 5px 5px;">
+                    Political
+                </mat-radio-button>
+                <mat-radio-button value="Career" style="padding: 5px 5px;">
+                    Career
+                </mat-radio-button>
+            </mat-radio-group>
+            <mat-error *ngIf="employeeType.errors && employeeType.touched" class="error">
+                <span *ngIf="employeeType.errors.required">
+                    Political or career employee is
+                    <strong>required</strong>
+                </span>
+            </mat-error>
+        </div>
+        <small>&nbsp;</small>
+
+        <div class="control-label required">Attending Capacity</div>
+        <div class="form-field">
+            <mat-radio-group aria-label="Attending Capacity" formControlName="capacity">
+                <mat-radio-button value="Official" style="padding: 5px 5px;">
+                    Official
+                </mat-radio-button>
+                <mat-radio-button value="Personal" style="padding: 5px 5px;">
+                    Personal
+                </mat-radio-button>
+            </mat-radio-group>
+            <mat-error *ngIf="capacity.errors && capacity.touched" class="error">
+                <span *ngIf="capacity.errors.required">
+                    Attending Capacity is
+                    <strong>required</strong>
+                </span>
+            </mat-error>
+        </div>
+        <small>&nbsp;</small>
+
+        <div class="control-label required">Will you be giving remarks?</div>
+        <div class="form-field">
+            <mat-radio-group aria-label="Will you be giving remarks?" formControlName="isGivingRemarks">
+                <mat-radio-button [value]="true" style="padding: 5px 5px;">
+                    Yes
+                </mat-radio-button>
+                <mat-radio-button [value]="false" style="padding: 5px 5px;">
+                    No
+                </mat-radio-button>
+            </mat-radio-group>
+            <mat-error *ngIf="isGivingRemarks.errors && isGivingRemarks.touched" class="error">
+                <span *ngIf="isGivingRemarks.errors.required">
+                    Will you be giving remarks is
+                    <strong>required</strong>
+                </span>
+            </mat-error>
+        </div>
+        <small>&nbsp;</small>
+
+        <div class="control-label required" *ngIf="isGivingRemarks.value">Remarks</div>
+        <mat-form-field appearance="outline" *ngIf="isGivingRemarks.value">
+            <textarea matInput rows="4" formControlName="remarks" placeholder=""></textarea>
+            <mat-error *ngIf="remarks.errors">
+                <span>
+                    Remarks are
+                    <strong>required</strong>
+                </span>
+            </mat-error>
+        </mat-form-field>
+        <small *ngIf="isGivingRemarks.value">Please briefly describe the topic of the planned remarks.</small>
+
+        <div class="control-label required" *ngIf="isGivingRemarks.value">Speaker Agreement Required?</div>
+        <div class="form-field" *ngIf="isGivingRemarks.value">
+            <mat-radio-group aria-label="Speaker Agreement Required?" formControlName="isSpeakerAgreementRequired">
+                <mat-radio-button [value]="true" style="padding: 5px 5px;">
+                    Yes
+                </mat-radio-button>
+                <mat-radio-button [value]="false" style="padding: 5px 5px;">
+                    No
+                </mat-radio-button>
+            </mat-radio-group>
+            <mat-error *ngIf="isSpeakerAgreementRequired.errors && isSpeakerAgreementRequired.touched">
+                <span>
+                    Speaker Agreement Required is
+                    <strong>required</strong>
+                </span>
+            </mat-error>
+        </div>
+        <small *ngIf="isGivingRemarks.value">&nbsp;</small>
+
+        <div *ngIf="isSpeakerAgreementRequired.value" style="grid-column: 1 / span 2; width: 100%; text-align: left; margin-bottom: 15px;">
+            <app-upload [saveUrl]="uploadSaveUrl" [removeUrl]="uploadRemoveUrl" [guid]="attachmentGuid.value" [files]="attachments" [type]="'SpeakerAgreement'"
+                        [restrictions]="restrictions" [foreignKey]="parentForeignKey" [isFormReadOnly]="false"
+                        (download)="downloadFile($event)" (uploaded)="uploadComplete($event)" (fileRemoved)="removeFile($event)" class="hideprint">
+            </app-upload>
+            <!--<mat-error *ngIf="isSpeakerAgreementRequired.value && attachments.length < 1" class="error">
+                <span>
+                    Speaker Agreement is
+                    <strong>required</strong>
+                </span>
+            </mat-error>-->
+        </div>
+        <small *ngIf="isSpeakerAgreementRequired.value">Please attach a copy of the speaker agreement.</small>
+
+
+        <div class="control-label required">Reason for Attending</div>
+        <mat-form-field appearance="outline">
+            <textarea matInput rows="4" formControlName="reasonForAttending" placeholder=""></textarea>
+            <mat-error *ngIf="reasonForAttending.errors">
+                <span>
+                    Reason for Attending is
+                    <strong>required</strong>
+                </span>
+            </mat-error>
+        </mat-form-field>
+        <small>Please explain how the event relates to your duties at OMB and how your attendance will further agency programs and operations?</small>
+    </div>
+</form>

@@ -8,12 +8,7 @@
 
 .view-container {
     padding: 15px;
-}
-
-.widget {
-    display: flex;
-    flex: 0 0 33.333%;
-    padding: 5px;
+    min-width: 1200px;
 }
 
 .details-drawer {
@@ -22,7 +17,7 @@
     margin: 15px 15px 15px 15px;
 }
 
-.mat-form-field {
+.mat-mdc-form-field {
     flex: 1;
     padding-right: 15px;
 }
@@ -30,12 +25,6 @@
 .form-status {
     display: flex;
     justify-content: space-between;
-}
-
-.widget-row {
-    display: flex;
-    flex: 1;
-    flex-wrap: wrap;
 }
 
 .form-tab {

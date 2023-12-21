@@ -1,0 +1,22 @@
+:host {
+    flex: 1;
+    display: flex;
+    align-content: stretch;
+    flex-direction: column;
+}
+
+.notification-view {
+    padding: 15px;
+    display: flex;
+    justify-content: center;
+}
+
+.notification-card {
+    min-width: 1024px;
+    width: 100%;
+}
+
+.content-card {
+    padding: 15px;
+    background-color: rgba(0, 0, 0, 0.03);
+}

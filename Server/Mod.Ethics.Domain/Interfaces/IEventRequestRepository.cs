@@ -1,4 +1,5 @@
 ﻿using Mod.Ethics.Domain.Entities;
+using Mod.Ethics.Domain.Views;
 using Mod.Framework.Domain.Repositories;
 using System;
 using System.Collections.Generic;
@@ -10,5 +11,6 @@ namespace Mod.Ethics.Domain.Interfaces
 {
     public interface IEventRequestRepository : IRepository<EventRequest>
     {
+        IQueryable<EventRequestTable> QueryTable();
     }
 }

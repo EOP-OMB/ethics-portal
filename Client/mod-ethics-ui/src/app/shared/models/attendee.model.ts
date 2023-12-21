@@ -1,22 +1,36 @@
 import { DtoBase, UserInfo } from "mod-framework";
+import { Employee } from "./employee.model";
+import { Guid } from "./guid.static";
+import { Attachment } from "./attachment.model";
 
 export class Attendee extends DtoBase {
-    constructor(reqId: number) {
+    constructor(parentId: number) {
         super();
-        this.eventRequestId = reqId;
 
-        //this.employee = new UserInfo();
+        this.eventRequestId = parentId;
+        this.id = 0;
+
+        this.attendeeAttachments = [];
+        this.attachmentGuid = Guid.newGuid();
     }
 
     eventRequestId: number;
-    eventName: string = "";
-    employee?: UserInfo;
-    capacity: string = "";
-    employeeType: string = "";
-    isGivingRemarks?: boolean;
-    remarks: string = "";
-    reasonForAttending: string = "";
+    capacity: string;
+    employee: Employee = new Employee();
+    employeeName: string;
+    employeeUpn: string;
+    employeeType: string;
+    informedSupervisor: boolean;
+    isGivingRemarks: boolean;
+    nameOfSupervisor: string;
+    reasonForAttending: string;
+    remarks: string;
 
-    // UI Only
-    selected: boolean = false;
+    isSpeakerAgreementRequired: boolean;
+    attendeeAttachments: Attachment[];
+    attachmentGuid: string;
+
+    // client only
+    result: string;
 }
+

@@ -21,7 +21,7 @@ import { DownloadHelper } from '../../static/download.helper';
 export class GuidanceEditComponent implements OnInit {
 
     @Input()
-    employee: Employee = new Employee();
+    employee: Employee;
 
     @Input()
     allowEmployeeSelect: boolean = true;
@@ -42,21 +42,12 @@ export class GuidanceEditComponent implements OnInit {
     guidanceTypes: SelectItem[];
     subjects: SelectItem[];
 
-    selectedEmployee: Employee = new Employee();
+    selectedEmployee: Employee;
 
     saveUrl: string;
     removeUrl: string;
 
-    public guidanceForm = new FormGroup({
-        dateOfGuidance: new FormControl(new Date(), Validators.required),
-        employee: new FormControl(this.employee, Validators.required),
-        guidanceType: new FormControl('', Validators.required),
-        subject: new FormControl('', null),
-        text: new FormControl('', Validators.required),
-        notifyEmployee: new FormControl(false),
-        summary: new FormControl('', null),
-        isShared: new FormControl(false, null)
-    });
+    public guidanceForm: FormGroup;
 
     get formEmployee() { return this.guidanceForm.get('employee'); }
     get guidanceType() { return this.guidanceForm.get('guidanceType'); }
@@ -124,11 +115,11 @@ export class GuidanceEditComponent implements OnInit {
 
     onSubmit(guidanceForm: FormGroup) {
         this.submitted = true;
-        if (this.guidanceForm.valid) {
+        if (guidanceForm.valid && this.selectedEmployee && this.selectedEmployee.id > 0) {
             let g: Guidance = Object.assign(new Guidance(), guidanceForm.value);
 
             g.subject = guidanceForm.value.subject.toString();
-            g.employeeId = this.selectedEmployee.id;
+            g.employeeUpn = this.selectedEmployee.upn;
             g.employee = this.selectedEmployee;
             g.employeeName = this.selectedEmployee.displayName;
             g.filerType = this.selectedEmployee.filerType;

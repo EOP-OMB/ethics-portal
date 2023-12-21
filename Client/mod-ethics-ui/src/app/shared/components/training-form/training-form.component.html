@@ -1,0 +1,103 @@
+<h1>Ethics Training Self Certification</h1>
+<div *ngIf="!trainingType.value" style="display: flex; flex-direction: column;">
+    <p>New Employees must take Initial Training within their first 90 days at OMB. Annual training is taken each year.</p>
+    <div class="section-header">
+        Type of Training (choose 1):
+    </div>
+    <div class="box-row" style="display: flex; flex-direction: column; gap: 20px;">
+        <div class="training-type-box" (click)="trainingTypeSelected('Initial')">
+            <span class="training-type-title">Initial Training</span>
+            <span style="color: green;" *ngIf="initialTraining && mode == 'SELF'">COMPLETED</span>
+            <span style="color: red;" *ngIf="!initialTraining && mode == 'SELF'">MISSING</span>
+            <small *ngIf="initialTraining">Completed on {{initialTraining.trainingDate | date: 'MM/dd/yyyy'}}</small>
+        </div>
+        <div class="training-type-box" (click)="trainingTypeSelected('Annual')">
+            <span class="training-type-title">Annual Training</span>
+            <span style="color: green;" *ngIf="currentAnnual && mode == 'SELF'">COMPLETED</span>
+            <span style="color: red;" *ngIf="!currentAnnual && mode == 'SELF'">MISSING</span>
+            <small *ngIf="currentAnnual">Completed on {{currentAnnual.trainingDate | date: 'MM/dd/yyyy'}}</small>
+            <small *ngIf="!currentAnnual && lastAnnual">Last completed on {{lastAnnual.trainingDate | date: 'MM/dd/yyyy'}}</small>
+        </div>
+    </div>
+</div>
+<div *ngIf="trainingType.value">
+    <div *ngIf="training && showUser">
+        <h2>{{ training.employeeName }}</h2>
+    </div>
+    <span class="section-header">{{ year }} {{ trainingType.value }} Training</span>
+
+    <div style="display: flex; align-items: center; gap: 20px; margin: 15px 0; border: 1px solid #17a2b8; padding: 10px; border-radius: 5px; background-color: #d9edf7;">
+        <mat-icon style="color: #17a2b8;">info</mat-icon>
+        <small style="flex: 1; font-weight: 600;">
+            Please enter the date, time, location, and name of the OMB ethics official who conducted your training. We entrust you to truthfully report your compliance with this requirement.
+            <br /><br />
+            A false official statement may result in a violation of 18 U.S.C. 1001.
+        </small>
+    </div>
+    <form [formGroup]="certForm" (ngSubmit)="onSubmit()" id="trainingForm">
+        <input type="hidden" formControlName="id" />
+        <input matInput type="text" formControlName="trainingType" placeholder="" style="display: none;" />
+        <div class="kendo-form-field">
+            <small class="floating-label">Date and Time of Training</small>
+            <kendo-datetimepicker formControlName="trainingDate" class="material-input form-input"
+                                  [formatPlaceholder]="formatPlaceholder" [max]="today">
+            </kendo-datetimepicker>
+            <mat-error *ngIf="trainingDate.errors && (trainingDate.dirty || trainingDate.touched)" class="kendo-error">
+                <span *ngIf="trainingDate.errors.required">
+                    Date is
+                    <strong>required</strong>
+                </span>
+            </mat-error>
+        </div>
+        <mat-form-field appearance="outline" floatLabel="always">
+            <mat-label>Location</mat-label>
+            <input matInput type="text" formControlName="location" placeholder="" />
+            <mat-error *ngIf="location.errors">
+                <span *ngIf="location.errors.required">
+                    Location is
+                    <strong>required</strong>
+                </span>
+            </mat-error>
+        </mat-form-field>
+        <mat-form-field appearance="outline" floatLabel="always">
+            <mat-label>Who Provided Training</mat-label>
+            <input matInput type="text" formControlName="ethicsOfficial" placeholder="" />
+            <mat-error *ngIf="ethicsOfficial.errors">
+                <span *ngIf="ethicsOfficial.errors.required">
+                    Name Of Official is
+                    <strong>required</strong>
+                </span>
+            </mat-error>
+        </mat-form-field>
+        <div *ngIf="canAssignAttendees()">
+            <div class="section-header" style="padding-top: 15px;">Attendee(s)</div>
+            <app-people-picker #peoplePicker (onPeoplePicked)="employeeSelected($event)" [required]="false"></app-people-picker>
+            <div formArrayName="attendees">
+                <div *ngFor="let att of attendees.controls; let i=index;">
+                    <div [formGroupName]="i" style="display: flex; justify-content: space-between; align-items: center;">
+                        <span>{{attendees.value[i].employeeName}}</span>
+                        <span>{{attendees.value[i].employeeUpn}}</span>
+                        <span *ngIf="attendees.value[i].result == 'Success'"><mat-icon style="color: green;">done</mat-icon></span>
+                        <span *ngIf="attendees.value[i].result == 'Error'"><mat-icon style="color: red;">cancel</mat-icon></span>
+                        <button mat-icon-button type="button" (click)="removeAttendee(i)"><mat-icon>close</mat-icon></button>
+                    </div>
+                </div>
+            </div>
+            <div *ngIf="hasError" style="color: red;">
+                <p>Submission failed:</p>
+                <ul>
+                    <li *ngIf="trainingType.value == 'Annual'">Cannot create two annual trainings for the same year.</li>
+                    <li *ngIf="trainingType.value == 'Initial'"> Cannot create more than one initial training.</li>
+                </ul>
+            </div>
+        </div>
+        <div style="display: flex; justify-content: space-between;">
+            <div style="display: flex; gap: 15px;">
+                <button mat-flat-button style="background-color: #5cb85c; border-color: #4cae4c; color: white;" type="submit" *ngIf="id.value == 0 && !submitting">Certify</button>
+                <button mat-flat-button color="primary" type="submit" *ngIf="id.value > 0 && !submitting">Update</button>
+                <button mat-stroked-button type="button" (click)="cancelClick()">{{ submitting ? 'Close' : 'Cancel' }}</button>
+            </div>
+            <button mat-flat-button color="warn" type="button" *ngIf="canDelete" (click)="deleteTraining()">Delete</button>
+        </div>
+    </form>
+</div>

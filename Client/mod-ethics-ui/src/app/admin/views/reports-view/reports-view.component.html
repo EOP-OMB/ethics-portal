@@ -1,115 +1,74 @@
-<div class="report-view">
-    <mat-card>
-        <h1>Financial Disclosure End of Year Reporting</h1>
-        <div class="report-section">
-            <mat-form-field appearance="outline" class="inline-form-field year-select">
-                <mat-label>Report by Calendar Year</mat-label>
-                <mat-select [(value)]="selectedYear" (selectionChange)="yearChange($event)">
-                    <mat-option [value]="0">
-                        All
-                    </mat-option>
-                    <mat-option *ngFor="let year of years" [value]="year.value">
-                        {{ year.text }}
-                    </mat-option>
-                </mat-select>
-            </mat-form-field>
-        </div>
-        <div class="report-section">
-            <p>Indicate the number of filers who filed electronically in fiscal year {{ eoy.year }}.</p>
-            <div class="table-row">
-                <table>
-                    <tr>
-                        <td>&nbsp;</td>
-                        <td>Public (<u><b>excluding</b></u> filers in <i>Integrity</i>)</td>
-                        <td>Confidential</td>
-                    </tr>
-                    <tr>
-                        <td>Number of financial disclosure filers, not reports, who filed electronically in FY {{ eoy.year }}</td>
-                        <td>&nbsp;</td>
-                        <td class="value">{{eoy.numberOfElectronicFilers}}</td>
-                    </tr>
-                </table>
-            </div>
-        </div>
+<div class="report-row">
+    <mat-card class="report-card">
+        <mat-card-header>
+            <mat-card-title>
+                <span class="title">OGE Form 450</span>
+                <button mat-flat-button (click)="gotoReport('EOY')"><mat-icon>dashboard</mat-icon>EOY Report</button>
+                <button mat-icon-button class="icon-button" (click)="refresh('450Status')"><mat-icon>refresh</mat-icon></button>
+            </mat-card-title>
+        </mat-card-header>
+        <mat-card-content>
+            <app-oge-form450-status-chart #ogeForm450Chart></app-oge-form450-status-chart>
+        </mat-card-content>
+    </mat-card>
 
-        <div class="report-section">
-            <p>Report the number of confidential financial disclosure reports required to be filed by December 31, {{ eoy.year }}, <b><u>excluding</u> SGEs</b>, and the number of reports actually filed by December 31, {{ eoy.year }}</p>
-
-            <div class="table-row">
-                <table>
-                    <tr>
-                        <td class="hidden">&nbsp;</td>
-                        <td>a. Required</td>
-                        <td colspan="2">b. Filed</td>
-                    </tr>
-                    <tr>
-                        <td class="hidden">&nbsp;</td>
-                        <td>&nbsp;</td>
-                        <td>OGE Form 450</td>
-                        <td class="value">{{eoy.filedForms}}</td>
-                    </tr>
-                    <tr>
-                        <td class="hidden">&nbsp;</td>
-                        <td>&nbsp;</td>
-                        <td>&nbsp;</td>
-                        <td>&nbsp;</td>
-                    </tr>
-                    <tr>
-                        <td class="hidden">&nbsp;</td>
-                        <td>&nbsp;</td>
-                        <td>OGE-approved alternative form</td>
-                        <td class="value">{{eoy.filedAlternativeForms}}</td>
-                    </tr>
-                    <tr>
-                        <td>Total</td>
-                        <td>{{eoy.requiredForms}}</td>
-                        <td>&nbsp;</td>
-                        <td class="value">{{eoy.filedAlternativeForms + eoy.filedForms}}</td>
-                    </tr>
-                </table>
-            </div>
-        </div>
-        <div class="report-section">
-            <p>
-                Note the number of confidential financial disclosure reports certified or otherwise closed by your agency during the calendar year. <b><u>Exclude</u> reports of SGEs</b>. Of those reports,
-                indicate how many were initially reviewed within 60 days and how many were certified within 60 days. "Initially reivewed within 60 days" means having completed a technical review of conflicts analysis. See
-                5 C.F.F. 2634.605 and the Certification Requirements section of the Confidential Financial Disclosure Guide.
-            </p>
-            <div class="table-row">
-                <table>
-                    <tr>
-                        <td>&nbsp;</td>
-                        <td>How many reports did your agency certify or close in {{ eoy.year }}?</td>
-                        <td>Of those certified or closed in {{ eoy.year }}, how many were initially reviewed within 60 days?</td>
-                        <td>Of those certified or closed in {{ eoy.year }}, how many were certified or closed within 60 days?</td>
-                    </tr>
-                    <tr>
-                        <td>a. OGE Form 450 and OGE-approved alternative</td>
-                        <td class="value">{{eoy.certifiedOrClosed}}</td>
-                        <td class="value">{{eoy.reviewedIn60Days}}</td>
-                        <td class="value">{{eoy.certifiedIn60Days}}</td>
-                    </tr>
-                </table>
-            </div>
-        </div>
-        <div class="details-section">
-            <mat-tab-group>
-                <mat-tab label="Canceled After Due Date">
-                    <app-form-table #dtForms key="closedReports" [data]="eoy.closedReports" [selectable]="false" [hiddenCols]="hiddenCols"></app-form-table>
-                </mat-tab>
-                <mat-tab label="Required Not Filed">
-                    <app-form-table #dtForms key="requiredVsFiled" [data]="eoy.requiredVsFiled" [selectable]="false" [hiddenCols]="hiddenCols"></app-form-table>
-                </mat-tab>
-                <mat-tab label="Not Reviewed in 60">
-                    <app-form-table #dtForms key="notReviewedIn60Days" [data]="eoy.notReviewedIn60Days" [selectable]="false" [hiddenCols]="hiddenCols"></app-form-table>
-                </mat-tab>
-                <mat-tab label="Not Certified in 60">
-                    <app-form-table #dtForms key="notCertifiedIn60Days" [data]="eoy.notCertifiedIn60Days" [selectable]="false" [hiddenCols]="hiddenCols"></app-form-table>
-                </mat-tab>
-                <mat-tab label="Filings Not Due in {{eoy.year}}">
-                    <app-form-table #dtForms key="nonYearFilings" [data]="eoy.nonYearFilings" [selectable]="false" [hiddenCols]="hiddenCols"></app-form-table>
-                </mat-tab>
-            </mat-tab-group>
-        </div>
+    <mat-card class="report-card">
+        <mat-card-header>
+            <mat-card-title>
+                <span class="title">Training ({{selectedYear}})</span>
+                <button mat-icon-button class="icon-button" [matMenuTriggerFor]="trainingMenu"><mat-icon>menu</mat-icon></button>
+                <mat-menu #trainingMenu="matMenu">
+                    <button mat-menu-item disabled>Missing Training Reports</button>
+                    <button mat-menu-item (click)="downloadTrainingReport('missingAnnual', 0)">
+                        <span>{{selectedYear}} Missing Annual</span>
+                    </button>
+                    <button mat-menu-item (click)="downloadTrainingReport('initial', 366)">
+                        <span>{{selectedYear}} Missing Initial</span>
+                    </button>
+                    <button mat-menu-item (click)="downloadTrainingReport('initial', 30)">
+                        <span>{{selectedYear}} Missing Initial 30 days</span>
+                    </button>
+                    <button mat-menu-item (click)="downloadTrainingReport('initial', 60)">
+                        <span>{{selectedYear}} Missing Initial 60 days</span>
+                    </button>
+                    <button mat-menu-item (click)="downloadTrainingReport('initial', 90)">
+                        <span>{{selectedYear}} Missing Initial 90 days</span>
+                    </button>
+                    <button mat-menu-item disabled>Select a Year:</button>
+                    <button mat-menu-item *ngFor="let year of years" (click)="changeTrainingYear(year)">{{year}}</button>
+                </mat-menu>
+                <button mat-icon-button class="icon-button" (click)="refresh('Training')"><mat-icon>refresh</mat-icon></button>
+            </mat-card-title>
+        </mat-card-header>
+        <mat-card-content>
+            <app-training-chart #trainingChart [year]="currentYear"></app-training-chart>
+        </mat-card-content>
     </mat-card>
 </div>
+<div class="report-row">
+    <mat-card class="report-card">
+        <mat-card-header>
+            <mat-card-title>
+                <span class="title">Event Clearance</span>
+                <button mat-icon-button class="icon-button" (click)="refresh('Events')"><mat-icon>refresh</mat-icon></button>
+            </mat-card-title>
+        </mat-card-header>
+        <mat-card-content>
+            <app-event-request-chart #eventChart></app-event-request-chart>
+        </mat-card-content>
+    </mat-card>
+</div>
+
+<!--<div class="report-row">
+    <mat-card class="report-card">
+        <mat-card-header>
+            <mat-card-title>
+                <span class="title">Self Reported Training</span>
+                <button mat-icon-button class="icon-button"><mat-icon>refresh</mat-icon></button>
+            </mat-card-title>
+        </mat-card-header>
+        <mat-card-content>
+            table goes here...
+        </mat-card-content>
+    </mat-card>
+</div>-->

@@ -4,6 +4,7 @@ export class WidgetData {
     title: string = "";
     icon: string = "";
     text: string = "";
+    color: string = "";
     statusColor: string = "";
     status: string = "";
     actionIcon: string = "";

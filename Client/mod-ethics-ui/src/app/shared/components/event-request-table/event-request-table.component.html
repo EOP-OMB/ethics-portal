@@ -1,0 +1,107 @@
+<div class="filter-container">
+    <div class="filter-row">
+        <mat-form-field appearance="outline" style="flex-grow: 2;" class="inline-form-field">
+            <mat-label>Filter by Attendees</mat-label>
+            <input [(ngModel)]="filter.attendeesString" matInput placeholder="Filter by Attendees" (keyup)="search()">
+        </mat-form-field>
+        <mat-form-field appearance="outline" class="inline-form-field">
+            <mat-label>Filter by Event Name</mat-label>
+            <input [(ngModel)]="filter.eventName" matInput placeholder="Filter by Event Name" (keyup)="search()">
+        </mat-form-field>
+        <mat-form-field appearance="outline" class="inline-form-field">
+            <mat-label>Filter by Status</mat-label>
+            <mat-select [(ngModel)]="filter.status" (selectionChange)="search()">
+                <mat-option value="">
+                    All
+                </mat-option>
+                <mat-option *ngFor="let es of eventStatuses" [value]="es.value">
+                    {{ es.text }}
+                </mat-option>
+            </mat-select>
+        </mat-form-field>
+        <mat-form-field appearance="outline" class="inline-form-field">
+            <mat-label>Filter by Start Date</mat-label>
+            <mat-select [(ngModel)]="filter.dateFilter" (selectionChange)="search()">
+                <mat-option value="">
+                    All
+                </mat-option>
+                <mat-option value="past">
+                    Past Events
+                </mat-option>
+                <mat-option value="next7">
+                    Next 7 Days
+                </mat-option>
+                <mat-option value="7to30">
+                    7 to 30 days
+                </mat-option>
+                <mat-option value="30plus">
+                    30+ days
+                </mat-option>
+            </mat-select>
+        </mat-form-field>
+        <mat-form-field appearance="outline" class="inline-form-field">
+            <mat-label>Filter by Assigned To</mat-label>
+            <mat-select [(ngModel)]="filter.assignedToUpn" (selectionChange)="search()">
+                <mat-option value="">
+                    All
+                </mat-option>
+                <mat-option *ngFor="let reviewer of reviewers" [value]="reviewer.value">
+                    {{ reviewer.text }}
+                </mat-option>
+            </mat-select>
+        </mat-form-field>
+    </div>
+    <div style="display: flex; gap: 10px;">
+        <button mat-flat-button aria-label="Reset Filters" (click)="resetFilters()" [color]="isFiltered ? 'accent' : ''" class="filter-button" matTooltip="Reset Filters">
+            RESET
+        </button>
+    </div>
+</div>
+<mat-paginator #paginator [length]="totalData" [pageSizeOptions]="pageSizeOptions" showFirstLastButtons style="margin-top: -45px"></mat-paginator>
+<table mat-table [dataSource]="dataSource" matSort matSortDisableClear [matSortActive]="sortString" [matSortDirection]="sortOrder">
+    <!--<ng-container matColumnDef="select" *ngIf="showSelect">
+        <th mat-header-cell *matHeaderCellDef>
+            <mat-checkbox (change)="$event ? masterToggle() : null"
+                          [checked]="selection.hasValue() && isAllSelected()"
+                          [indeterminate]="selection.hasValue() && !isAllSelected()"
+                          [aria-label]="checkboxLabel()">
+            </mat-checkbox>
+        </th>
+        <td mat-cell *matCellDef="let form">
+            <mat-checkbox (click)="$event.stopPropagation()"
+                          (change)="$event ? selection.toggle(form) : null"
+                          [checked]="selection.isSelected(form)"
+                          [aria-label]="checkboxLabel(form)">
+            </mat-checkbox>
+        </td>
+    </ng-container>-->
+    <ng-container matColumnDef="attendeesString">
+        <th mat-header-cell *matHeaderCellDef> Attendees </th>
+        <td mat-cell *matCellDef="let event"> {{ event.attendeesString }} </td>
+    </ng-container>
+    <ng-container matColumnDef="eventName">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header> Event Name </th>
+        <td mat-cell *matCellDef="let event"> {{ event.eventName }} </td>
+    </ng-container>
+    <ng-container matColumnDef="eventDates">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header> Event Date(s) </th>
+        <td mat-cell *matCellDef="let event"> {{ event.eventDates }} </td>
+    </ng-container>
+    <ng-container matColumnDef="submittedDate">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header> Date Submitted </th>
+        <td mat-cell *matCellDef="let event"> {{ event.submittedDate | date: 'MM/dd/yyyy' }} </td>
+    </ng-container>
+    <ng-container matColumnDef="status">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header> Status </th>
+        <td mat-cell *matCellDef="let event"> {{ event.status }} </td>
+    </ng-container>
+    <ng-container matColumnDef="assignedTo">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header> Assigned To </th>
+        <td mat-cell *matCellDef="let event"> {{ event.assignedTo }} </td>
+    </ng-container>
+
+    <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+    <tr mat-row *matRowDef="let row; columns: displayedColumns;" (click)="rowSelected(row)"></tr>
+
+</table>
+

@@ -1,0 +1,181 @@
+$formColor: #17bcd0;
+$guidanceColor: #d8b304;
+$eventColor: #43a047;
+$trainingColor: #fb8c00;
+$positionColor: #125360;
+$circle-size: 10px;
+$icon-size: 32px;
+$bdrs-icon: 100%;
+$spacing: 10px;
+
+.mat-icon {
+    overflow: unset !important;
+}
+
+.ethics-item {
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
+    padding: 10px;
+    border-radius: 4px;
+    background-color: white;
+}
+
+.ethics-item-oge450:hover {
+    
+    box-shadow: rgba(23, 188, 208, 0.8) 0px 2px 8px 0px;
+    cursor: pointer;
+}
+
+.ethics-item-guidance:hover {
+    box-shadow: rgba(216, 179, 4, 0.8) 0px 2px 8px 0px;
+    cursor: pointer;
+}
+
+.ethics-item-event:hover {
+    box-shadow: rgba(67, 160, 71, 0.8) 0px 2px 8px 0px;
+    cursor: pointer;
+}
+
+.ethics-item-training:hover {
+    box-shadow: rgba(251, 140, 0, 0.8) 0px 2px 8px 0px;
+    cursor: pointer;
+}
+
+.ethics-item-position:hover {
+    box-shadow: rgba(18, 83, 96, 0.8) 0px 2px 8px 0px;
+    cursor: pointer;
+}
+
+.item-title {
+    font-size: 1.2em;
+    font-weight: 600;
+}
+
+.title-row {
+    flex: 2 !important;
+    display: flex;
+    flex-direction: column;
+}
+
+.item-details {
+    font-size: .9em;
+    color: #999;
+}
+
+.item-row {
+    padding: 2px;
+    flex: 1;
+    justify-content: flex-start;
+    display: flex;
+    gap: 10px;
+}
+
+.centered {
+    justify-content: center;
+}
+
+.icon-oge450 {
+    background: $formColor;
+
+    &:before {
+        background: $formColor;
+    }
+
+    &:after {
+        background: $formColor;
+    }
+}
+
+.icon-guidance {
+    background: $guidanceColor;
+
+    &:before {
+        background: $guidanceColor;
+    }
+
+    &:after {
+        background: $guidanceColor;
+    }
+}
+
+.icon-event {
+    background: $eventColor;
+
+    &:before {
+        background: $eventColor;
+    }
+
+    &:after {
+        background: $eventColor;
+    }
+}
+
+
+.icon-training {
+    background: $trainingColor;
+
+    &:before {
+        background: $trainingColor;
+    }
+
+    &:after {
+        background: $trainingColor;
+    }
+}
+
+.icon-position {
+    background: $positionColor;
+
+    &:before {
+        background: $positionColor;
+    }
+
+    &:after {
+        background: $positionColor;
+    }
+}
+
+.icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    padding: $spacing;
+    align-self: center;
+    margin: 0 $spacing;
+    border-radius: $bdrs-icon;
+    width: $circle-size;
+    box-shadow: 0 30px 60px -12px rgba(50, 50, 93, 0.25), 0 18px 36px -18px rgba(0, 0, 0, 0.3), 0 -12px 36px -8px rgba(0, 0, 0, 0.025);
+    padding: 20px;
+    height: $circle-size;
+    position: relative;
+    flex: 0;
+    margin-right: 20px;
+
+    &:before {
+        content: "";
+        width: 2px;
+        height: 100%;
+        position: absolute;
+        top: 0%;
+        z-index: -1;
+        left: 50%;
+        transform: translateX(-50%);
+        animation: fillTop 2s forwards 2s ease-in-out;
+    }
+
+    &:after {
+        content: "";
+        width: 100%;
+        height: 2px;
+        position: absolute;
+        left: 0%;
+        z-index: -1;
+        top: 50%;
+        transform: translateY(-50%);
+        animation: fillLeftOdd 2s forwards 2s ease-in-out;
+    }
+}

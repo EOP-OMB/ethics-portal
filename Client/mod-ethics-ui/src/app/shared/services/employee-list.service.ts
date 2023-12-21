@@ -31,6 +31,17 @@ export class EmployeeListService extends ModPromiseServiceBase<Employee> {
         }
     }
 
+    getEventReviewers(): Promise<Employee[]> {
+        var url = `${this.url}/${this.endpoint}/eventreviewers`;
+
+        if (!this._reviewers) {
+            return this.getAllByUrl(url);
+        }
+        else {
+            return this._reviewers;
+        }
+    }
+
     private getAllByUrl(url: string): Promise<Employee[]> {
         return this.http
             .get<Employee[]>(url)

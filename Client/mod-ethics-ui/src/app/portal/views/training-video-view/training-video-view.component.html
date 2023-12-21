@@ -1,0 +1,17 @@
+<div style="display: flex; gap: 15px; padding: 15px;" *ngIf="files">
+    <div style="flex: 1;">
+        <app-card title="Training Videos" [records]="files" [totalRecords]="files.length" [showRecordDate]="false" (selected)="showVideo($event)"></app-card>
+    </div>
+    <div style="flex: 2;">
+        <div *ngIf="!selectedFile">
+            <strong>Please select a video from the list.</strong>
+        </div>
+        <div *ngIf="selectedFile">
+            <div style="border-top: solid 1px #e5e5e5; width: 100%;">
+                <video controls [src]="selectedFile.url" style="width: 100%;">
+                    Your browser does not support the video tag.
+                </video>
+            </div>
+        </div>
+    </div>
+</div>

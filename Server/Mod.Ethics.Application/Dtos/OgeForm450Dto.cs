@@ -1,4 +1,5 @@
-﻿using Mod.Framework.Application;
+﻿using Mod.Ethics.Domain.Enumerations;
+using Mod.Framework.Application;
 using Mod.Framework.Runtime.Security;
 using System;
 using System.Collections.Generic;
@@ -16,7 +17,7 @@ namespace Mod.Ethics.Application.Dtos
         // Direct Mappings
         public int Year { get; set; }
         public string ReportingStatus { get; set; }
-        public DateTime DueDate { get; set; }
+        public string DueDate { get; set; }
         public string EmployeesName { get; set; }
         public string EmailAddress { get; set; }
         public string PositionTitle { get; set; }
@@ -66,14 +67,30 @@ namespace Mod.Ethics.Application.Dtos
         public string AppUser { get; set; }
 
         public string AssignedTo { get; set; }
+        public string AssignedToUpn { get; set; }
         public int AssignedToEmployeeId { get; set; }
 
         public DateTime? DateCanceled { get; set; }
+        public DateTime? DateDeclined { get; set; }
+
+        public string DaysFilter { get; set; }
+
+        public string PrivateComments { get; set; }
+        public string ReviewStatus { get; set; }
+        public string SubstantiveReviewerUpn { get; set; }
+        public string DeclineReason { get; set; }
+        public string ReasonOther { get; set; }
 
         public void ClearEmptyReportableInformation()
         {
             if (this.ReportableInformationList != null)
-                this.ReportableInformationList.RemoveAll(x => x.Id == 0 && x.IsEmpty());
+                this.ReportableInformationList.RemoveAll(x => x.IsEmpty());
+        }
+
+        internal bool IsUserFinished()
+        {
+            return FormStatus == OgeForm450Statuses.SUBMITTED || FormStatus == OgeForm450Statuses.RE_SUBMITTED || FormStatus == OgeForm450Statuses.CERTIFIED || 
+                FormStatus == OgeForm450Statuses.READY_TO_CERT || FormStatus == OgeForm450Statuses.IN_REVIEW || FormStatus == OgeForm450Statuses.DECLINED;
         }
     }
 }

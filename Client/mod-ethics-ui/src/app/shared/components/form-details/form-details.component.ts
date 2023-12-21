@@ -3,6 +3,8 @@ import { OgeForm450 } from '@shared/models/oge-form-450.model';
 import { SelectItem } from '@shared/models/select-item.interface';
 import { Helper } from '@shared/static/helper.funcs';
 import { FormStatus } from '../../static/form-status.const';
+import { EmployeeService } from '../../services/employee.service';
+import { Router } from '@angular/router';
 
 export const AccessLevels =
 {
@@ -43,12 +45,10 @@ export class FormDetailsComponent implements OnInit {
     @Output()
     extend = new EventEmitter<OgeForm450>();
 
-    tempDueDate: Date | null = null;
-
-    constructor() { }
+    constructor(private employeeService: EmployeeService, private router: Router) { }
 
     ngOnInit(): void {
-        this.tempDueDate = Helper.getDate(this.form.dueDate);
+        
     }
 
     get canEdit(): boolean {
@@ -60,11 +60,8 @@ export class FormDetailsComponent implements OnInit {
     }
 
     saveClick(): void {
-        if (this.canEdit) {
-            var dateString = Helper.formatDate(this.tempDueDate);
-            this.form.dueDate = dateString ?? "";
-        }
-        
+        var upn = this.form.assignedToUpn;
+        this.form.assignedTo = upn && upn != 'na' ? this.reviewers.filter(x => x.value == upn)[0].text : '';
         this.save.emit(this.form);
     }
 
@@ -87,5 +84,12 @@ export class FormDetailsComponent implements OnInit {
 
     isCanceled(form: OgeForm450) {
         return form.formStatus.includes(FormStatus.CANCELED);
+    }
+
+    employeeClick(upn: string) {
+        this.employeeService.getByUpn(upn).then(response => {
+            if (response && response.id > 0)
+                this.router.navigate(['/profile', response.id]);
+        });
     }
 }

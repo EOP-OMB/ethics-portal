@@ -142,7 +142,7 @@ export abstract class FormViewBaseComponent {
                 else {
                     this.forms.filter(x => x.id == form.id)[0].dueDate = response.dueDate;
                     this.forms.filter(x => x.id == form.id)[0].assignedTo = response.assignedTo;
-                    this.forms.filter(x => x.id == form.id)[0].assignedToEmployeeId = response.assignedToEmployeeId;
+                    this.forms.filter(x => x.id == form.id)[0].assignedToUpn = response.assignedToUpn;
                     this.forms.filter(x => x.id == form.id)[0].formStatus = response.formStatus;
 
                     message = "Form Updated Successfully";
@@ -215,13 +215,6 @@ export abstract class FormViewBaseComponent {
         this.selectedForm = undefined;
         this.selectedExtension = undefined;
         this.selectedForms = undefined;
-    }
-
-    assignMultiple(forms: OgeForm450[], employeeId: number): void {
-        forms.forEach(x => {
-            x.assignedToEmployeeId = employeeId;
-            this.saveForm(x);
-        });
     }
 
     saveExtension(extension: ExtensionRequest): void {

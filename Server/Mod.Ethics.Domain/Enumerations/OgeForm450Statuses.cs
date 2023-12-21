@@ -23,6 +23,10 @@ namespace Mod.Ethics.Domain.Enumerations
         public const string MIFSSING_INFORMATION_EXPIRED = "Missing Information - Expired";
         public const string RE_SUBMITTED_EXPIRED = "Re-submitted - Expired";
 
+        public const string IN_REVIEW = "In Review";
+        public const string READY_TO_CERT = "Ready to Certify";
+        public const string DECLINED = "Declined";
+
         //Draft
         //Not-Started
         //Submitted

@@ -12,7 +12,7 @@ export class WidgetComponent implements OnInit {
     @Input() icon: string = "";
 
     @Output()
-    widgetClick: EventEmitter<void> = new EventEmitter<void>();
+    widgetClick: EventEmitter<string> = new EventEmitter<string>();
 
     constructor() { }
 
@@ -21,7 +21,7 @@ export class WidgetComponent implements OnInit {
     }
 
     onClick(): void {
-        this.widgetClick.emit();
+        this.widgetClick.emit(this.data.title);
     }
 }
 

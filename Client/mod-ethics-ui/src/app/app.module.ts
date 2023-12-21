@@ -11,6 +11,18 @@ import { PortalModule } from '@portal/portal.module';
 import { SharedModule } from '@shared/shared.module';
 import { OgeForm450Module } from '@oge450/oge-form-450.module';
 import { EventsModule } from '@events/events.module';
+import { EditorModule } from '@progress/kendo-angular-editor';
+import { ButtonsModule } from '@progress/kendo-angular-buttons';
+import { DateInputsModule } from '@progress/kendo-angular-dateinputs';
+import { DialogsModule } from '@progress/kendo-angular-dialog';
+import { DropDownsModule } from '@progress/kendo-angular-dropdowns';
+import { InputsModule } from '@progress/kendo-angular-inputs';
+import { ToolBarModule } from '@progress/kendo-angular-toolbar';
+import { TreeViewModule } from '@progress/kendo-angular-treeview';
+import { UploadsModule } from '@progress/kendo-angular-upload';
+import { HttpClientModule } from '@angular/common/http';
+import 'hammerjs';
+
 
 
 const modConfig: ModFrameworkConfig = {
@@ -26,7 +38,7 @@ const modConfig: ModFrameworkConfig = {
 
 @NgModule({
     declarations: [
-        AppComponent
+        AppComponent,
     ],
     imports: [
         BrowserModule,
@@ -37,8 +49,19 @@ const modConfig: ModFrameworkConfig = {
         PortalModule,
         OgeForm450Module,
         EventsModule,
+        EditorModule,
+        ButtonsModule,
+        DateInputsModule,
+        DialogsModule,
+        DropDownsModule,
+        InputsModule,
+        ToolBarModule,
+        TreeViewModule,
+        UploadsModule,
+        HttpClientModule,
     ],
-    providers: [],
+    providers: [
+    ],
     bootstrap: [AppComponent]
 })
 export class AppModule { }

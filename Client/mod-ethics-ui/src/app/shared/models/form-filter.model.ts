@@ -6,4 +6,6 @@ export class FormFilter {
     formStatus: string = "";
     dateOfEmployeeSignature: string = "";
     formFlags: string = "";
+    reviewStatus: string = "";
+    substantiveReviewerUpn: string = "";
 }
