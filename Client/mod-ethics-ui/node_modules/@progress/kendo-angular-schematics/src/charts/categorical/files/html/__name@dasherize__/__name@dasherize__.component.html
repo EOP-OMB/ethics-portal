@@ -1,0 +1,46 @@
+<kendo-chart <% if (renderAs) {%>renderAs="<%=renderAs%>"<% } %>>
+<% if (titleText) { %>
+    <kendo-chart-title
+        text="<%=titleText %>" <% if (titlePosition) {%>
+        position="<%=titlePosition%>" <% } %><% if (titleAlign) {%>
+        align="<%=titleAlign%>" <% } %>
+        ></kendo-chart-title>
+<% } %><% if (legend) { %>
+    <kendo-chart-legend<% if (legendAlign) {%>
+        align="<%=legendAlign%>"<% } %><% if (legendPosition) {%>
+        position="<%=legendPosition%>"<% } %><% if (legendOrientation) {%>
+        orientation="<%=legendOrientation%>"<% } %><% if (legendTitleText) {%>
+        [title]="legendTitle"<% } %>></kendo-chart-legend>
+<% } %>
+    <kendo-chart-series>
+<% for (let item of series) { %>
+        <kendo-chart-series-item<% if (item.currentField) {%>
+            currentField="<%=item.currentField%>"<% } %><% if (item.categoryField) {%>
+            categoryField="<%=item.categoryField%>"<% } %>
+            [data]="seriesData"<% if (item.field) {%>
+            field="<%=item.field%>"<% } %><% if (item.name) {%>
+            name="<%=item.name%>"<% } %><% if (item.type) {%>
+            type="<%=item.type%>"<% } %><% if (item.width) {%>
+            [width]="<%=item.width%>"<% } %>>
+        </kendo-chart-series-item>
+<% } %>
+    </kendo-chart-series>
+    <kendo-chart-category-axis>
+<% for (let item of categoryAxis) { %>
+        <kendo-chart-category-axis-item<% if (item.name) {%>
+            name="<%=item.name%>"<% } %><% if (item.type) {%>
+            type="<%=item.type%>"<% } %>><% if (item.title) {%>
+            <kendo-chart-category-axis-item-title text="<%=item.title%>"></kendo-chart-category-axis-item-title><% } %>
+        </kendo-chart-category-axis-item>
+<% } %>
+    </kendo-chart-category-axis>
+    <kendo-chart-value-axis>
+<% for (let item of valueAxis) { %>
+        <kendo-chart-value-axis-item<% if (item.name) {%>
+            name="<%=item.name%>"<% } %><% if (item.type) {%>
+            type="<%=item.type%>"<% } %>><% if (item.title) {%>
+            <kendo-chart-value-axis-item-title text="<%=item.title%>"></kendo-chart-value-axis-item-title><% } %>
+        </kendo-chart-value-axis-item>
+<% } %>
+    </kendo-chart-value-axis>
+</kendo-chart>

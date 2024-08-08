@@ -1,0 +1,253 @@
+{
+	"progress:name": "Categorical Chart",
+    "progress:icon": "barcharts",
+	"progress:description": "Generate new Kendo UI for Angular Chart page",
+	"$schema": "http://json-schema.org/schema",
+	"$id": "Schema",
+	"type": "object",
+	"properties": {
+		"path": {
+			"type": "string",
+			"format": "path",
+			"progress:editorVisible": false
+		},
+		"name": {
+			"type": "string",
+			"$default": {
+				"$source": "argv",
+				"index": 0
+			},
+			"default": "ChartPage"
+		},
+
+		"inlineTemplate": {
+			"progress:category": "Code Generation",
+			"progress:display-name": "Inline template",
+			"description": "Include template inline in the component.ts file. By default, an external template file is created and referenced in the component.ts file.",
+			"type": "boolean",
+			"default": false,
+			"alias": "t"
+		},
+		"inlineStyle": {
+			"progress:category": "Code Generation",
+			"description": "Include styles inline in the component.ts file. Only CSS styles can be included inline. By default, an external styles file is created and referenced in the component.ts file.",
+			"type": "boolean",
+			"default": false,
+			"alias": "s"
+		},
+		"skipTests": {
+			"progress:category": "Code Generation",
+			"type": "boolean",
+			"description": "Do not create \"spec.ts\" test files for the new component.",
+			"default": false
+		},
+
+        "titleText": {
+            "progress:category": "Title",
+            "progress:displayName": "Text",
+            "type": "string"
+        },
+        "titlePosition": {
+            "progress:category": "Title",
+            "progress:displayName": "Position",
+            "type": "string",
+            "enum": [ "top", "bottom" ],
+            "progress:attributes": [
+				{ "type": "hideOnPropertyValue", "property": "titleText", "values": [ "" ] }
+			]
+        },
+        "titleAlign": {
+            "progress:category": "Title",
+            "progress:displayName": "Align",
+            "type": "string",
+            "enum": [ "left", "right", "center" ],
+            "progress:attributes": [
+				{ "type": "hideOnPropertyValue", "property": "titleText", "values": [ "" ] }
+			]
+        },
+
+        "legend": {
+            "progress:category": "Legend",
+            "description": "Determines whether the Chart legend will be rendered",
+            "type": "boolean"
+        },
+        "legendAlign": {
+            "progress:category": "Legend",
+            "description": "The legend alignment",
+            "type": "string",
+            "enum": [ "center", "start", "end" ],
+            "progress:attributes": [
+				{ "type": "hideOnPropertyValue", "property": "legend", "values": [ false ] }
+			]
+        },
+        "legendPosition": {
+            "progress:category": "Legend",
+            "description": "The legend position",
+            "type": "string",
+            "enum": [ "top", "bottom", "left", "right", "custom" ],
+            "progress:attributes": [
+				{ "type": "hideOnPropertyValue", "property": "legend", "values": [ false ] }
+			]
+        },
+        "legendOrientation": {
+            "progress:category": "Legend",
+            "description": "The legend orientation",
+            "type": "string",
+            "enum": [ "vertical", "horizontal" ],
+            "progress:attributes": [
+				{ "type": "hideOnPropertyValue", "property": "legend", "values": [ false ] }
+			]
+        },
+        "legendTitleText": {
+            "progress:category": "Legend",
+            "description": "The legend title",
+            "type": "string",
+            "progress:attributes": [
+				{ "type": "hideOnPropertyValue", "property": "legend", "values": [ false ] }
+			]
+        },
+        "legendTitleAlign": {
+            "progress:category": "Legend",
+            "description": "The legend title alignment",
+            "type": "string",
+            "enum": [ "left", "right", "center" ],
+            "progress:attributes": [
+				{ "type": "hideOnPropertyValue", "property": "legend", "values": [ false ] },
+                { "type": "hideOnPropertyValue", "property": "legendTitleText", "values": [ "" ] }
+			]
+        },
+        "legendTitlePosition": {
+            "progress:category": "Legend",
+            "description": "The legend title alignment",
+            "type": "string",
+            "enum": [ "top", "bottom" ],
+            "progress:attributes": [
+				{ "type": "hideOnPropertyValue", "property": "legend", "values": [ false ] },
+                { "type": "hideOnPropertyValue", "property": "legendTitleText", "values": [ "" ] }
+			]
+        },
+
+        "renderAs": {
+            "progress:category": "Rendering",
+            "type": "string",
+            "enum": [ "svg", "canvas" ]
+        },
+
+        "dataSource": {
+			"progress:category": "Data Source",
+			"description": "Select grid data source generation strategy",
+			"type": "string",
+			"default": "Example",
+			"enum": [ "Example", "Mock Data", "Existing App Data" ],
+			"progress:enum": [{
+				"name": "Example", "description": "An example data source will be added to the project, with predefined chart series."
+			}, {
+				"name": "Mock Data", "description": "Specify chart series, from which mock data will be generated and added to the project."
+			}, {
+				"name": "Existing App Data", "description": "Provide import path. If the data module does not exist in your project, you will have to generate it by hand."
+			}]
+		},
+
+		"dataPath": {
+            "progress:category": "Data Source",
+			"description": "Sets a path to the local data file",
+			"type": "string",
+            "progress:attributes": [
+				{ "type": "hideOnPropertyValue", "property": "dataSource", "values": [ "Example", "Mock Data" ] }
+			]
+		},
+		"dataName": {
+            "progress:category": "Data Source",
+			"description": "Sets a name to the local data property",
+			"type": "string",
+            "progress:attributes": [
+				{ "type": "hideOnPropertyValue", "property": "dataSource", "values": [ "Example", "Mock Data" ] }
+			]
+		},
+
+        "series": {
+			"progress:category": "Chart Series",
+			"progress:type": "array",
+			"hidden": true,
+			"description": "Configures the series in the Chart",
+			"type": "string",
+            "progress:attributes": [
+				{ "type": "hideOnPropertyValue", "property": "dataSource", "values": [ "Example" ] }
+			],
+			"items": {
+				"type": "object",
+				"properties": {
+					"type": {
+                        "type": "string",
+                        "enum": [
+                            "area",
+                            "bar",
+                            "bullet",
+                            "column",
+                            "horizontalWaterfall",
+                            "line",
+                            "radarArea",
+                            "radarColumn",
+                            "radarLine",
+                            "rangeArea",
+                            "rangeBar",
+                            "rangeColumn",
+                            "waterfall"
+                        ],
+                        "default": "line"
+                    },
+                    "categoryField": {"type": "string"},
+                    "currentField": {"type": "string"},
+                    "field": {"type": "string"},
+                    "name": {"type": "string"},
+                    "width": {"type": "number"}
+				}
+			}
+		},
+        "categoryAxis": {
+			"progress:category": "Chart Axis",
+			"progress:type": "array",
+			"hidden": true,
+			"description": "Configures the category axis items in the Chart",
+			"type": "string",
+            "progress:attributes": [
+				{ "type": "hideOnPropertyValue", "property": "dataSource", "values": [ "Example" ] }
+			],
+			"items": {
+				"type": "object",
+				"properties": {
+                    "name": {"type": "string"},
+                    "title": {"type": "string"},
+                    "type": {
+                        "type": "string",
+                        "enum": [ "category", "date" ] 
+                    }
+				}
+			}
+		},
+        "valueAxis": {
+			"progress:category": "Chart Axis",
+			"progress:type": "array",
+			"hidden": true,
+			"description": "Configures the value axis items in the Chart",
+			"type": "string",
+            "progress:attributes": [
+				{ "type": "hideOnPropertyValue", "property": "dataSource", "values": [ "Example" ] }
+			],
+			"items": {
+				"type": "object",
+				"properties": {
+                    "name": {"type": "string"},
+                    "title": {"type": "string"},
+                    "type": {
+                        "type": "string",
+                        "enum": [ "numeric", "log" ] 
+                    }
+				}
+			}
+		}
+	},
+	"required": [
+		"name"
+	]
+}

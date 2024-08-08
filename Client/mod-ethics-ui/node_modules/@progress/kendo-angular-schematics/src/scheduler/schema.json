@@ -1,0 +1,78 @@
+{
+	"progress:name": "Scheduler",
+	"progress:description": "Generate new Kendo UI for Angular Scheduler page",
+	"$schema": "http://json-schema.org/schema",
+	"$id": "Schema",
+	"type": "object",
+	"properties": {
+		"path": {
+			"type": "string",
+			"format": "path",
+			"progress:editorVisible": false
+		},
+		"name": {
+			"type": "string",
+			"$default": {
+				"$source": "argv",
+				"index": 0
+			},
+			"default": "SchedulerPage"
+		},
+
+		"inlineTemplate": {
+			"progress:category": "Code Generation",
+			"progress:display-name": "Inline template",
+			"description": "Include template inline in the component.ts file. By default, an external template file is created and referenced in the component.ts file.",
+			"type": "boolean",
+			"default": false,
+			"alias": "t"
+		},
+		"inlineStyle": {
+			"progress:category": "Code Generation",
+			"description": "Include styles inline in the component.ts file. Only CSS styles can be included inline. By default, an external styles file is created and referenced in the component.ts file.",
+			"type": "boolean",
+			"default": false,
+			"alias": "s"
+		},
+		"skipTests": {
+			"progress:category": "Code Generation",
+			"type": "boolean",
+			"description": "Do not create \"spec.ts\" test files for the new component.",
+			"default": false
+		},
+
+		"dayView": {
+			"progress:category": "Scheduler Views",
+			"description": "Enables Scheduler day view",
+			"type": "boolean",
+			"default": true
+		},
+		"weekView": {
+			"progress:category": "Scheduler Views",
+			"description": "Enables Scheduler week view",
+			"type": "boolean",
+			"default": true
+		},
+		"monthView": {
+			"progress:category": "Scheduler Views",
+			"description": "Enables Scheduler week view",
+			"type": "boolean",
+			"default": true
+		},
+		"timelineView": {
+			"progress:category": "Scheduler Views",
+			"description": "Enables Scheduler timeline view",
+			"type": "boolean",
+			"default": true
+		},
+		"agendaView": {
+			"progress:category": "Scheduler Views",
+			"description": "Enables Scheduler agenda view",
+			"type": "boolean",
+			"default": true
+		}
+	},
+	"required": [
+		"name"
+	]
+}

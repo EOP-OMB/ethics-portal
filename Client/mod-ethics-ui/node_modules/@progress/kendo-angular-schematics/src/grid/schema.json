@@ -1,0 +1,168 @@
+{
+	"progress:name": "Grid",
+	"progress:description": "Generate new Kendo UI for Angular Grid page",
+	"$schema": "http://json-schema.org/schema",
+	"$id": "Schema",
+	"type": "object",
+	"properties": {
+		"path": {
+			"type": "string",
+			"format": "path",
+			"progress:editorVisible": false
+		},
+		"name": {
+			"type": "string",
+			"$default": {
+				"$source": "argv",
+				"index": 0
+			},
+			"default": "GridPage"
+		},
+
+		"inlineTemplate": {
+			"progress:category": "Code Generation",
+			"progress:display-name": "Inline template",
+			"description": "Include template inline in the component.ts file. By default, an external template file is created and referenced in the component.ts file.",
+			"type": "boolean",
+			"default": false,
+			"alias": "t"
+		},
+		"inlineStyle": {
+			"progress:category": "Code Generation",
+			"description": "Include styles inline in the component.ts file. Only CSS styles can be included inline. By default, an external styles file is created and referenced in the component.ts file.",
+			"type": "boolean",
+			"default": false,
+			"alias": "s"
+		},
+		"skipTests": {
+			"progress:category": "Code Generation",
+			"type": "boolean",
+			"description": "Do not create \"spec.ts\" test files for the new component.",
+			"default": false
+		},
+
+		"editing": {
+			"progress:category": "Grid Features",
+			"description": "Configures the Grid for inline or incell editing.",
+			"type": "string",
+            "enum": ["none", "inline", "incell"],
+			"default": "none"
+		},
+		"filtering": {
+			"progress:category": "Grid Features",
+			"description": "Enables Grid filtering",
+			"type": "boolean",
+			"default": false
+		},
+		"grouping": {
+			"progress:category": "Grid Features",
+			"description": "Enables Grid grouping",
+			"type": "boolean",
+			"default": false
+		},
+		"paging": {
+			"progress:category": "Grid Features",
+			"description": "Enables Grid paging",
+			"type": "boolean",
+			"default": false
+		},
+		"sorting": {
+			"progress:category": "Grid Features",
+			"description": "Enables Grid sorting",
+			"type": "boolean",
+			"default": false
+		},
+		"resizing": {
+			"progress:category": "Grid Features",
+			"description": "Enables Grid resizing",
+			"type": "boolean",
+			"default": false
+		},
+		"reordering": {
+			"progress:category": "Grid Features",
+			"description": "Enables Grid reordering",
+			"type": "boolean",
+			"default": false
+		},
+		"columnMenu": {
+			"progress:category": "Grid Features",
+			"description": "Enables Grid column menu",
+			"type": "boolean",
+			"default": false
+		},
+		"navigable": {
+			"progress:category": "Grid Features",
+			"description": "Makes the Grid navigable",
+			"type": "boolean",
+			"default": false
+		},
+		"pageSize": {
+			"progress:category": "Grid Features",
+			"description": "Sets the pageSize of a pageable Grid",
+			"type": "number",
+			"default": 3
+		},
+		"height": {
+			"progress:category": "Grid Features",
+			"description": "Sets the height of the Grid",
+			"type": "number",
+			"default": 300
+		},
+		"dataSource": {
+			"progress:category": "Data Source",
+			"description": "Select grid data source generation strategy",
+			"type": "string",
+			"default": "Example",
+			"enum": [ "Example", "Mock Data", "Existing App Data" ],
+			"progress:enum": [{
+				"name": "Example", "description": "An example data source will be added to the project, with predefined column definitions."
+			}, {
+				"name": "Mock Data", "description": "Specify column definitions, from which mock data will be generated and added to the project."
+			}, {
+				"name": "Existing App Data", "description": "Provide import path. If the data module does not exist in your project, you will have to generate it by hand."
+			}]
+		},
+		"dataPath": {
+			"progress:category": "Data Source",
+			"description": "Sets a path to the local data file",
+			"type": "string",
+			"progress:attributes": [
+				{ "type": "hideOnPropertyValue", "property": "dataSource", "values": [ "Example", "Mock Data" ] }
+			]
+		},
+		"dataName": {
+			"progress:category": "Data Source",
+			"description": "Sets a name to the local data property",
+			"type": "string",
+			"progress:attributes": [
+				{ "type": "hideOnPropertyValue", "property": "dataSource", "values": [ "Example", "Mock Data" ] }
+			]
+		},
+		"columns": {
+			"progress:category": "Data Source",
+			"progress:type": "array",
+			"hidden": true,
+			"description": "Specifies the columns in the Grid",
+			"type": "string",
+			"progress:attributes": [
+				{ "type": "hideOnPropertyValue", "property": "dataSource", "values": [ "Example" ] }
+			],
+			"items": {
+				"type": "object",
+				"properties": {
+					"field": {"type": "string"},
+					"title": {"type": "string"},
+					"hidden": {"type": "boolean"},
+                    "locked": {"type": "boolean"},
+                    "sticky": {"type": "boolean"},
+                    "columnMenu": {"type": "boolean"},
+                    "editable": {"type": "boolean"},
+                    "width": {"type": "number"}
+				}
+			}
+		}
+	},
+	"required": [
+		"name"
+	]
+}

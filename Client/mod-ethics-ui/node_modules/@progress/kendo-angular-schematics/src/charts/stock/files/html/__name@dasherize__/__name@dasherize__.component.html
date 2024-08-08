@@ -1,0 +1,57 @@
+<kendo-stockchart <% if (renderAs) {%>renderAs="<%=renderAs%>"<% } %>><% if (titleText) {%>
+    <kendo-chart-title
+        text="<%=titleText %>" <% if (titlePosition) {%>
+        position="<%=titlePosition%>" <% } %><% if (titleAlign) {%>
+        align="<%=titleAlign%>" <% } %>
+        ></kendo-chart-title><% }%><% if (legend) {%>
+    <kendo-chart-legend<% if (legendAlign) {%>
+        align="<%=legendAlign%>"<% } %><% if (legendPosition) {%>
+        position="<%=legendPosition%>"<% } %><% if (legendOrientation) {%>
+        orientation="<%=legendOrientation%>"<% } %><% if (legendTitleText || legendTitleAlign || legendTitlePosition) {%>
+        [title]="legendTitle"<% } %>></kendo-chart-legend><% }%>
+    <kendo-chart-series><% if (series.length) {%><% for (let item of series) {%>
+        <kendo-chart-series-item<% if (item.categoryField) {%>
+            categoryField="<%=item.categoryField%>"<% } %><% if (item.openField) {%>
+            openField="<%=item.openField%>"<% } %><% if (item.field) {%>
+            field="<%=item.field%>"<% } %>
+            [data]="seriesData"<% if (item.closeField) {%>
+            closeField="<%=item.closeField%>"<% } %><% if (item.lowField) {%>
+            lowField="<%=item.lowField%>"<% } %><% if (item.highField) {%>
+            highField="<%=item.highField%>"<% } %><% if (item.name) {%>
+            name="<%=item.name%>"<% } %><% if (item.type) {%>
+            type="<%=item.type%>"<% } %><% if (item.width || item.width === 0) {%>
+            [width]="<%=item.width%>"<% } %>></kendo-chart-series-item><% } %><% } %>
+    </kendo-chart-series>
+    <kendo-chart-category-axis><% if (categoryAxis.length) {%><% for (let item of categoryAxis) {%>
+        <kendo-chart-category-axis-item<% if (item.name) {%>}
+            name="<%=item.name%>"<% } %><% if (item.type) {%>
+            type="<%=item.type%>"<% } %>><% if (item.title) {%>
+            <kendo-chart-category-axis-item-title text="<%=item.title%>"></kendo-chart-category-axis-item-title><% } %>
+        </kendo-chart-category-axis-item><% } %><% } %>
+    </kendo-chart-category-axis>
+    <kendo-chart-value-axis><% if (valueAxis.length) {%><% for (let item of valueAxis) {%>
+        <kendo-chart-value-axis-item<% if (item.name) {%>}
+            name="<%=item.name%>"<% } %><% if (item.type) {%>
+            type="<%=item.type%>"<% } %>><% if (item.title) {%>
+            <kendo-chart-value-axis-item-title text="<%=item.title%>"></kendo-chart-value-axis-item-title><% } %>
+        </kendo-chart-value-axis-item><% } %><% } %>
+    </kendo-chart-value-axis><% if (navigator) { %>
+    <kendo-chart-navigator><% if (navigatorFrom || navigatorTo) { %>
+        <kendo-chart-navigator-select <% if (navigatorFrom) { %>
+            [from]="from"<% } %><% if (navigatorTo) { %>
+            [to]="to"<% } %>></kendo-chart-navigator-select><% } %>
+        <kendo-chart-navigator-series><% if (navigatorSeries.length) {%><% for (let item of navigatorSeries) {%>
+            <kendo-chart-navigator-series-item<% if (item.categoryField) {%>
+                categoryField="<%=item.categoryField%>"<% } %><% if (item.openField) {%>
+                openField="<%=item.openField%>"<% } %><% if (item.field) {%>
+                field="<%=item.field%>"<% } %>
+                [data]="seriesData"<% if (item.closeField) {%>
+                closeField="<%=item.closeField%>"<% } %><% if (item.lowField) {%>
+                lowField="<%=item.lowField%>"<% } %><% if (item.highField) {%>
+                highField="<%=item.highField%>"<% } %><% if (item.name) {%>
+                name="<%=item.name%>"<% } %><% if (item.type) {%>
+                type="<%=item.type%>"<% } %><% if (item.width || item.width === 0) {%>
+                [width]="<%=item.width%>"<% } %>></kendo-chart-navigator-series-item><% } %><% } %>
+        </kendo-chart-navigator-series>
+    </kendo-chart-navigator><% } %>
+</kendo-stockchart>

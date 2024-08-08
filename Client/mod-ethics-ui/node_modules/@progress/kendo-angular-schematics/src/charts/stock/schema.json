@@ -1,0 +1,285 @@
+{
+	"progress:name": "Stock Chart",
+    "progress:icon": "stockchart",
+	"progress:description": "Generate new Kendo UI for Angular Chart page",
+	"$schema": "http://json-schema.org/schema",
+	"$id": "Schema",
+	"type": "object",
+	"properties": {
+		"path": {
+			"type": "string",
+			"format": "path",
+			"progress:editorVisible": false
+		},
+		"name": {
+			"type": "string",
+			"$default": {
+				"$source": "argv",
+				"index": 0
+			},
+			"default": "ChartPage"
+		},
+		"inlineTemplate": {
+			"progress:display-name": "Inline template",
+			"description": "Include template inline in the component.ts file. By default, an external template file is created and referenced in the component.ts file.",
+			"type": "boolean",
+			"default": false,
+			"alias": "t"
+		},
+		"inlineStyle": {
+			"description": "Include styles inline in the component.ts file. Only CSS styles can be included inline. By default, an external styles file is created and referenced in the component.ts file.",
+			"type": "boolean",
+			"default": false,
+			"alias": "s"
+		},
+		"skipTests": {
+			"type": "boolean",
+			"description": "Do not create \"spec.ts\" test files for the new component.",
+			"default": false
+		},
+        "titleText": {
+            "progress:category": "Title",
+            "progress:displayName": "Text",
+            "type": "string"
+        },
+        "titlePosition": {
+            "progress:category": "Title",
+            "progress:displayName": "Position",
+            "type": "string",
+            "enum": [
+                "top",
+                "bottom"
+            ]
+        },
+        "titleAlign": {
+            "progress:category": "Title",
+            "progress:displayName": "Align",
+            "type": "string",
+            "enum": [
+                "left",
+                "right",
+                "center"
+            ]
+        },
+        "renderAs": {
+            "type": "string",
+            "enum": [
+                "svg",
+                "canvas"
+            ]
+        },
+		"title": {
+			"description": "Sets the Chart title",
+			"type": "string",
+            "hidden": true,
+            "progress:type": "object",
+            "properties": {
+                "text": {"type": "string"},
+                "color": {"type": "string"},
+                "background": {"type": "string"},
+                "font": {"type": "string"},
+                "margin": {"type": "number"},
+                "padding": {"type": "number"},
+                "position": {
+                    "type": "string",
+                    "enum": [
+                        "top",
+                        "bottom"
+                    ]
+                },
+                "visible": {"type": "boolean"}
+            }
+		},
+		"series": {
+			"progress:category": "Chart Series",
+			"progress:type": "array",
+			"hidden": true,
+			"description": "Configures the series in the Chart",
+			"type": "string",
+			"items": {
+				"type": "object",
+				"properties": {
+					"type": {
+                        "type": "string",
+                        "enum": [
+                            "candlestick",
+                            "ohlc"
+                        ],
+                        "default": "candlestick"
+                    },
+                    "categoryField": {"type": "string"},
+                    "openField": {"type": "string"},
+                    "closeField": {"type": "string"},
+                    "lowField": {"type": "string"},
+                    "highField": {"type": "string"},
+                    "name": {"type": "string"},
+                    "width": {"type": "number"}
+				}
+			}
+		},
+        "categoryAxis": {
+			"progress:category": "Chart Axis",
+			"progress:type": "array",
+			"hidden": true,
+			"description": "Configures the category axis items in the Chart",
+			"type": "string",
+			"items": {
+				"type": "object",
+				"properties": {
+                    "name": {"type": "string"},
+                    "title": {"type": "string"},
+                    "type": {
+                        "type": "string",
+                        "enum": [
+                            "category",
+                            "date"
+                        ] 
+                    }
+				}
+			}
+		},
+        "valueAxis": {
+			"progress:category": "Chart Axis",
+			"progress:type": "array",
+			"hidden": true,
+			"description": "Configures the value axis items in the Chart",
+			"type": "string",
+			"items": {
+				"type": "object",
+				"properties": {
+                    "name": {"type": "string"},
+                    "title": {"type": "string"},
+                    "type": {
+                        "type": "string",
+                        "enum": [
+                            "numeric",
+                            "log"
+                        ] 
+                    }
+				}
+			}
+		},
+        "legend": {
+            "description": "Determines whether the Chart legend will be rendered",
+            "type": "boolean"
+        },
+        "legendTitleText": {
+            "description": "The legend title",
+            "type": "string"
+        },
+        "legendTitleAlign": {
+            "description": "The legend title alignment",
+            "type": "string",
+            "enum": [
+                "left",
+                "right",
+                "center"
+            ]
+        },
+        "legendTitlePosition": {
+            "description": "The legend title alignment",
+            "type": "string",
+            "enum": [
+                "top",
+                "bottom"
+            ]
+        },
+        "legendAlign": {
+            "description": "The legend alignment",
+            "type": "string",
+            "enum": [
+                "center",
+                "start",
+                "end"
+            ]
+        },
+        "legendPosition": {
+            "description": "The legend position",
+            "type": "string",
+            "enum": [
+                "top",
+                "bottom",
+                "left",
+                "right",
+                "custom"
+            ]
+        },
+        "legendOrientation": {
+            "description": "The legend orientation",
+            "type": "string",
+            "enum": [
+                "vertical",
+                "horizontal"
+            ]
+        },
+        "navigator": {"type": "boolean"},
+        "navigatorFrom": {"type": "string"},
+        "navigatorTo": {"type": "string"},
+        "navigatorSeries": {
+			"progress:category": "Navigator Series",
+			"progress:type": "array",
+			"hidden": true,
+			"description": "Configures the series in the Chart Navigator",
+			"type": "string",
+			"items": {
+				"type": "object",
+				"properties": {
+					"type": {
+                        "type": "string",
+                        "enum": [
+                            "area",
+                            "column",
+                            "line",
+                            "candlestick",
+                            "ohlc"
+                        ],
+                        "default": "area"
+                    },
+                    "categoryField": {"type": "string"},
+                    "field": {"type": "string"},
+                    "openField": {"type": "string"},
+                    "closeField": {"type": "string"},
+                    "lowField": {"type": "string"},
+                    "highField": {"type": "string"},
+                    "name": {"type": "string"},
+                    "width": {"type": "number"}
+				}
+			}
+		},
+		"mockedData": {
+			"description": "Enables the generation of a local data file",
+			"type": "boolean"
+		},
+		"dataPath": {
+			"description": "Sets a path to the local data file",
+			"type": "string",
+			"progress:hideOnPropertyValue": {
+				"property": "mockedData",
+				"value": true
+			}
+		},
+		"dataName": {
+			"description": "Sets a name to the local data property",
+			"type": "string",
+			"progress:hideOnPropertyValue": {
+				"property": "mockedData",
+				"value": true
+			}
+		},
+        "dataSourceType": {
+            "type": "string"
+        },
+        "dataSourceModule": {
+            "type": "string"
+        },
+        "dataSourceMember": {
+            "type": "string"
+        },
+        "dataSourceMethod": {
+            "type": "string"
+        }
+	},
+	"required": [
+		"name"
+	]
+}

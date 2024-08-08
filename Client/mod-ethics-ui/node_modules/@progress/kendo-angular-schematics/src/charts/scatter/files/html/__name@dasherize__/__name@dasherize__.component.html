@@ -1,0 +1,35 @@
+<kendo-chart <% if (renderAs) {%>renderAs="<%=renderAs%>"<% } %>><% if (titleText) {%>
+    <kendo-chart-title
+        text="<%=titleText %>" <% if (titlePosition) {%>
+        position="<%=titlePosition%>" <% } %><% if (titleAlign) {%>
+        align="<%=titleAlign%>" <% } %>
+        ></kendo-chart-title><% }%><% if (legend) {%>
+    <kendo-chart-legend<% if (legendAlign) {%>
+        align="<%=legendAlign%>"<% } %><% if (legendPosition) {%>
+        position="<%=legendPosition%>"<% } %><% if (legendOrientation) {%>
+        orientation="<%=legendOrientation%>"<% } %><% if (legendTitleText || legendTitleAlign || legendTitlePosition) {%>
+        [title]="legendTitle"<% } %>></kendo-chart-legend><% }%>
+    <kendo-chart-series><% if (series.length) {%><% for (let item of series) {%>
+        <kendo-chart-series-item<% if (item.xField) {%>
+            xField="<%=item.xField%>"<% } %>
+            [data]="seriesData"<% if (item.yField) {%>
+            yField="<%=item.yField%>"<% } %><% if (item.name) {%>
+            name="<%=item.name%>"<% } %><% if (item.type) {%>
+            type="<%=item.type%>"<% } %><% if (item.width || item.width === 0) {%>
+            [width]="<%=item.width%>"<% } %>></kendo-chart-series-item><% } %><% } %>
+    </kendo-chart-series>
+    <kendo-chart-x-axis><% if (xAxis.length) {%><% for (let item of xAxis) {%>
+        <kendo-chart-x-axis-item<% if (item.name) {%>}
+            name="<%=item.name%>"<% } %><% if (item.type) {%>
+            type="<%=item.type%>"<% } %>><% if (item.title) {%>
+            <kendo-chart-x-axis-item-title text="<%=item.title%>"></kendo-chart-x-axis-item-title><% } %>
+        </kendo-chart-x-axis-item><% } %><% } %>
+    </kendo-chart-x-axis>
+    <kendo-chart-y-axis><% if (yAxis.length) {%><% for (let item of yAxis) {%>
+        <kendo-chart-y-axis-item<% if (item.name) {%>}
+            name="<%=item.name%>"<% } %><% if (item.type) {%>
+            type="<%=item.type%>"<% } %>><% if (item.title) {%>
+            <kendo-chart-y-axis-item-title text="<%=item.title%>"></kendo-chart-y-axis-item-title><% } %>
+        </kendo-chart-y-axis-item><% } %><% } %>
+    </kendo-chart-y-axis>
+</kendo-chart>

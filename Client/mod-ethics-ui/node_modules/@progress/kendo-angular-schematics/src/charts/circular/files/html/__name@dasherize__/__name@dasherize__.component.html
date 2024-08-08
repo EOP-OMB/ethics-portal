@@ -1,0 +1,27 @@
+<kendo-chart<% if (renderAs) {%>renderAs="<%=renderAs%>"<% } %>><% if (titleText) {%>
+    <kendo-chart-title
+        text="<%=titleText %>" <% if (titlePosition) {%>
+        position="<%=titlePosition%>" <% } %><% if (titleAlign) {%>
+        align="<%=titleAlign%>"<% } %>></kendo-chart-title><% }%><% if (legend) {%>
+        <kendo-chart-legend<% if (legendAlign) {%>
+            align="<%=legendAlign%>"<% } %><% if (legendPosition) {%>
+            position="<%=legendPosition%>"<% } %><% if (legendOrientation) {%>
+            orientation="<%=legendOrientation%>"<% } %><% if (legendTitleText || legendTitleAlign || legendTitlePosition) {%>
+            [title]="legendTitle"<% } %>></kendo-chart-legend><% }%>
+    <kendo-chart-series><% if (series.length) {%><% for (let item of series) {%>
+        <kendo-chart-series-item<% if (item.categoryField) {%>
+            categoryField="<%=item.categoryField%>"<% } %><% if (item.currentField) {%>
+            currentField="<%=item.currentField%>"<% } %>
+            [data]="seriesData"<% if (item.field) {%>
+            field="<%=item.field%>"<% } %><% if (item.name) {%>
+            name="<%=item.name%>"<% } %><% if (item.type) {%>
+            type="<%=item.type%>"<% } %><% if (item.holeSize || item.holeSize === 0) {%>
+            [holeSize]="<%=item.holeSize%>"<% } %><% if (item.size || item.size === 0) {%>
+            [size]="<%=item.size%>"<% } %><% if (item.startAngle || item.startAngle === 0) {%>
+            [startAngle]="<%=item.startAngle%>"<% } %>><% if (showLabels) {%>
+            <kendo-chart-series-item-labels
+                [visible]="true"
+                [content]="labelContent"></kendo-chart-series-item-labels><% } %>
+        </kendo-chart-series-item><% } %><% } %>
+    </kendo-chart-series>
+</kendo-chart>
