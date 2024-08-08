@@ -94,7 +94,7 @@
         <div style="display: flex; justify-content: space-between;">
             <div style="display: flex; gap: 15px;">
                 <button mat-flat-button style="background-color: #5cb85c; border-color: #4cae4c; color: white;" type="submit" *ngIf="id.value == 0 && !submitting">Certify</button>
-                <button mat-flat-button color="primary" type="submit" *ngIf="id.value > 0 && !submitting">Update</button>
+                <button mat-flat-button color="primary" type="submit" *ngIf="id.value > 0 && !submitting" [disabled]="!canEdit">Update</button>
                 <button mat-stroked-button type="button" (click)="cancelClick()">{{ submitting ? 'Close' : 'Cancel' }}</button>
             </div>
             <button mat-flat-button color="warn" type="button" *ngIf="canDelete" (click)="deleteTraining()">Delete</button>

@@ -5,7 +5,6 @@ using System.Threading;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Serilog;
-using Serilog.Events;
 
 using Mod.Ethics.Infrastructure.EfCore;
 using Mod.Framework.Configuration;

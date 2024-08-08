@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { ActivatedRoute, NavigationEnd, NavigationStart, Router } from '@angular/router';
+import { NavigationStart, Router } from '@angular/router';
 
 import * as config from '@src/assets/menu-config.json';
 import { ModSideMenuConfig } from 'mod-framework';
@@ -14,7 +14,7 @@ import { filter } from 'rxjs/operators';
 export class AppComponent {
     public menuConfig: ModSideMenuConfig;
 
-    constructor(private router: Router, private activatedRoute: ActivatedRoute) {
+    constructor(private router: Router) {
         this.menuConfig = (config as any).default;
 
         this.router.events.pipe(

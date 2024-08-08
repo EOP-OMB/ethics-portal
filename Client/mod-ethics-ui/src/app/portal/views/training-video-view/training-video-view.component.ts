@@ -19,13 +19,7 @@ export class TrainingVideoViewComponent {
 
     ngOnInit(): void {
 
-        this.http.get<TrainingVideo[]>('assets/training-videos.json').subscribe(response => {
-            var files = [];
-            var tempFiles = response.filter(x => environment.debug || x.environment == 'prod');
-            tempFiles.forEach(x => files.push(Object.assign(new TrainingVideo(), x)));
-
-            this.files = files;
-        });
+        
         
     }
 

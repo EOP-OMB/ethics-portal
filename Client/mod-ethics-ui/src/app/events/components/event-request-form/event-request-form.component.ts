@@ -563,6 +563,12 @@ export class EventRequestFormComponent implements OnInit {
     isSubmitting: boolean = false;
 
     save(submitting: boolean, close: boolean = false): void {
+        if (this.request.status.includes('Open') && !submitting) {
+            if (!window.confirm('The form you are making changes to has already been submitted. If you save these changes you will be required to re-submit the form. Press OK to proceed.')) {
+                return;
+            }
+        }
+
         this.request = Object.assign(this.request, this.eventRequestForm.value);
 
         this.request.eventRequestAttendees.forEach(x => {

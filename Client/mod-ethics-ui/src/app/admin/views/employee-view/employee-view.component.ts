@@ -8,6 +8,8 @@ import { EmployeeTableComponent } from '@admin/components/employee-table/employe
 import { Employee } from '@shared/models/employee.model';
 import { MatCheckboxChange } from '@angular/material/checkbox';
 import { EmployeeFilter } from '../../../shared/models/employee-filter.model';
+import { CurrentUserService } from 'mod-framework';
+import { Roles } from '../../../shared/static/roles.const';
 
 @Component({
     selector: 'app-employee-view',
@@ -33,7 +35,11 @@ export class EmployeeViewComponent implements OnInit {
     hiddenCols: string[] = [];
 
     constructor(private employeeService: EmployeeService, private employeeListService: EmployeeListService,
-        private router: Router) {
+        private router: Router, private userService: CurrentUserService) {
+    }
+
+    canEditEmployees(): boolean {
+        return this.userService.isInRole(Roles.Admin) || this.userService.isInRole(Roles.Support);
     }
 
     ngOnInit(): void {

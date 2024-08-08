@@ -18,6 +18,9 @@ export class EmployeeEditComponent implements OnInit, OnChanges, OnDestroy {
     @Input()
     employee: Employee = new Employee();
 
+    @Input()
+    canSave: boolean = false;
+
     @Output()
     viewForm = new EventEmitter<Employee>();
 
@@ -71,13 +74,11 @@ export class EmployeeEditComponent implements OnInit, OnChanges, OnDestroy {
     }
 
     canCreateNewForm(): boolean {
-        console.log('canCreateNewForm');
-        console.log(this.editEmployee.currentFormStatus);
-        return this.editEmployee.currentFormId == 0 ||
+        return (this.editEmployee.currentFormId == 0 ||
             this.editEmployee.currentFormStatus == FormStatus.CANCELED ||
             this.editEmployee.currentFormStatus == FormStatus.CERTIFIED ||
             this.editEmployee.currentFormStatus == FormStatus.DECLINED ||
-            this.editEmployee.currentFormStatus.toLowerCase().includes(FormStatus.EXPIRED.toLowerCase());
+            this.editEmployee.currentFormStatus.toLowerCase().includes(FormStatus.EXPIRED.toLowerCase())) && this.canSave;
     }
 
     private initializeEmployee() {

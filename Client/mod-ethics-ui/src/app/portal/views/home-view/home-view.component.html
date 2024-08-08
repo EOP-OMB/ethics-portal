@@ -23,6 +23,7 @@
                 </div>
                 <div class="column">
                     <app-card title="Forms" [records]="ethicsFormFiles" [totalRecords]="ethicsFormFiles.length" [options]="options" [showRecordDate]="true" (selected)="formSelected($event)"></app-card>
+                    <app-card title="Ethics Training" [records]="trainingVideos" [totalRecords]="trainingVideos.length" [options]="options" [showRecordDate]="false" (selected)="trainingSelected($event)"></app-card>
                 </div>
             </div>
         </div>

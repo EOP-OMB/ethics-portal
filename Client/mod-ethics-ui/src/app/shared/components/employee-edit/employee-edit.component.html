@@ -105,7 +105,7 @@
                 <h4 class="employee-row"><span style="font-weight: 400;">Form Status:</span><span>{{editEmployee.currentFormStatus}}</span></h4>
                 <h4 class="employee-row"><span style="font-weight: 400;">Due Date:</span><span>{{ editEmployee.dueDate | date: 'MM/dd/yyyy'}}</span></h4>
             </div>
-            <button mat-stroked-button type="button" color="primary" (click)="gotoForm(editEmployee)"><mat-icon>description</mat-icon>View Form</button>
+            <button mat-stroked-button type="button" color="primary" (click)="gotoForm(editEmployee)" [disabled]="!canSave"><mat-icon>description</mat-icon>View Form</button>
         </div>
     </div>
 
@@ -148,7 +148,7 @@
     </div>
 
     <div>
-        <button *ngIf="!editEmployee.inactive" mat-flat-button type="button" (click)="saveEmployee(editEmployee)" color="primary" style="margin-top: 15px;">Save</button>
+        <button *ngIf="!editEmployee.inactive" mat-flat-button type="button" (click)="saveEmployee(editEmployee)" color="primary" style="margin-top: 15px;" [disabled]="!canSave">Save</button>
     </div>
 </div>
 

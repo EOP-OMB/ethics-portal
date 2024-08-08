@@ -13,6 +13,8 @@ export class Settings extends DtoBase {
     ccEmail: string = "";
 
     annualDueDate: Date = new Date();
+
+    inMaintMode: Boolean = false;
 }
 
 

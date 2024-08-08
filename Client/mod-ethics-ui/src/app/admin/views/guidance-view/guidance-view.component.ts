@@ -36,7 +36,7 @@ export class GuidanceViewComponent implements OnInit {
         protected userService: CurrentUserService,
         private router: Router) {
     }
-
+    
     public get canEdit(): boolean {
         return this.userService.isInRole(Roles.Admin);
     }

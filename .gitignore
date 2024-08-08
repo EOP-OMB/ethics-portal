@@ -46,3 +46,6 @@ msbuild.wrn
 /dist/migration
 /.vs
 /Client/mod-ethics-ui/.vs
+/Client/mod-ethics-ui/.angular/cache/16.0.2
+/Framework
+/Server/Microsoft/VisualStudio/Packages

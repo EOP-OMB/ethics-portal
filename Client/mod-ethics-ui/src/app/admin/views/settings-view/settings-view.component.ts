@@ -82,7 +82,7 @@ export class SettingsViewComponent implements OnInit {
         this.settingsService.initiateAnnualRollover().then(response => {
             this.settings = response;
 
-            this.router.navigate(['/maintenance']);
+            this.router.navigate(['/portal/maintenance']);
         });
     }
 }

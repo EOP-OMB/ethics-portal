@@ -22,6 +22,7 @@ import { TreeViewModule } from '@progress/kendo-angular-treeview';
 import { UploadsModule } from '@progress/kendo-angular-upload';
 import { HttpClientModule } from '@angular/common/http';
 import 'hammerjs';
+import { MaintenanceViewComponent } from './views/maintenance-view/maintenance-view.component';
 
 
 
@@ -39,6 +40,7 @@ const modConfig: ModFrameworkConfig = {
 @NgModule({
     declarations: [
         AppComponent,
+        MaintenanceViewComponent
     ],
     imports: [
         BrowserModule,

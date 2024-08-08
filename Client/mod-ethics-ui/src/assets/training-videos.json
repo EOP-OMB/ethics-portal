@@ -15,7 +15,7 @@
         "date": "08/13/2019 11:00 am"
     },
     {
-        "environment": "prod",
+        "environment": "dev",
         "id": 1,
         "url": "assets/vid/20190722 OMB Ethics Training.mp4",
         "title": "OMB Training Video 1",
@@ -23,7 +23,7 @@
 
     },
     {
-        "environment": "prod",
+        "environment": "dev",
         "id": 2,
         "url": "assets/vid/20190723 OMB Ethics Training.mp4",
         "title": "OMB Training Video 2",
@@ -31,11 +31,18 @@
 
     },
     {
-        "environment": "prod",
+        "environment": "dev",
         "id": 3,
-        "url": "assets/vid/20230413 OMB 2023 Mandatory Annual Ethics Training.mp4",
+        "url": "https://access.omb.gov/20230413%20OMB%202023%20Mandatory%20Annual%20Ethics%20Training.mp4",
         "title": "2023 Mandatory Annual Ethics Training",
         "date": "04/13/2023 12:00 pm"
+    },
+    {
+        "environment": "prod",
+        "id": 4,
+        "url": "https://access.omb.gov/20240207%20Hatch%20Act%20Training%20Day%202.mp4",
+        "title": "2024 Hatch Act Training",
+        "date": "02/07/2024 1:00 pm"
     }
 
 ]

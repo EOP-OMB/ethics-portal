@@ -64,6 +64,10 @@ export class TrainingFormComponent implements OnInit {
             return new Date().getFullYear();
     }
 
+    get canEdit() {
+        return this.userService.isInRole(Roles.Admin) || this.userService.isInRole(Roles.Support) || this.userService.user.upn.toLowerCase() == this.training.employeeUpn.toLowerCase();
+    }
+
     constructor(private formBuilder: FormBuilder,
         private trainingService: TrainingService,
         private userService: CurrentUserService,

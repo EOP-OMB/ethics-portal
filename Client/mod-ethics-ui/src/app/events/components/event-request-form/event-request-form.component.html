@@ -620,7 +620,7 @@
 
                 <div class="button-row">
                     <button mat-flat-button color="primary" *ngIf="canSubmit()" (click)="submitRequest(eventRequestForm)" type="button">Submit</button>
-                    <button mat-stroked-button type="button" color="primary" (click)="save()">Save</button>
+                    <button mat-stroked-button type="button" color="primary" (click)="save()" [disabled]="!isDirty()">Save</button>
                     <button mat-stroked-button (click)="goBack()">Cancel</button>
                     <button *ngIf="canDelete()" mat-flat-button color="warn" type="button" (click)="delete()" style="margin-left: 50px;">Delete</button>
                 </div>

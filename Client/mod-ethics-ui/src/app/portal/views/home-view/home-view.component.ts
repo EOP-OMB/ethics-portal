@@ -10,11 +10,12 @@ import { PortalService } from '@portal/services/portal.service';
 import { PortalData } from '@portal/models/portal-data.model';
 import { FormStatus } from '@shared/static/form-status.const';
 import { MatSelectionListChange } from '@angular/material/list';
-import { HttpResponse } from '@angular/common/http';
+import { HttpClient, HttpResponse } from '@angular/common/http';
 import { MatDrawer } from '@angular/material/sidenav';
 import { TrainingService } from '@shared/services/training.service';
 import { Training } from '@shared/models/training.model';
 import { environment } from '@src/environments/environment';
+import { TrainingVideo } from '../../models/training-video.model';
 
 @Component({
     selector: 'app-home-view',
@@ -36,6 +37,7 @@ export class HomeViewComponent implements OnInit {
     public guidanceFiles: EthicsForm[] = [];
     public ethicsFormFiles: EthicsForm[] = [];
     public ethicsTeam: EthicsTeam[] = [];
+    public trainingVideos: TrainingVideo[] = [];
 
     public data: PortalData = new PortalData();
 
@@ -47,7 +49,8 @@ export class HomeViewComponent implements OnInit {
         private ethicsFormService: EthicsFormService,
         private ethicsTeamService: EthicsTeamService,
         private trainingService: TrainingService,
-        private router: Router
+        private router: Router,
+        private http: HttpClient
     ) {
         this.saveUrl = environment.apiUrl + "/api/guidanceAttachment/upload";
         this.removeUrl = environment.apiUrl + "/api/guidanceAttachment/remove";
@@ -57,6 +60,7 @@ export class HomeViewComponent implements OnInit {
         this.loadData();
         this.getForms();
         this.getEthicsTeam();
+        this.getTrainingVideos();
     }
 
     loadData(): void {
@@ -201,11 +205,25 @@ export class HomeViewComponent implements OnInit {
             });
     }
 
+    getTrainingVideos(): void {
+        this.http.get<TrainingVideo[]>('assets/training-videos.json').subscribe(response => {
+            var files = [];
+            var tempFiles = response.filter(x => environment.debug || x.environment == 'prod');
+            tempFiles.forEach(x => files.push(Object.assign(new TrainingVideo(), x)));
+
+            this.trainingVideos = files;
+        });
+    }
+
     getEthicsTeam(): void {
         this.ethicsTeamService.getAll()
             .then(result => {
                 this.ethicsTeam = result;
             });
+    }
+
+    trainingSelected(trainingVideo: TrainingVideo) {
+        window.open(trainingVideo.url, "_blank");
     }
 
     formSelected(form: EthicsForm): void {

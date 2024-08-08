@@ -37,13 +37,13 @@
                     "text": "Employees",
                     "icon": "group",
                     "route": "admin/employees",
-                    "allowedRoles": [ "Admin", "OGESupport" ]
+                    "allowedRoles": [ "Admin", "OGESupport", "FOIA" ]
                 },
                 {
                     "text": "Guidance",
                     "icon": "contact_support",
                     "route": "admin/guidance",
-                    "allowedRoles": [ "Admin" ]
+                    "allowedRoles": [ "Admin", "FOIA" ]
                 },
                 {
                     "text": "OGE Form 450",
@@ -55,13 +55,13 @@
                     "text": "Event Requests",
                     "icon": "event_available",
                     "route": "events/dashboard",
-                    "allowedRoles": [ "Admin", "OGESupport", "EventReviewer" ]
+                    "allowedRoles": [ "Admin", "OGESupport", "EventReviewer", "FOIA" ]
                 },
                 {
                     "text": "Training",
                     "icon": "balance",
                     "route": "admin/training",
-                    "allowedRoles": [ "Admin", "OGESupport" ]
+                    "allowedRoles": [ "Admin", "OGESupport", "FOIA" ]
                 },
                 {
                     "text": "Outside Positions",
@@ -84,7 +84,7 @@
                     "text": "Reports",
                     "icon": "space_dashboard",
                     "route": "admin/reports",
-                    "allowedRoles": [ "Admin" ]
+                    "allowedRoles": [ "Admin", "FOIA" ]
                 }
             ]
         }

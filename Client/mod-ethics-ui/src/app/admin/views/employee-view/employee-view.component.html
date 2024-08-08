@@ -2,7 +2,7 @@
     <mat-drawer #drawer mode="over" position="end" class="details-drawer" (closedStart)="drawerClosing()" [opened]="false" [autoFocus]="false">
         <div class="drawer-container" *ngIf="selectedEmployee">
             <button mat-icon-button type="button" (click)="drawer.close()" class="drawer-close"><mat-icon>close</mat-icon></button>
-            <app-employee-edit [employee]="selectedEmployee" (viewForm)="onViewForm($event)" (save)="onSave($event)" (gotoProfile)="gotoProfile($event)"></app-employee-edit>
+            <app-employee-edit [employee]="selectedEmployee" (viewForm)="onViewForm($event)" (save)="onSave($event)" [canSave]="canEditEmployees()" (gotoProfile)="gotoProfile($event)"></app-employee-edit>
         </div>
     </mat-drawer>
     <mat-drawer-content>

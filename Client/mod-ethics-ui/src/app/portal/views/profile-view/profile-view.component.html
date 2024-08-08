@@ -16,7 +16,7 @@
                 <app-form-details [form]="selectedForm" [reviewers]="reviewers" [accessLevel]="formAccessLevel" [canExtend]="canExtend" (save)="saveForm($event)" (view)="viewForm($event)" (cancel)="cancelForm($event)" (extend)="addExtension($event)"></app-form-details>
             </div>
             <div *ngIf="selectedEmployee">
-                <app-employee-edit [employee]="selectedEmployee" (viewForm)="viewForm($event)" (save)="saveEmployee($event)"></app-employee-edit>
+                <app-employee-edit [employee]="selectedEmployee" (viewForm)="viewForm($event)" (save)="saveEmployee($event)" [canSave]="canEditEmployees()"></app-employee-edit>
             </div>
             <div *ngIf="selectedEvent">
                 <app-event-request-detail [event]="selectedEvent" [reviewers]="eventReviewers" (close)="closeEvent($event)"></app-event-request-detail>
@@ -43,7 +43,8 @@
                     <div class="flex-row justify-space title-row">
                         <div class="employee-title">{{ employee.title }}</div>
                         <div style="display: flex; gap: 10px;">
-                            <button mat-flat-button color="basic" [matMenuTriggerFor]="menu" aria-label="Menu to add new Event or Outside Position Requests" class="menu" *ngIf="canEdit">
+                            <button mat-flat-button color="basic" [matMenuTriggerFor]="menu"
+                                    aria-label="Menu to add new Event or Outside Position Requests" class="menu" *ngIf="canEdit">
                                 <mat-icon style="color: #43a047;">add</mat-icon>
                                 Add New...
                             </button>

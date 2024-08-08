@@ -96,6 +96,10 @@ export class ProfileViewComponent implements OnInit, AfterViewInit {
 
     }
 
+    canEditEmployees(): boolean {
+        return this.userService.isInRole(Roles.Admin) || this.userService.isInRole(Roles.Support);
+    }
+
     ngAfterViewInit(): void {
 
     }

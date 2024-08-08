@@ -11,7 +11,7 @@
         <div class="training-view">
             <mat-card>
                 <div style="margin-top: 20px;">
-                    <app-training-table #dtTrainings key="training" [data]="trainings" [canAdd]="true" (addClicked)="addTraining()" (rowSelect)="onTrainingSelect($event)" [hiddenCols]="hiddenCols"></app-training-table>
+                    <app-training-table #dtTrainings key="training" [data]="trainings" [canAdd]="canEdit" (addClicked)="addTraining()" (rowSelect)="onTrainingSelect($event)" [hiddenCols]="hiddenCols"></app-training-table>
                 </div>
             </mat-card>
         </div>
