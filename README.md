@@ -10,4 +10,6 @@ The OMB Ethics Portal provides several automated functions to augment the Genera
 
 **Guidance Tracker**:  The GC can utilize this app for tracking any guidance supplied to an employee.  It ties the guidance directly to the employee and allows reusable responses and full history.
 
+**Outside Positions**:  Staff can submit requests to obtain a position outside federal employment. Provides the form, workflow, and guidnce as well as GC final review and approval.
+
 Framework dependency:  https://github.com/EOP-OMB/mod-framework
