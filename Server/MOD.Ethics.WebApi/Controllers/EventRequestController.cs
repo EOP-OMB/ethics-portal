@@ -53,5 +53,23 @@ namespace Mod.Ethics.WebApi.Controllers
         {
             return Service.GetYearOverYearChart();
         }
+
+        [HttpPut("Approve")]
+        public virtual ActionResult<EventRequest> Approve([FromBody] ApproveModel model)
+        {
+            return Json(Service.Approve(model.id, model.comment));
+        }
+
+        [HttpPut("Deny")]
+        public virtual ActionResult<EventRequest> Deny([FromBody] ApproveModel model)
+        {
+            return Json(Service.Deny(model.id, model.comment));
+        }
+    }
+
+    public class ApproveModel
+    {
+        public int id { get; set; }
+        public string comment { get; set; }
     }
 }

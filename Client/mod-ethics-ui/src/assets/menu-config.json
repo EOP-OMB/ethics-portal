@@ -55,7 +55,7 @@
                     "text": "Event Requests",
                     "icon": "event_available",
                     "route": "events/dashboard",
-                    "allowedRoles": [ "Admin", "OGESupport", "EventReviewer", "FOIA" ]
+                    "allowedRoles": [ "Admin", "OGESupport", "EventReviewer", "FOIA", "EventCOMMS" ]
                 },
                 {
                     "text": "Training",

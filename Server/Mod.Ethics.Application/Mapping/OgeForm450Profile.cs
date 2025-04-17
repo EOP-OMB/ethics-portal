@@ -113,7 +113,7 @@ namespace Mod.Ethics.Application.Mapping
 
             var flags = "";
 
-            dto.IsBlank = !(dto.HasAssetsOrIncome || dto.HasLiabilities || dto.HasOutsidePositions || dto.HasAgreementsOrArrangements || dto.HasGiftsOrTravelReimbursements) && !dto.SubmittedPaperCopy && dto.IsUserFinished();
+            dto.IsBlank = !(dto.HasAssetsOrIncome || dto.HasLiabilities || dto.HasOutsidePositions || dto.HasAgreementsOrArrangements || dto.HasSpousePaidEmployment || dto.HasGiftsOrTravelReimbursements) && !dto.SubmittedPaperCopy && dto.IsUserFinished();
 
             if (dto.SubmittedPaperCopy)
             {

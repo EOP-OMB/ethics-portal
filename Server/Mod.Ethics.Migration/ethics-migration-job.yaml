@@ -48,7 +48,7 @@ spec:
           name: secret
       dnsPolicy: ClusterFirst
       imagePullSecrets:
-      - name: registry-credentials
+      - name: registry2.omb.gov-credentials
       restartPolicy: Never
       schedulerName: default-scheduler
       securityContext: {}

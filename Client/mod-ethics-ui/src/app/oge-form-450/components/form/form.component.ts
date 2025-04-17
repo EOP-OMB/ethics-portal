@@ -225,7 +225,8 @@ export class FormComponent implements OnInit, OnChanges, AfterViewInit {
         $('#lnkPartVExample').popover({ container: 'body', html: true, content: function () { return $('#partVExample').html(); }, sanitize: false });
 
         if (this.mode != "COMPARE") {
-            $('#instructionsI').html($('#partI_Instructions').html());
+            $('#instructionsIa').html($('#partI_Instructions').html());
+            $('#instructionsIb').html($('#partI_Instructions').html());
             $('#instructionsII').html($('#partII_Instructions').html());
             $('#instructionsIII').html($('#partIII_Instructions').html());
             $('#instructionsIV').html($('#partIV_Instructions').html());

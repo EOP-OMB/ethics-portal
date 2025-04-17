@@ -12,7 +12,10 @@
             <mat-card>
                 <div class="widget-row">
                     <div class="widget">
-                        <app-widget [data]="openWidget" icon="calendar_today" (widgetClick)="openClicked()"></app-widget>
+                        <app-widget [data]="commsWidget" icon="mark_chat_unread" (widgetClick)="commsClicked()"></app-widget>
+                    </div>
+                    <div class="widget">
+                        <app-widget [data]="ogcWidget" icon="hourglass_top" (widgetClick)="ogcClicked()"></app-widget>
                     </div>
                     <div class="widget">
                         <app-widget [data]="upcomingWidget" icon="upcoming" (widgetClick)="upcommingClicked()"></app-widget>

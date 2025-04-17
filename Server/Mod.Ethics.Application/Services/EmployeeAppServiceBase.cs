@@ -21,7 +21,7 @@ namespace Mod.Ethics.Application.Services
     public class EmployeeAppServiceBase<TDto> : CrudAppService<TDto, Employee> where TDto : EmployeeListDtoBase
     {
         protected new IEmployeeRepository Repository { get; set; }
-        protected ISettingsAppService SettingsService { get; set; }
+        protected ISettingsAppService SettingsAppService { get; set; }
 
         protected IOgeForm450Repository FormRepository { get; set; }
 
@@ -31,7 +31,7 @@ namespace Mod.Ethics.Application.Services
         {
             Repository = repository;
             FormRepository = formRepository;
-            SettingsService = settingsService;
+            SettingsAppService = settingsService;
         }
 
         protected OgeForm450 GetCurrentForm(EmployeeListDtoBase dto)

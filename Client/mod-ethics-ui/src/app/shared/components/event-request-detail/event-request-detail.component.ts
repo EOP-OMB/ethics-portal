@@ -42,9 +42,12 @@ export class EventRequestDetailComponent implements OnInit {
     statuses: SelectItem[];
 
     public closeForm: FormGroup;
+    public commsForm: FormGroup;
 
     get reason() { return this.closeForm.get('reason'); }
     get comments() { return this.closeForm.get('comments'); }
+
+    get commsComments() { return this.commsForm.get('commsComments'); }
 
     constructor(private formBuilder: FormBuilder,
         private userService: CurrentUserService,
@@ -72,6 +75,10 @@ export class EventRequestDetailComponent implements OnInit {
             this.closeForm = this.formBuilder.group({
                 reason: ['', [Validators.required]],
                 comments: [null]
+            });
+
+            this.commsForm = this.formBuilder.group({
+                commsComments: [null]
             });
         }
     }
@@ -153,15 +160,19 @@ export class EventRequestDetailComponent implements OnInit {
     }
 
     canAssign() {
-        return this.userService.isInRole(Roles.Admin) && this.editEvent.status.includes('Open');
+        return this.userService.isInRole(Roles.Admin) && this.editEvent.status.includes('Open') && this.editEvent.status != EventStatus.OPEN_COMMS;
+    }
+
+    canApprove() {
+        return this.userService.isInRole(Roles.EventCOMMS) && this.editEvent.status == EventStatus.OPEN_COMMS;
     }
 
     canEdit() {
-        return (this.userService.isInRole(Roles.Admin) || (this.userService.isInRole(Roles.EventReviewer) && this.editEvent.assignedTo == this.userService.user.displayName)) && this.editEvent.status != EventStatus.DRAFT;
+        return (this.userService.isInRole(Roles.Admin) || (this.userService.isInRole(Roles.EventReviewer) && this.editEvent.assignedTo == this.userService.user.displayName)) && this.editEvent.status != EventStatus.DRAFT && this.editEvent.status != EventStatus.OPEN_COMMS;
     }
 
     canClose() {
-        return (this.userService.isInRole(Roles.Admin) || (this.userService.isInRole(Roles.EventReviewer) && this.editEvent.assignedTo == this.userService.user.displayName)) && this.editEvent.status.includes('Open') && !this.isAttending(this.editEvent);
+        return (this.userService.isInRole(Roles.Admin) || (this.userService.isInRole(Roles.EventReviewer) && this.editEvent.assignedTo == this.userService.user.displayName)) && this.editEvent.status.includes('Open') && this.editEvent.status != EventStatus.OPEN_COMMS && (!this.isAttending(this.editEvent) || environment.debug);
     }
 
     isAttending(event: EventRequest): boolean {
@@ -185,5 +196,54 @@ export class EventRequestDetailComponent implements OnInit {
 
     gotoEmployee(id: number) {
         this.router.navigate(['/profile', id]);
+    }
+
+    isApproving: boolean | null = null;
+    approveRequest(): void {
+        let id: number = this.event.id;
+        let comment: string = ""; // TODO: Assign from commsForm modal comment.
+
+        if (this.commsForm.valid) {
+            comment = this.commsComments.value;
+
+            if (this.isApproving == true) {
+                this.eventService.approveRequest(id, comment).then(response => {
+                    this.closeCommsModal();
+                    this.saved.emit(response);
+                });
+            } else if (this.isApproving == false) {
+                this.eventService.denyRequest(id, comment).then(response => {
+                    this.closeCommsModal();
+                    this.saved.emit(response);
+                });
+            }
+        }
+    }
+
+    showCommsModal(isApproving: boolean) {
+        this.isApproving = isApproving;
+
+        $("#confirm-comms").modal("show");
+        $("#confirm-comms").appendTo("body");
+    }
+
+    closeCommsModal() {
+        $("#confirm-comms").modal("hide");
+        this.isApproving = null;
+    }
+
+    getCommsDecision(): string {
+        if (this.event.status == EventStatus.DENIED_COMMS) {
+            return "Denied";
+        }
+        else if (this.event.status != EventStatus.OPEN_COMMS) {
+            if (this.event.capacity == "Official")
+                return "Approved";
+            else
+                return "N/A";
+        }
+        else {
+            return "Awaiting COMMS";
+        }
     }
 }

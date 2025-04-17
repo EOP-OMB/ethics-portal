@@ -1,35 +1,32 @@
 import { AfterViewInit, Component, EventEmitter, Input, KeyValueDiffers, OnInit, Output, SimpleChanges, ViewChild } from '@angular/core';
 
-import { PropertyOptions } from 'mat-table-filter';
-import { MatTableDataSource } from '@angular/material/table';
-import { MatPaginator } from '@angular/material/paginator';
-import { MatSort, MatSortable } from '@angular/material/sort';
 import { Lookups } from '@shared/static/lookups.static';
 import { SelectItem } from '@shared/models/select-item.interface';
-import { FormFilter } from '@shared/models/form-filter.model';
 import { Helper } from '@shared/static/helper.funcs';
-import { SelectionModel } from '@angular/cdk/collections';
-import { MatTableExporterDirective } from 'mat-table-exporter';
 import { LoadingService } from 'mod-framework';
-import { TableBaseComponent } from '../table-base/table-base.component';
-import { CachedTableComponent } from '../cached-table/cached-table.component';
 import { Guidance } from '@shared/models/guidance.model';
 import { GuidanceFilter } from '@shared/models/guidance-filter.model';
 import { GuidanceTypeService } from '../../services/guidance-type.service';
 import { GuidanceSubjectService } from '../../services/guidance-subject.service';
+import { ServerSideTableComponent } from '../server-side-table/server-side-table.component';
+import { GuidanceService } from '../../services/guidance.service';
+import { Observable } from 'rxjs';
+import { TableData } from '../../models/table-data.model';
 
 @Component({
     selector: 'app-guidance-table',
     templateUrl: './guidance-table.component.html',
     styleUrls: ['./guidance-table.component.scss']
 })
-export class GuidanceTableComponent extends CachedTableComponent<Guidance, GuidanceFilter> implements AfterViewInit {
+export class GuidanceTableComponent extends ServerSideTableComponent<Guidance, GuidanceFilter> implements OnInit {
 
     @Input()
     canAdd: boolean = false;
 
     @Output()
     addClicked = new EventEmitter();
+
+    filter: GuidanceFilter;
 
     // Actions
     numberOfBlankForms: number = 0;
@@ -41,10 +38,16 @@ export class GuidanceTableComponent extends CachedTableComponent<Guidance, Guida
     guidanceTypes: SelectItem[];
     subjects: SelectItem[];
 
+    page: number;
+    pageSize: number;
+    sortString: string;
+    sortOrder: string;
     constructor(protected loadingService: LoadingService,
         protected differs: KeyValueDiffers,
         private typeService: GuidanceTypeService,
-        private subjectService: GuidanceSubjectService) {
+        private subjectService: GuidanceSubjectService,
+        private service: GuidanceService)
+    {
         super(loadingService, differs);
 
         this.filter = new GuidanceFilter();
@@ -87,10 +90,54 @@ export class GuidanceTableComponent extends CachedTableComponent<Guidance, Guida
                 return match;
             }
         };
+
+        this.sortString = 'dateOfGuidance';
+        this.sortOrder = 'desc';
     }
 
-    ngAfterViewInit(): void {
-        
+    ngOnInit(): void {
+        this.resetCols();
+        super.ngOnInit();
+    }
+
+    getTableData$(page: number, pageSize: number, sort: string, sortOrder: string): Observable<TableData<Guidance>> {
+        this.page = page;
+        this.pageSize = pageSize;
+
+        if (sort) {
+            this.sortString = sort;
+            this.sortOrder = sortOrder;
+        }
+
+        return this.loadGuidance();
+    }
+
+    loadGuidance() {
+        var filter = '';
+
+        if (this.filter.employeeName != '') {
+            filter += 'employeeName|' + this.filter.employeeName + ';';
+        }
+        if (this.filter.filerType != '') {
+            filter += 'filerType|' + this.filter.filerType + ';';
+        }
+        if (this.filter.summary != '') {
+            filter += 'summary|' + this.filter.summary + ';';
+        }
+        if (this.filter.guidanceType != '') {
+            filter += 'guidanceType|' + this.filter.guidanceType + ';';
+        }
+        if (this.filter.subject != '') {
+            filter += 'subject|' + this.filter.subject + ';';
+        }
+        if (this.filter.dateFilter != '') {
+            filter += 'dateFilter|' + this.filter.dateFilter + ';';
+        }
+
+        if (filter.endsWith(';'))
+            filter = filter.substring(0, filter.length - 1);
+
+        return this.service.getTable(this.page, this.pageSize, this.sortString, this.sortOrder, filter);
     }
 
     dataChanged(): void {
@@ -137,6 +184,13 @@ export class GuidanceTableComponent extends CachedTableComponent<Guidance, Guida
 
     public resetFilters(): void {
         this.filter = new GuidanceFilter();
+        this.filterChange.emit(this.filter);
+        this.paginator.pageIndex = 0;
+    }
+
+    search(): void {
+        this.paginator.pageIndex = 0;
+        this.filterChange.emit(this.filter);
     }
 
     isFiltered(): boolean {

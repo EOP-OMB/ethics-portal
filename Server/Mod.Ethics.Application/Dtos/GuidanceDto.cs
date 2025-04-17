@@ -21,5 +21,8 @@ namespace Mod.Ethics.Application.Dtos
         public bool HasAttachments { get; set; }
         public List<AttachmentDto> Attachments { get; set; }
         public EmployeeDto Employee { get; set; }
+
+        public string DateFilter { get; set; }
+        public string GivenBy { get; set; }
     }
 }

@@ -74,7 +74,7 @@ namespace Mod.Ethics.Application.Services
                 (!filter.IsOverdue || x.DueDate < DateTime.Now && (x.FormStatus == OgeForm450Statuses.NOT_STARTED || x.FormStatus == OgeForm450Statuses.DRAFT || x.FormStatus == OgeForm450Statuses.MISSING_INFORMATION)) &&
                 (!filter.SubmittedPaperCopy || (x.FormFlags & 1) == 1) &&
                 (!filter.IsBlank ||
-                    (!(x.HasAssetsOrIncome || x.HasLiabilities || x.HasOutsidePositions || x.HasAgreementsOrArrangements || x.HasGiftsOrTravelReimbursements) &&
+                    (!(x.HasAssetsOrIncome || x.HasLiabilities || x.HasOutsidePositions || x.HasAgreementsOrArrangements || x.HasSpousePaidEmployment || x.HasGiftsOrTravelReimbursements) &&
                     (x.FormFlags & 1) != 1 &&
                     (x.FormStatus == OgeForm450Statuses.SUBMITTED || x.FormStatus == OgeForm450Statuses.IN_REVIEW || x.FormStatus == OgeForm450Statuses.READY_TO_CERT || x.FormStatus == OgeForm450Statuses.RE_SUBMITTED || x.FormStatus == OgeForm450Statuses.CERTIFIED))) &&
                 (filter.DaysExtended == 0 || x.DaysExtended > 0) &&

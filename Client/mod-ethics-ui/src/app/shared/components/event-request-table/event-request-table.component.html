@@ -79,6 +79,10 @@
         <th mat-header-cell *matHeaderCellDef> Attendees </th>
         <td mat-cell *matCellDef="let event"> {{ event.attendeesString }} </td>
     </ng-container>
+    <ng-container matColumnDef="capacity">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header> Capacity </th>
+        <td mat-cell *matCellDef="let event"> {{ event.capacity }} </td>
+    </ng-container>
     <ng-container matColumnDef="eventName">
         <th mat-header-cell *matHeaderCellDef mat-sort-header> Event Name </th>
         <td mat-cell *matCellDef="let event"> {{ event.eventName }} </td>

@@ -21,14 +21,16 @@ namespace Mod.Ethics.Application.Services
         private readonly ISettingsAppService SettingsService;
         private readonly INotificationDomService NotificationService;
         private readonly IOgeForm450AppService FormService;
+        private readonly IEmployeeAppService EmployeeService;
 
         private List<Notification> _pendingEmails;
 
-        public ExtensionRequestAppService(IOgeForm450ExtensionRequestRepository repository, ISettingsAppService settingsService, IOgeForm450AppService formService, INotificationDomService notificationService, IObjectMapper objectMapper, ILogger<IAppService> logger, IModSession session) : base(repository, objectMapper, logger, session)
+        public ExtensionRequestAppService(IOgeForm450ExtensionRequestRepository repository, IEmployeeAppService employeeService, ISettingsAppService settingsService, IOgeForm450AppService formService, INotificationDomService notificationService, IObjectMapper objectMapper, ILogger<IAppService> logger, IModSession session) : base(repository, objectMapper, logger, session)
         {
             NotificationService = notificationService;
             SettingsService = settingsService;
             FormService = formService;
+            EmployeeService = employeeService;
 
             var isAdminOrReviewer = Session.Principal.IsInRole(Roles.OGEReviewer) || Session.Principal.IsInRole(Roles.EthicsAppAdmin) || Session.Principal.IsInRole(Roles.OGESupport);
 
@@ -98,8 +100,8 @@ namespace Mod.Ethics.Application.Services
             if (e.Entity.Status == ExtensionRequestStatuses.PENDING && e.Dto.Status != ExtensionRequestStatuses.CANCELED && e.Dto.Status != ExtensionRequestStatuses.PENDING)
             {
                 var data = GetEmailData(e.Dto);
-
-                var notification = NotificationService.CreateNotification((int)NotificationTypes.ExtensionDecision, "", data, "");
+                var recipient = data["Email"]; // get the filer's email from the email data.
+                var notification = NotificationService.CreateNotification((int)NotificationTypes.ExtensionDecision, recipient, data, "");
                 _pendingEmails.Add(notification);
             }
         }
@@ -170,7 +172,7 @@ namespace Mod.Ethics.Application.Services
         {
             var settings = SettingsService.Get();
             var dict = new Dictionary<string, string>();
-            var user = Session.Principal;
+            var user = EmployeeService.GetByUpn(dto.Form.Filer);
 
             dict = SettingsService.AppendEmailData(dict, settings);
 

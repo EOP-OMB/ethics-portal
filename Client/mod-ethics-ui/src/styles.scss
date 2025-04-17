@@ -2,6 +2,10 @@
 @import "bootstrap/dist/css/bootstrap.css";
 @import "font-awesome/scss/font-awesome.scss";
 
+.showprint-only {
+    display: none !important;
+}
+
 /* Print Stuff  */
 @media print {
     app-form-view {
@@ -24,6 +28,10 @@
         min-height: auto !important;
         overflow: visible !important;
         margin-bottom: 12000px;
+    }
+
+    .print-margin {
+        margin-bottom: 500px;
     }
 
     textarea {
@@ -63,7 +71,8 @@
         display: block !important;
     }
 
-    .showprint {
+    .showprint,
+    .showprint-only {
         display: block !important;
     }
 

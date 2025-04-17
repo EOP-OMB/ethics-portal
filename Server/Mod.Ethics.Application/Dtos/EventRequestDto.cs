@@ -63,6 +63,11 @@ namespace Mod.Ethics.Application.Dtos
         public string WhatIsProvided { get; set; }
         public DateTime? SubmittedDate { get; set; }
 
+        public string ApprovedBy { get; set; }
+        public DateTime? ApprovedDate { get; set; }
+        public string CommsComment { get; set; }
+        public string Capacity { get; set; }
+
         public List<AttendeeDto> EventRequestAttendees { get; set; }
 
         public List<AttachmentDto> EventRequestAttachments { get; set; }

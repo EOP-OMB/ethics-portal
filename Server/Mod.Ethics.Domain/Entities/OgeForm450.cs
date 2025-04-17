@@ -18,6 +18,7 @@ namespace Mod.Ethics.Domain.Entities
         public int FormFlags { get; set; }  // 1 - SubmittedPaperCopy, 2 - IsUnchanged
         public int DaysExtended { get; set; }
         public bool HasAssetsOrIncome { get; set; }
+        public bool HasSpousePaidEmployment { get; set; }
         public bool HasLiabilities { get; set; }
         public bool HasOutsidePositions { get; set; }
         public bool HasAgreementsOrArrangements { get; set; }

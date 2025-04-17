@@ -2,6 +2,7 @@
 using Mod.Ethics.Application.Constants;
 using Mod.Ethics.Application.Dtos;
 using Mod.Ethics.Domain.Entities;
+using Mod.Ethics.Domain.Enumerations;
 using Mod.Ethics.Domain.Interfaces;
 using Mod.Ethics.Domain.Views;
 using Mod.Framework.Application;
@@ -39,6 +40,11 @@ namespace Mod.Ethics.Application.Services
                 var attendeeString = "";
                 foreach (AttendeeDto att in er.EventRequestAttendees)
                 {
+                    er.Capacity = EventRequestCapacity.Personal;
+
+                    if (att.Capacity == EventRequestCapacity.Official)
+                        er.Capacity = att.Capacity;
+
                     if (att.EmployeeUpn != null)
                     {
                         att.Employee = EmployeeAppService.GetByUpn(att.EmployeeUpn);

@@ -35,7 +35,9 @@ namespace Mod.Ethics.Application.Services
             this.Permissions.CanCreate = this.Session.Principal.IsInRole(Roles.EthicsAppAdmin);
             this.Permissions.CanUpdate = this.Session.Principal.IsInRole(Roles.EthicsAppAdmin);
 
-            var canRead = Session.Principal.IsInRole(Roles.EthicsAppAdmin) || Session.Principal.IsInRole(Roles.OGEReviewer) || Session.Principal.IsInRole(Roles.OGESupport);
+            var canRead = Session.Principal.IsInRole(Roles.EthicsAppAdmin) || Session.Principal.IsInRole(Roles.OGEReviewer) || 
+                          Session.Principal.IsInRole(Roles.OGESupport) || Session.Principal.IsInRole(Roles.FOIA);
+
             this.Permissions.PermissionFilter = (x => x.IsShared || canRead);
         }
 
@@ -120,6 +122,8 @@ namespace Mod.Ethics.Application.Services
         public override GuidanceDto Create(GuidanceDto dto)
         {
             dto.EmployeeName = dto.Employee.DisplayName;
+            dto.FilerType = dto.Employee.FilerType;
+            dto.GivenBy = this.Session.Principal.DisplayName;
             var retDto = base.Create(dto);
 
             SendNotification(retDto);
@@ -147,6 +151,8 @@ namespace Mod.Ethics.Application.Services
         public override GuidanceDto Update(GuidanceDto dto)
         {
             dto.EmployeeName = dto.Employee.DisplayName;
+            dto.FilerType = dto.Employee.FilerType;
+            dto.GivenBy = this.Session.Principal.DisplayName;
             var retDto = base.Update(dto);
 
             SendNotification(retDto);

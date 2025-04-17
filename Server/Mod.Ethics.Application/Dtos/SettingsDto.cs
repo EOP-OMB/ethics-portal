@@ -19,5 +19,7 @@ namespace Mod.Ethics.Application.Dtos
         public int TotalGiftValue { get; set; }
         public DateTime AnnualDueDate { get; set; }
         public DateTime LastEmployeeSyncDate { get; set; }
+
+        public bool InMaintMode { get; set; }
     }
 }

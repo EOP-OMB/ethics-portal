@@ -41,7 +41,7 @@ namespace Mod.Ethics.Application.Services
 
             dto.CurrentTrainingId = currentTraining == null ? 0 : currentTraining.Id;
 
-            var pendingEvents = myEvents.Where(x => x.Status == EventRequestStatus.OPEN || x.Status == EventRequestStatus.UNASSIGNED).ToList();
+            var pendingEvents = myEvents.Where(x => x.Status.Contains("Open")).ToList();
 
             dto.PendingEvents = pendingEvents.Count();
 

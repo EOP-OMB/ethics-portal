@@ -114,7 +114,7 @@ export class TrainingFormComponent implements OnInit {
 
             tmpList = this.myTraining.filter(x => x.trainingType == TrainingTypes.ANNUAL);
             if (tmpList) {
-                tmpList = tmpList.sort((a, b) => a.trainingDate > b.trainingDate ? 1 : 0);
+                tmpList = tmpList.sort((a, b) => a.trainingDate < b.trainingDate ? 1 : 0);
                 this.lastAnnual = tmpList[0];
             }
         }

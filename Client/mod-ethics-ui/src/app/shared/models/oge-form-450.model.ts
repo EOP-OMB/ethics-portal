@@ -19,6 +19,7 @@ export class OgeForm450 extends DtoBase {
     mailingAddress: string = "";
 
     hasAssetsOrIncome: string = "";
+    hasSpousePaidEmployment: string = "";
     hasLiabilities: string = "";
     hasOutsidePositions: string = "";
     hasAgreementsOrArrangements: string = "";

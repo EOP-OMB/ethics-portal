@@ -23,7 +23,7 @@ export class GuidanceViewComponent implements OnInit {
 
     selectedGuidance?: Guidance;
 
-    guidance: Guidance[] = [];
+    //guidance: Guidance[] = [];
 
     numberOfBlankForms: number = 0;
     numberOfUnchangedForms: number = 0;
@@ -42,16 +42,16 @@ export class GuidanceViewComponent implements OnInit {
     }
 
     ngOnInit(): void {
-        this.loadGuidance();
+        //this.loadGuidance();
     }
 
-    loadGuidance() {
-        this.guidanceService
-            .getAll()
-            .then(guidance => {
-                this.guidance = guidance;
-            });
-    }
+    //loadGuidance() {
+    //    this.guidanceService
+    //        .getAll()
+    //        .then(guidance => {
+    //            this.guidance = guidance;
+    //        });
+    //}
 
     onFilersClick() {
         this.dtGuidance.resetFilters();
@@ -83,7 +83,8 @@ export class GuidanceViewComponent implements OnInit {
 
     saveGuidance(guidance: Guidance): void {
         this.guidanceService.save(guidance).then(response => {
-            this.loadGuidance();
+            //this.loadGuidance();
+            this.dtGuidance.search();
             this.drawer.close();
         });
     }
@@ -94,7 +95,8 @@ export class GuidanceViewComponent implements OnInit {
 
     deleteGuidance(guidance: Guidance): void {
         this.guidanceService.delete(guidance.id).then(responst => {
-            this.loadGuidance();
+            //this.loadGuidance();
+            this.dtGuidance.search();
             this.drawer.close();
         });
     }

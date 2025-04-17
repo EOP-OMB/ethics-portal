@@ -15,5 +15,6 @@ namespace Mod.Ethics.Domain.Entities
         public int TotalGiftValue { get; set; }
         public DateTime AnnualDueDate { get; set; }
         public DateTime LastEmployeeSyncDate { get; set; }
+        public bool InMaintMode { get; set; }
     }
 }

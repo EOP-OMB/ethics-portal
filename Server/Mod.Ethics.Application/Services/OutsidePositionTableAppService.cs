@@ -42,8 +42,8 @@ namespace Mod.Ethics.Application.Services
 
             return query.Where(x =>
                 // Permissions
-                ((Session.Principal.IsInRole(Roles.EthicsAppAdmin) || Session.Principal.IsInRole(Roles.OGESupport)
-                || x.EmployeeUpn == Session.Principal.Upn || x.SupervisorUpn == Session.Principal.Upn) &&
+                ((Session.Principal.IsInRole(Roles.EthicsAppAdmin) || Session.Principal.IsInRole(Roles.OGESupport) || Session.Principal.IsInRole(Roles.FOIA)
+                || x.EmployeeUpn == Session.Principal.Upn || (x.SupervisorUpn == Session.Principal.Upn && x.Status != OutsidePositionStatuses.DRAFT)) &&
                 //Filters
                 (string.IsNullOrEmpty(filter.OrganizationName) || x.OrganizationName.ToLower().Contains(filter.OrganizationName.ToLower())) &&
                 (string.IsNullOrEmpty(filter.EmployeeName) || x.EmployeeName.ToLower().Contains(filter.EmployeeName.ToLower())) &&

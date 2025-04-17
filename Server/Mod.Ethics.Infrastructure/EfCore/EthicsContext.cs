@@ -38,6 +38,8 @@ namespace Mod.Ethics.Infrastructure.EfCore
         public DbSet<OutsidePosition> OutsidePositions { get; set; }
         public DbSet<OutsidePositionStatus> OutsidePositionStatuses { get; set; }
 
+        //public DbSet<EventRequestStatus> EventRequestStatus { get; set; }
+
         public EthicsContext(DbContextOptions<EthicsContext> options, IModSession session)
         : base(options)
         {

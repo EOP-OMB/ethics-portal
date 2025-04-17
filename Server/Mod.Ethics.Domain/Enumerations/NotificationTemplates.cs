@@ -32,7 +32,11 @@ namespace Mod.Ethics.Domain.Enumerations
         OutsidePositionConfirmation =  21,
         OutsidePositionApproval = 22,
         OutsidePositionEthicsApproval = 23,
-        OutsidePositionDisapproved = 24
+        OutsidePositionDisapproved = 24,
+        EventRequestAwaitingComms = 25,
+        EventRequestDenied = 26,
+        EventRequestCommsApproved = 27
+
     }
 
     public static class NotificationTemplates

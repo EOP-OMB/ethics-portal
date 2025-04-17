@@ -10,4 +10,5 @@ export class GuidanceFilter {
     filerType: string = "";
     dateOfGuidance: string = "";
     summary: string = "";
+    dateFilter: string = "";
 }

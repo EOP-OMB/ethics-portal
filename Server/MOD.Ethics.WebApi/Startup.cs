@@ -29,18 +29,24 @@ namespace Mod.Ethics.WebApi
 
             var applicationRoles = new ApplicationRoles();
 
-            var groups = Environment.GetEnvironmentVariable("MOD_Ethics_SystemAdminGroups").Split(';', ',');
+            var groups = Environment.GetEnvironmentVariable("Ethics_SystemAdminGroups").Split(';', ',');
             //var groups = new List<string>().ToArray();
             applicationRoles.Roles.Add(new Role(Roles.EthicsAppAdmin, groups));
 
-            groups = Environment.GetEnvironmentVariable("MOD_Ethics_ReviewerGroups").Split(';', ',');
+            groups = Environment.GetEnvironmentVariable("Ethics_ReviewerGroups").Split(';', ',');
             applicationRoles.Roles.Add(new Role(Roles.OGEReviewer, groups));
 
-            groups = Environment.GetEnvironmentVariable("MOD_Ethics_SupportGroups").Split(';', ',');
+            groups = Environment.GetEnvironmentVariable("Ethics_SupportGroups").Split(';', ',');
             applicationRoles.Roles.Add(new Role(Roles.OGESupport, groups));
 
-            groups = Environment.GetEnvironmentVariable("MOD_Ethics_EventReviewerGroups").Split(';', ',');
+            groups = Environment.GetEnvironmentVariable("Ethics_EventReviewerGroups").Split(';', ',');
             applicationRoles.Roles.Add(new Role(Roles.EventReviewer, groups));
+
+            groups = Environment.GetEnvironmentVariable("Ethics_FOIA").Split(';', ',');
+            applicationRoles.Roles.Add(new Role(Roles.FOIA, groups));
+
+            groups = Environment.GetEnvironmentVariable("Ethics_Event_Comms").Split(';', ',');
+            applicationRoles.Roles.Add(new Role(Roles.EventCOMMS, groups));
 
             services.AddModAspNetCore(options =>
             {

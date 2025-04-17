@@ -8,18 +8,18 @@ using Mod.Framework.Runtime.Session;
 using Mod.Framework.User.Interfaces;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace Mod.Ethics.Application.Services
 {
     public class SettingsAppService : CrudAppService<SettingsDto, Settings>, ISettingsAppService
     {
-        public IOgeForm450Repository FormRepository { get; private set; }
-        public IEmployeeRepository EmployeeRepository { get; private set; }
+        private bool IN_MAINTENANCE_MODE;
 
-        public SettingsAppService(ISettingsRepository repository, IOgeForm450Repository formRepository, IEmployeeRepository employeeRepo, IObjectMapper objectMapper, ILogger<IAppService> logger, IModSession session) : base(repository, objectMapper, logger, session)
+        public SettingsAppService(ISettingsRepository repository, IObjectMapper objectMapper, ILogger<IAppService> logger, IModSession session) : base(repository, objectMapper, logger, session)
         {
-            FormRepository = formRepository;
-            EmployeeRepository = employeeRepo;
+            this.IN_MAINTENANCE_MODE = false;
         }
 
         public SettingsDto Get()

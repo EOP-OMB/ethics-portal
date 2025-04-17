@@ -13,6 +13,8 @@ namespace Mod.Ethics.Domain.Entities
     {
         public int EmployeeId { get; set; }
         public string EmployeeUpn { get; set; }
+        public string EmployeeName { get; set; }
+        public string FilerType { get; set; }
         public string GuidanceType { get; set; }
         public string Subject { get; set; }
         public string Text { get; set; }
@@ -23,5 +25,6 @@ namespace Mod.Ethics.Domain.Entities
         public virtual ICollection<GuidanceAttachment> Attachments { get; set; }
 
         public Guid Guid { get; set; }
+        public string GivenBy { get; set; }
     }
 }

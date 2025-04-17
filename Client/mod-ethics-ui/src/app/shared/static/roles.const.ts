@@ -3,5 +3,6 @@ export const Roles = {
     Admin: "Admin",
     Support: "OGESupport",
     EventReviewer: "EventReviewer",
-    FOIA: "FOIA"
+    FOIA: "FOIA",
+    EventCOMMS: "EventCOMMS"
 };

@@ -49,6 +49,9 @@ namespace Mod.Ethics.Application.Services
                 case (int)NotificationTypes.EventRequestAssigned:
                 case (int)NotificationTypes.EventRequestConfirmation:
                 case (int)NotificationTypes.EventRequestSubmitted:
+                case (int)NotificationTypes.EventRequestDenied:
+                case (int)NotificationTypes.EventRequestCommsApproved:
+                case (int)NotificationTypes.EventRequestAwaitingComms:
                     dict.Add("[Attendees]", "All attendee information for this event.");
                     dict.Add("[AttendeeString]", "Comma seperated string of attendy names.");
                               
@@ -88,7 +91,7 @@ namespace Mod.Ethics.Application.Services
                     dict.Add("[ContactNumber]", "Submitter's phone number");
                     dict.Add("[ContactComponent]", "Submitter's Office/Division");
                     dict.Add("[AssignedTo]", "The Ethics Official Assigned to the request");
-                    
+                    dict.Add("[COMMSComment]", "Comments left by COMMS.");
                     break;
                 case (int)NotificationTypes.ExtensionDecision:
                 case (int)NotificationTypes.ExtensionRecieved:

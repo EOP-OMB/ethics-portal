@@ -631,7 +631,7 @@
                 </div>
             </div>
 
-            <div class="card hideprint" *ngIf="showReviewSecion()">
+            <div class="card" *ngIf="showReviewSecion()">
                 <div class="card-header">Review / Recommendation</div>
                 <div class="card-body" style="display: flex; flex-direction: column;">
                     <div clsas="text-center">
@@ -645,7 +645,7 @@
                         government property or time to conduct his or her outside employment or activity.
                     </small>
 
-                    <div class="instructions" *ngIf="showInstructions">
+                    <div class="instructions hideprint" *ngIf="showInstructions">
                         <small style="margin-bottom: 15px;">
                             An outside activity conflicts with official duties if it is prohibited by statute or regulation; or it would require the employee’s
                             recusal from matters so central or critical to the performance of his or her official duties that the employee’s ability to perform
@@ -722,61 +722,66 @@
                     </div>
 
                     <div>
-                        <div class="grid-body hideprint" *ngIf="canApproveManager()">
+                        <div class="grid-body" *ngIf="canApproveManager()">
                             <div class="control-label">Reason</div>
-                            <mat-form-field appearance="outline">
-                                <textarea title="Reason " type="text" rows="6" matInput formControlName="guidance"></textarea>
+                            <mat-form-field appearance="outline" class="hideprint">
+                                <textarea title="Reason" type="text" rows="6" matInput formControlName="guidance"></textarea>
+                                <small>If you disapprove of this request, you must provide a reason.'</small>
                             </mat-form-field>
-                            <small>If you disapprove of this request, you must provide a reason.'</small>
+                            <div class="showprint-only outer-box" style="padding: 10px; margin: 5px 0px;" [innerHTML]="position.guidance">
+                            </div>
                         </div>
                         <div *ngIf="canApproveEthics() || position.guidance">
                             <div class="control-label">Reason / Guidance</div>
-                            <kendo-editor formControlName="guidance" style="height: 300px; width: 100%;">
+                            <kendo-editor formControlName="guidance" style="height: 300px; width: 100%;" class="hideprint">
                             </kendo-editor>
-                            <div style="padding-top: 5px; margin-bottom: 15px;">
+                            <div class="showprint-only outer-box" style="padding: 10px; margin: 15px 0px;" [innerHTML]="position.guidance">
+                            </div>
+                            <div style="padding-top: 5px; margin-bottom: 15px;" class="hideprint">
                                 <small style="padding-left: 15px;">* If you disapprove of this request, you must provide a reason. If you're approving, you may leave guidance here.</small>
                             </div>
                         </div>
 
-                        <div class="text-center button-row" style="padding-bottom: 15px;">
+                        <div class="text-center button-row hideprint" style="padding-bottom: 15px;">
                             <button *ngIf="canApprove()" mat-flat-button color="primary" type="button" (click)="approve()">Approve</button>
                             <button *ngIf="canApprove()" mat-flat-button color="warn" type="button" (click)="deny()" [disabled]="!guidance.value">Disapprove</button>
                             <button *ngIf="canCancel()" mat-stroked-button color="warn" type="button" (click)="cancelRequest()" class="hideprint">Cancel Request</button>
                         </div>
                     </div>
-
-                    <small>
-                        <b>NOTE:</b> Presidential appointees are subject to an additional restriction pertaining to outside earned income. Under Section 102 of Executive Order 12674, a political
-                        appointee who is appointed by the President to a full-time non-career position in the executive branch is prohibited from receiving any earned income for any
-                        outside employment or activity performed during that Presidential appointment. Appointees in the following positions are exempt from this ban:
-                    </small>
-                    <ul>
-                        <li>
-                            <small>
-                                a position filled under the authority of 3 U.S.C. § 105 or 3 U.S.C. § 107(a) for which the rate of basic pay is less than that for GS-9, step 1 of the General
-                                Schedule (currently $56,233);
-                            </small>
-                        </li>
-                        <li>
-                            <small>
-                                a position, within a White House operating unit, that is designated as not normally subject to change as a result of a Presidential transition (e.g., EXR
-                                staff);
-                            </small>
-                        </li>
-                        <li>
-                            <small>
-                                a position within the uniformed services; and
-                            </small>
-                        </li>
-                        <li>
-                            <small>
-                                a position in which a member of the foreign service is serving that does not require advice and consent of the Senate.
-                            </small>
-                        </li>
-                    </ul>
+                    <div>
+                        <small>
+                            <b>NOTE:</b> Presidential appointees are subject to an additional restriction pertaining to outside earned income. Under Section 102 of Executive Order 12674, a political
+                            appointee who is appointed by the President to a full-time non-career position in the executive branch is prohibited from receiving any earned income for any
+                            outside employment or activity performed during that Presidential appointment. Appointees in the following positions are exempt from this ban:
+                        </small>
+                        <ul>
+                            <li>
+                                <small>
+                                    a position filled under the authority of 3 U.S.C. § 105 or 3 U.S.C. § 107(a) for which the rate of basic pay is less than that for GS-9, step 1 of the General
+                                    Schedule (currently $56,233);
+                                </small>
+                            </li>
+                            <li>
+                                <small>
+                                    a position, within a White House operating unit, that is designated as not normally subject to change as a result of a Presidential transition (e.g., EXR
+                                    staff);
+                                </small>
+                            </li>
+                            <li>
+                                <small>
+                                    a position within the uniformed services; and
+                                </small>
+                            </li>
+                            <li>
+                                <small>
+                                    a position in which a member of the foreign service is serving that does not require advice and consent of the Senate.
+                                </small>
+                            </li>
+                        </ul>
+                    </div>
                 </div>
             </div>
-            <div class="card">
+            <div class="card print-margin">
                 <div class="card-header">Status History</div>
                 <div class="card-body" style="display: flex; flex-direction: column;">
                     <table mat-table [dataSource]="position.outsidePositionStatuses">
@@ -809,7 +814,7 @@
         </form>
     </div>
 
-    <div class="modal fade" id="confirm-close" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal fade hideprint" id="confirm-close" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header modal-header-danger">

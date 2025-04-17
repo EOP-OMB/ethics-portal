@@ -69,7 +69,7 @@ namespace Mod.Ethics.Application.Services
         public override OgeForm450Dto Get(int id)
         {
             var form = GetIncluding(id, x => x.OgeForm450Statuses, y => y.ReportableInformation);
-            var prev = GetPreviousForm(form.Year, form.Filer);
+            var prev = GetPreviousForm(form.Filer);
             
             if (form != null)
                 SetReportableInformation(form, prev);
@@ -79,7 +79,6 @@ namespace Mod.Ethics.Application.Services
 
         public OgeForm450Dto GetCurrentForm()
         {
-            var settings = SettingsService.Get();
             var form = GetByIncluding(x => x.FilerUpn.ToLower() == Session.UserId.ToLower() && x.FormStatus != OgeForm450Statuses.CANCELED, y => y.OgeForm450Statuses, z => z.ReportableInformation).OrderByDescending(x => Convert.ToDateTime(x.DueDate)).FirstOrDefault();
             if (form != null)
                 SetReportableInformation(form, null);
@@ -96,7 +95,11 @@ namespace Mod.Ethics.Application.Services
 
         public IEnumerable<OgeForm450Dto> GetFormsByEmployee(string upn)
         {
-            var list = GetByIncluding(x => x.FilerUpn == upn, y => y.OgeForm450Statuses).ToList();
+            var canRead = Session.Principal.IsInRole(Roles.EthicsAppAdmin) || Session.Principal.IsInRole(Roles.OGESupport) || upn == this.Session.Principal.Upn;
+            var list = new List<OgeForm450Dto>();
+            
+            if (canRead)
+                list = GetByIncluding(x => x.FilerUpn == upn, y => y.OgeForm450Statuses).ToList();
 
             return list;
         }
@@ -114,7 +117,7 @@ namespace Mod.Ethics.Application.Services
             if (form != null)
             {
                 // if has current form, find previous by year and filer
-                var prev = Repository.GetPreviousForm(form.Year, form.Filer);
+                var prev = Repository.GetPreviousForm(form.Filer);
 
                 if (prev != null)
                 {
@@ -133,9 +136,9 @@ namespace Mod.Ethics.Application.Services
             return form;
         }
 
-        private OgeForm450Dto GetPreviousForm(int year, string upn)
+        private OgeForm450Dto GetPreviousForm(string upn)
         {
-            var form = MapToDto(Repository.GetPreviousForm(year, upn));
+            var form = MapToDto(Repository.GetPreviousForm(upn));
             return form;
         }
 
@@ -205,6 +208,7 @@ namespace Mod.Ethics.Application.Services
             form.FilerUpn = emp.Upn;
             form.Agency = emp.Agency;
             form.BranchUnitAndAddress = emp.Office;
+            form.Year = DateTime.Now.Year;
 
             var appointmentDate = emp.AppointmentDate;
 
@@ -230,6 +234,7 @@ namespace Mod.Ethics.Application.Services
                 form.PositionTitle = previousForm.PositionTitle;
 
                 form.HasAgreementsOrArrangements = previousForm.HasAgreementsOrArrangements;
+                form.HasSpousePaidEmployment = previousForm.HasSpousePaidEmployment;
                 form.HasAssetsOrIncome = previousForm.HasAssetsOrIncome;
                 form.HasGiftsOrTravelReimbursements = previousForm.HasGiftsOrTravelReimbursements;
                 form.HasLiabilities = previousForm.HasLiabilities;
@@ -366,7 +371,7 @@ namespace Mod.Ethics.Application.Services
             if (!e.Dto.HasAssetsOrIncome)
                 e.Dto.ReportableInformationList.Where(x => x.InfoType == ReportableInformationType.AssetsAndIncome).ToList().ForEach(x => x.IsDeleted = true);
 
-            if (!e.Dto.HasAgreementsOrArrangements)
+            if (!e.Dto.HasAgreementsOrArrangements && !e.Dto.HasSpousePaidEmployment)
                 e.Dto.ReportableInformationList.Where(x => x.InfoType == ReportableInformationType.AgreementsOrArrangements).ToList().ForEach(x => x.IsDeleted = true);
 
             if (!e.Dto.HasOutsidePositions)
@@ -548,7 +553,7 @@ namespace Mod.Ethics.Application.Services
         private bool CompareVsPreviousForm(OgeForm450Dto dto)
         {
             // Get previous year's Form
-            var prev = GetPreviousForm(dto.Year, dto.Filer);
+            var prev = GetPreviousForm(dto.Filer);
             var unchanged = false;
 
             // If previous year's form exists and it was certified
@@ -560,6 +565,7 @@ namespace Mod.Ethics.Application.Services
                 // When checking if a form is changed or not we will not consider the fields Name, email, and Phone number.
                 // Fields that would be considered a “change” include all relevant form data: Answers 
                 unchanged &= prev.HasAgreementsOrArrangements == dto.HasAgreementsOrArrangements;
+                unchanged &= prev.HasSpousePaidEmployment == dto.HasSpousePaidEmployment;
                 unchanged &= prev.HasAssetsOrIncome == dto.HasAssetsOrIncome;
                 unchanged &= prev.HasGiftsOrTravelReimbursements == dto.HasGiftsOrTravelReimbursements;
                 unchanged &= prev.HasLiabilities == dto.HasLiabilities;

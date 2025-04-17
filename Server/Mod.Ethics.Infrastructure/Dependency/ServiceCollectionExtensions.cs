@@ -115,6 +115,7 @@ namespace Mod.Ethics.Infrastructure.Dependency
             services.AddTransient<IAttendeeAttachmentAppService, AttendeeAttachmentAppService>();
 
             services.AddHostedService<EthicsNotificationService>();
+            services.AddTransient<GuidanceTableAppService, GuidanceTableAppService>();
 
             return services;
         }

@@ -11,7 +11,11 @@ using Mod.Framework.Attachments.Dtos;
 using Mod.Framework.Domain.Entities;
 using Mod.Framework.Notifications.Domain.Entities;
 using Mod.Framework.Notifications.Domain.Services;
+using Mod.Framework.Runtime.Security;
 using Mod.Framework.Runtime.Session;
+using Mod.Framework.User.Entities;
+using Mod.Framework.User.Interfaces;
+using Mod.Framework.User.Repositories;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -24,18 +28,22 @@ namespace Mod.Ethics.Application.Services
         IEmployeeAppService EmployeeAppService;
         IEventRequestAttachmentRepository EventRequestAttachmentRepository;
         IAttendeeAttachmentRepository AttendeeAttachmentRepository;
+        private IApplicationRoles _applicationRoles { get; set; }
         private readonly INotificationDomService NotificationService;
         private readonly ISettingsAppService SettingsAppService;
+        private readonly IEmployeeRepository _employeeRepository;
 
         List<Notification> _pendingEmails = new List<Notification>();
 
-        public EventRequestAppService(IEventRequestRepository repository, ISettingsAppService settingsService, IEventRequestAttachmentRepository attachmentRepo, IAttendeeAttachmentRepository attendeeAttachmentRepo, INotificationDomService notificationService, IEmployeeAppService employeeService, IObjectMapper objectMapper, ILogger<IAppService> logger, IModSession session) : base(repository, objectMapper, logger, session)
+        public EventRequestAppService(IEventRequestRepository repository, ISettingsAppService settingsService, IEventRequestAttachmentRepository attachmentRepo, IApplicationRoles applicationRoles, IEmployeeRepository employeeRepository, IAttendeeAttachmentRepository attendeeAttachmentRepo, INotificationDomService notificationService, IEmployeeAppService employeeService, IObjectMapper objectMapper, ILogger<IAppService> logger, IModSession session) : base(repository, objectMapper, logger, session)
         {
             EmployeeAppService = employeeService;
             EventRequestAttachmentRepository = attachmentRepo;
             AttendeeAttachmentRepository = attendeeAttachmentRepo;
             NotificationService = notificationService;
             SettingsAppService = settingsService;
+            _applicationRoles = applicationRoles;
+            _employeeRepository = employeeRepository;
         }
 
         public List<EventRequestDto> GetMyEvents()
@@ -54,9 +62,13 @@ namespace Mod.Ethics.Application.Services
             filterEndDate = new DateTime(filterEndDate.Year, filterEndDate.Month, filterEndDate.Day, 23, 59, 59);
 
             var openEvents = Repository.GetAll(x => x.Status.Contains(EventRequestStatuses.OPEN));
+            var commsEvents = Repository.GetAll(x => x.Status.Contains(EventRequestStatuses.OPEN_COMMS));
+            var upcomingEvents = openEvents.Union(commsEvents).Where(x => x.EventStartDate <= filterEndDate && x.EventStartDate >= filterStartDate);
 
-            summary.OpenEvents = openEvents.Count();
-            summary.UpcomingEvents = openEvents.Where(x => x.EventStartDate <= filterEndDate && x.EventStartDate >= filterStartDate).Count();
+            summary.OpenOGCEvents = openEvents.Count();
+            summary.OpenCOMMSEvents = commsEvents.Count();
+            summary.UpcomingEvents = upcomingEvents.Count();
+            
             summary.AssignedToMe = Repository.GetAll(x => x.AssignedToUpn.ToLower() == Session.Principal.Upn.ToLower()).Count();
 
             return summary;
@@ -88,10 +100,30 @@ namespace Mod.Ethics.Application.Services
         private void HandleSubmission(CrudEventArgs<EventRequestDto, EventRequest> e)
         {
             var dto = e.Dto;
+            var needsCommsApproval = false;
 
-            if (!string.IsNullOrEmpty(e.Entity.AssignedToUpn))
+            if (e.Dto.EventRequestAttendees != null && e.Dto.EventRequestAttendees.Count > 0)
+            {
+                foreach (AttendeeDto a in e.Dto.EventRequestAttendees)
+                {
+                    if (a.Capacity == EventRequestCapacity.Official)
+                    {
+                        needsCommsApproval = true;
+                        break;
+                    }
+                }
+            }
+
+            if (needsCommsApproval)
+            {
+                e.Dto.Status = EventRequestStatuses.OPEN_COMMS;
+            } else if (!string.IsNullOrEmpty(e.Entity.AssignedToUpn))
             {
                 e.Dto.Status = EventRequestStatuses.OPEN;
+            }
+            else
+            {
+                e.Dto.Status = EventRequestStatuses.UNASSIGNED;
             }
 
             e.Dto.SubmittedDate = DateTime.Now;
@@ -103,8 +135,100 @@ namespace Mod.Ethics.Application.Services
             var notification = NotificationService.CreateNotification((int)NotificationTypes.EventRequestConfirmation, recipient, dict, "");
             _pendingEmails.Add(notification);
 
-            notification = NotificationService.CreateNotification((int)NotificationTypes.EventRequestSubmitted, "", dict, "");
-            _pendingEmails.Add(notification);
+            if (needsCommsApproval)
+            {
+                string emailTo = GetEmailsForCommsAndReviewer();
+
+                notification = NotificationService.CreateNotification((int)NotificationTypes.EventRequestAwaitingComms, emailTo, dict, "");
+                _pendingEmails.Add(notification);
+            }
+            else
+            {
+                string emailTo = GetEmailsForCommsAndReviewer();
+
+                notification = NotificationService.CreateNotification((int)NotificationTypes.EventRequestSubmitted, emailTo, dict, "");
+                _pendingEmails.Add(notification);
+            }
+        }
+
+        public EventRequestDto Approve(int id, string comment)
+        {
+            var entity = Repository.GetIncluding(id, this.Permissions.PermissionFilter, x => x.EventRequestAttendees);
+
+            entity.CommsComment = comment;
+            entity.ApprovedBy = EmployeeAppService.GetByUpn(Session.Principal.Upn)?.DisplayName;
+            entity.ApprovedDate = DateTime.Now;
+            entity.Status = EventRequestStatuses.UNASSIGNED;
+
+            entity = Repository.Save(entity);
+
+            var dto = PostMap(MapToDto(entity));
+            var dict = GetEmailData(dto);
+            var ccEmail = EmployeeAppService.GetByUpn(entity.SubmittedBy)?.EmailAddress;
+            var notification = NotificationService.CreateNotification((int)NotificationTypes.EventRequestCommsApproved, "", dict, ccEmail);
+
+            NotificationService.AddNotification(notification);
+
+            return dto;
+        }
+
+        public EventRequestDto Deny(int id, string comment)
+        {
+            var entity = Repository.GetIncluding(id, this.Permissions.PermissionFilter, x => x.EventRequestAttendees);
+
+            entity.CommsComment = comment;
+            entity.ApprovedBy = EmployeeAppService.GetByUpn(Session.Principal.Upn)?.DisplayName;
+            entity.ApprovedDate = DateTime.Now;
+            entity.Status = EventRequestStatuses.DENIED_COMMS;
+
+            entity = Repository.Save(entity);
+
+            var dto = PostMap(MapToDto(entity));
+            var dict = GetEmailData(dto);
+            var ccEmail = EmployeeAppService.GetByUpn(entity.SubmittedBy)?.EmailAddress;
+
+            var notification = NotificationService.CreateNotification((int)NotificationTypes.EventRequestDenied, "", dict, ccEmail);
+            NotificationService.AddNotification(notification);
+
+            return dto;
+        }
+
+        private string GetEmailsForCommsAndReviewer()
+        {
+            // Send notification to Comms and Ethics
+            var emailTo = GetEmailsForRole(Roles.EventCOMMS);
+            var tmpTo = GetEmailsForRole(Roles.EventReviewer);
+            if (!string.IsNullOrEmpty(emailTo))
+            {
+                if (!string.IsNullOrEmpty(tmpTo))
+                {
+                    emailTo += "," + tmpTo;
+                }
+            }
+            else if (!string.IsNullOrEmpty(tmpTo))
+            {
+                emailTo = tmpTo;
+            }
+
+            return emailTo;
+        }
+
+        private string GetEmailsForRole(string role, int? departmentId = null)
+        {
+            string[] roleGroups = _applicationRoles.GetRoleGroups(role);
+            List<Employee> usersInRole = _employeeRepository.GetAllInGroups(roleGroups);
+
+            if (departmentId != null)
+            {
+                usersInRole = usersInRole.Where(x => x.DepartmentId == departmentId).ToList();
+            }
+
+            //find the officeManager of that department
+            string emailList = "";
+            usersInRole.ForEach(x => emailList += x.EmailAddress + ",");
+            emailList = emailList.TrimEnd(',');
+
+            return emailList;
         }
 
         protected override void OnBeforeUpdate(CrudEventArgs<EventRequestDto, EventRequest> e)
@@ -158,10 +282,15 @@ namespace Mod.Ethics.Application.Services
 
         private EventRequestDto MapAttendeeEmployee(EventRequestDto dto)
         {
+            var capacity = EventRequestCapacity.Personal;
+
             foreach (AttendeeDto att in dto.EventRequestAttendees)
             {
                 if (!string.IsNullOrEmpty(att.EmployeeUpn))
                     att.Employee = EmployeeAppService.GetByUpn(att.EmployeeUpn);
+
+                if (att.Capacity == EventRequestCapacity.Official)
+                    capacity = att.Capacity;
 
                 var attendeeAttachments = AttendeeAttachmentRepository.GetAll(x => x.EventRequestAttendeeId == att.Id);
 
@@ -173,6 +302,8 @@ namespace Mod.Ethics.Application.Services
                     att.AttendeeAttachments.Add(Map(attach));
                 }
             }
+
+            dto.Capacity = capacity;
 
             return dto;
         }
@@ -322,6 +453,8 @@ namespace Mod.Ethics.Application.Services
             entity.TypeOfOrg = dto.TypeOfOrg;   
             entity.WhatIsProvided = dto.WhatIsProvided;
             entity.WhoIsPaying = dto.WhoIsPaying;
+            entity.ApprovedBy = dto.ApprovedBy;
+            entity.ApprovedDate = dto.ApprovedDate;
 
             // Map Attendees
             //   Check for deleted attendees
@@ -406,6 +539,7 @@ namespace Mod.Ethics.Application.Services
             dict.Add("IsOpenToMedia", dto.IsOpenToMedia.HasValue && dto.IsOpenToMedia.Value ? "Yes" : "No");
             dict.Add("RequiresTravel", dto.RequiresTravel.HasValue && dto.RequiresTravel.Value ? "Yes" : "No");
             dict.Add("InternationalTravel", dto.InternationalTravel.HasValue && dto.InternationalTravel.Value ? "Yes" : "No");
+            dict.Add("COMMSComment", dto.CommsComment);
 
             var travelForms = "";
             var invitations = "";
@@ -441,7 +575,7 @@ namespace Mod.Ethics.Application.Services
                 data += "Reason for Attending: {7}";
 
                 data = string.Format(data, new string[] {
-                    ((att.Employee == null) ? "" : att.Employee.DisplayName),
+                    ((att.Employee == null) ? att.EmployeeName : att.Employee.DisplayName),
                     (att.InformedSupervisor.HasValue && att.InformedSupervisor.Value ? "Yes" : "No"),
                     att.NameOfSupervisor ?? "",
                     att.EmployeeType ?? "",
@@ -451,7 +585,7 @@ namespace Mod.Ethics.Application.Services
                     att.ReasonForAttending ?? ""});
 
                 attendeeData += data + "<br /><br />";
-                attendeeString += (att.Employee == null ? "Unknown Employee" : att.Employee.DisplayName) + ", ";
+                attendeeString += (att.Employee == null ? att.EmployeeName : att.Employee.DisplayName) + ", ";
             }
 
             if (attendeeData.Length > 12)
@@ -515,56 +649,57 @@ namespace Mod.Ethics.Application.Services
             return desc;
         }
 
-        public Dictionary<string, string> GetEmailFieldsDef(Dictionary<string, string> dict)
-        {
-            dict.Add("[User]", "The Display Name of the filer.");
-            dict.Add("[Email]", "The filer's email address.");
+        //public Dictionary<string, string> GetEmailFieldsDef(Dictionary<string, string> dict)
+        //{
+        //    dict.Add("[User]", "The Display Name of the filer.");
+        //    dict.Add("[Email]", "The filer's email address.");
 
-            dict.Add("[EventName]", "The name of the event.");
-            dict.Add("[EventStartDate]", "The start date of the event.");
-            dict.Add("[EventEndDate]", "The end date of the event.");
-            dict.Add("[EventLocation]", "The location of the event.");
-            dict.Add("[ApproximateAttendees]", "The approximate number of attendees for the event.");
-            dict.Add("[CrowdDescription]", "The description of the crowd at the event.");
-            dict.Add("[IsFundraiser]", "Is the event a fundraiser?");
-            dict.Add("[IsOpenToMedia]", "Is the event open to the media?");
-            dict.Add("[IsQAndA]", "Will the event have a Q and A?");
-            dict.Add("[ModeratorsAndPanelists]", "If panel discussion, list of moderators and panelists.");
-            dict.Add("[RequiresTravel]", "Does the event require travel?");
-            dict.Add("[InternationalTravel]", "Does the event require international travel?");
-            dict.Add("[TravelForms]", "The attached travel forms.");
+        //    dict.Add("[EventName]", "The name of the event.");
+        //    dict.Add("[EventStartDate]", "The start date of the event.");
+        //    dict.Add("[EventEndDate]", "The end date of the event.");
+        //    dict.Add("[EventLocation]", "The location of the event.");
+        //    dict.Add("[ApproximateAttendees]", "The approximate number of attendees for the event.");
+        //    dict.Add("[CrowdDescription]", "The description of the crowd at the event.");
+        //    dict.Add("[IsFundraiser]", "Is the event a fundraiser?");
+        //    dict.Add("[IsOpenToMedia]", "Is the event open to the media?");
+        //    dict.Add("[IsQAndA]", "Will the event have a Q and A?");
+        //    dict.Add("[ModeratorsAndPanelists]", "If panel discussion, list of moderators and panelists.");
+        //    dict.Add("[RequiresTravel]", "Does the event require travel?");
+        //    dict.Add("[InternationalTravel]", "Does the event require international travel?");
+        //    dict.Add("[TravelForms]", "The attached travel forms.");
 
-            dict.Add("[Attendees]", "Attendee information for the event.");
-            dict.Add("[AttendeeString]", "Comma delimited list of attendees.");
+        //    dict.Add("[Attendees]", "Attendee information for the event.");
+        //    dict.Add("[AttendeeString]", "Comma delimited list of attendees.");
 
-            dict.Add("[GuestsInvited]", "Are guests invited?");
-            dict.Add("[IndividualExtendingInvite]", "Individual extending the invite.");
-            dict.Add("[IndividualLobbyist]", "Is this person a lobbyist?");
-            dict.Add("[OrgExtendingInvite]", "Organization extending the invite.");
-            dict.Add("[IsOrgLobbyist]", "Is this organization a lobbyist?");
-            dict.Add("[TypeOfOrg]", "Type of organization.");
-            dict.Add("[OrgHostingEvent]", "Organization hosting the event.");
-            dict.Add("[IsHostLobbyist]", "Is the host a lobbyist.");
-            dict.Add("[TypeOfHost]", "The type of oranization of the host.");
-            dict.Add("[Invitations]", "The attached invitations.");
+        //    dict.Add("[GuestsInvited]", "Are guests invited?");
+        //    dict.Add("[IndividualExtendingInvite]", "Individual extending the invite.");
+        //    dict.Add("[IndividualLobbyist]", "Is this person a lobbyist?");
+        //    dict.Add("[OrgExtendingInvite]", "Organization extending the invite.");
+        //    dict.Add("[IsOrgLobbyist]", "Is this organization a lobbyist?");
+        //    dict.Add("[TypeOfOrg]", "Type of organization.");
+        //    dict.Add("[OrgHostingEvent]", "Organization hosting the event.");
+        //    dict.Add("[IsHostLobbyist]", "Is the host a lobbyist.");
+        //    dict.Add("[TypeOfHost]", "The type of oranization of the host.");
+        //    dict.Add("[Invitations]", "The attached invitations.");
 
-            dict.Add("[EventContactName]", "Person to contact at the event.");
-            dict.Add("[EventContactPhone]", "The event contact's phone number.");
-            dict.Add("[EventContactEmail]", "The event contact's email.");
-            dict.Add("[FairMarketValue]", "The fair market value of the event.");
-            dict.Add("[WhoIsPaying]", "The person paying for the event.");
-            dict.Add("[AdditionalInformation]", "Additional information submitted.");
-            dict.Add("[AdditionalDocuments]", "Any additional attachments.");
+        //    dict.Add("[EventContactName]", "Person to contact at the event.");
+        //    dict.Add("[EventContactPhone]", "The event contact's phone number.");
+        //    dict.Add("[EventContactEmail]", "The event contact's email.");
+        //    dict.Add("[FairMarketValue]", "The fair market value of the event.");
+        //    dict.Add("[WhoIsPaying]", "The person paying for the event.");
+        //    dict.Add("[AdditionalInformation]", "Additional information submitted.");
+        //    dict.Add("[AdditionalDocuments]", "Any additional attachments.");
 
-            dict.Add("[Submitter]", "The submitter of the event request.");
-            dict.Add("[ContactEmail]", "The submitter's email.");
-            dict.Add("[ContactNumber]", "The submitter's phone number.");
-            dict.Add("[ContactComponent]", "The component of the submitter.");
+        //    dict.Add("[Submitter]", "The submitter of the event request.");
+        //    dict.Add("[ContactEmail]", "The submitter's email.");
+        //    dict.Add("[ContactNumber]", "The submitter's phone number.");
+        //    dict.Add("[ContactComponent]", "The component of the submitter.");
 
-            dict.Add("[AssignedTo]", "Who the event request was assigned to.");
+        //    dict.Add("[AssignedTo]", "Who the event request was assigned to.");
+        //    dict.Add("[COMMSComment]", "Comments left by COMMS.");
 
-            return dict;
-        }
+        //    return dict;
+        //}
 
         public EventsRequestChart GetYearOverYearChart()
         {

@@ -52,12 +52,15 @@ export class Lookups {
         Lookups.EVENT_STATUSES = [];
         Lookups.EVENT_STATUSES.push({ text: EventStatus.DRAFT, value: EventStatus.DRAFT, group: '' });
         Lookups.EVENT_STATUSES.push({ text: EventStatus.UNASSIGNED, value: EventStatus.UNASSIGNED, group: '' });
+        Lookups.EVENT_STATUSES.push({ text: EventStatus.ALL_OPEN, value: EventStatus.ALL_OPEN, group: '' });
+        Lookups.EVENT_STATUSES.push({ text: EventStatus.OPEN_COMMS, value: EventStatus.OPEN_COMMS, group: '' });
         Lookups.EVENT_STATUSES.push({ text: EventStatus.OPEN, value: EventStatus.OPEN, group: '' });
         Lookups.EVENT_STATUSES.push({ text: EventStatus.CLOSED, value: EventStatus.CLOSED, group: '' });
         Lookups.EVENT_STATUSES.push({ text: EventStatus.APPROVED, value: EventStatus.APPROVED, group: '' });
         Lookups.EVENT_STATUSES.push({ text: EventStatus.CANCELED, value: EventStatus.CANCELED, group: '' });
         Lookups.EVENT_STATUSES.push({ text: EventStatus.WITHDRAWN, value: EventStatus.WITHDRAWN, group: '' });
         Lookups.EVENT_STATUSES.push({ text: EventStatus.DENIED, value: EventStatus.DENIED, group: '' });
+        Lookups.EVENT_STATUSES.push({ text: EventStatus.DENIED_COMMS, value: EventStatus.DENIED_COMMS, group: '' });
 
         Lookups.FORM_FLAGS = [];
         Lookups.FORM_FLAGS.push({ text: FormFlags.EXTENDED, value: FormFlags.EXTENDED, group: "" });

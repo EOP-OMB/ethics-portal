@@ -63,7 +63,11 @@ namespace Mod.Ethics.Domain.Entities
         public string ModeratorsAndPanelists { get; set; }
         public bool? ReceivedInvitation { get; set; }
         public string WhatIsProvided { get; set; }
+        public string ApprovedBy { get; set; }
+        public DateTime? ApprovedDate { get; set; }
+        public string CommsComment { get; set; }
 
         public virtual ICollection<EventRequestAttachment> EventRequestAttachments { get; set; }
+        //public virtual ICollection<EventRequestStatus> EventRequestStatuses { get; set; }
     }
 }

@@ -38,6 +38,7 @@ export abstract class ServerSideTableComponent<T extends IDto, TFilter> extends 
     }
 
     ngAfterViewInit() {
+        console.log('afterViewInit: server-side table component');
         merge(this.sort.sortChange, this.paginator.page, this.filterChange)
             .pipe(
                 startWith({}),

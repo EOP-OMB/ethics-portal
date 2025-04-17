@@ -84,7 +84,8 @@ export class EventRequest extends DtoBase {
 
     dateValue: number;
     dateFilter: string = '';
-
-    
-    
+    approvedBy: string;
+    approvedDate: Date;
+    commsComment: string;
+    capacity: string;
 }

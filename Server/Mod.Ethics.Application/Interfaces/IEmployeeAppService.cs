@@ -3,6 +3,7 @@ using Mod.Framework.User.Entities;
 using Mod.Ethics.Application.Dtos;
 using System.Collections.Generic;
 using System;
+using System.Threading.Tasks;
 
 namespace Mod.Ethics.Application.Services
 {
@@ -13,9 +14,10 @@ namespace Mod.Ethics.Application.Services
         EmployeeDto GetMyProfile();
         List<EmployeeDto> Search(string query);
         int CountNoFilerTypes();
-        void CreateFormForEmployee(SettingsDto settings, EmployeeDto dto, DateTime? dueDate = null);
-        SettingsDto InitiateAnnualFiling();
+        void CreateFormForEmployee(EmployeeDto dto, DateTime? dueDate = null);
         //SettingsDto FixAnnualFiling();
         EmployeeDto GetByUpn(string upn);
+
+        SettingsDto InitiateAnnualFiling();
     }
 }

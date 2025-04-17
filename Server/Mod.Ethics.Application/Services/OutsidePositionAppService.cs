@@ -40,8 +40,10 @@ namespace Mod.Ethics.Application.Services
             ApplicationRoles = applicationRoles;
             EmployeeRepository = employeeRepository;
 
-            Permissions.PermissionFilter = position => Session.Principal.IsInRole(Roles.EthicsAppAdmin) || Session.Principal.IsInRole(Roles.OGESupport) || Session.Principal.IsInRole(Roles.OGEReviewer)
-                || position.EmployeeUpn == Session.Principal.Upn || 
+            Permissions.PermissionFilter = position => 
+                Session.Principal.IsInRole(Roles.EthicsAppAdmin) || Session.Principal.IsInRole(Roles.OGESupport) || 
+                Session.Principal.IsInRole(Roles.OGEReviewer) || Session.Principal.IsInRole(Roles.FOIA) ||
+                position.EmployeeUpn == Session.Principal.Upn || 
                 (!string.IsNullOrEmpty(position.SupervisorUpn) && position.SupervisorUpn == Session.Principal.Upn);
         }
 
@@ -435,7 +437,7 @@ namespace Mod.Ethics.Application.Services
                 dto.OutsidePositionStatuses = new List<OutsidePositionStatusDto>();
 
             dto.Status = status;
-            dto.OutsidePositionStatuses.Add(new OutsidePositionStatusDto() { Status = status, Comment = comment, Action = action });
+            dto.OutsidePositionStatuses.Add(new OutsidePositionStatusDto() { Status = status, Comment = comment, Action = action, CreatedTime = DateTime.Now, CreatedBy = Session.Principal.DisplayName });
         }
 
         public OutsidePositionSummary GetSummary()

@@ -1,7 +1,6 @@
 import { Component, Input, KeyValueDiffers, OnInit } from '@angular/core';
 import { CurrentUserService, LoadingService } from 'mod-framework';
 import { Observable } from 'rxjs';
-import { Employee } from '../../models/employee.model';
 import { EventRequest } from '../../models/event-request.model';
 import { SelectItem } from '../../models/select-item.interface';
 import { TableData } from '../../models/table-data.model';
@@ -44,7 +43,6 @@ export class EventRequestTableComponent extends ServerSideTableComponent<EventRe
     pageSize: number;
     sortString: string;
     sortOrder: string;
-
     constructor(private service: EventRequestService,
                 private userService: CurrentUserService,
                 protected loadingService: LoadingService,
@@ -77,6 +75,7 @@ export class EventRequestTableComponent extends ServerSideTableComponent<EventRe
     resetCols(): void {
         this.displayedColumns = [
             'attendeesString',
+            'capacity',
             'eventName',
             'eventDates',
             'submittedDate',
@@ -129,11 +128,14 @@ export class EventRequestTableComponent extends ServerSideTableComponent<EventRe
         this.filter = new EventRequest();
 
         switch (type.toLowerCase()) {
-            case "open":
+            case "ogc":
                 this.filter.status = EventStatus.OPEN;
                 break;
+            case "comms":
+                this.filter.status = EventStatus.OPEN_COMMS;
+                break;
             case "upcoming":
-                this.filter.status = EventStatus.OPEN;
+                this.filter.status = EventStatus.ALL_OPEN;
                 this.filter.dateFilter = "next7";
                 break;
             case "assigned":

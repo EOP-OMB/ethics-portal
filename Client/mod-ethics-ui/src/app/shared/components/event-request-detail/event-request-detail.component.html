@@ -343,19 +343,19 @@
             </div>
         </div>
         <!--<div class="row detail-row">
-        <label>Other Attachments(s)</label>
-        <div>
-            <div *ngFor="let form of otherAttachments" style="width: 100%; display: block;">
-                <a (click)="getAttachment(form.id)">{{ form.fileName }}</a>
+            <label>Other Attachments(s)</label>
+            <div>
+                <div *ngFor="let form of otherAttachments" style="width: 100%; display: block;">
+                    <a (click)="getAttachment(form.id)">{{ form.fileName }}</a>
+                </div>
             </div>
-        </div>
-    </div>-->
+        </div>-->
         <!--</div>
-    </div>
+        </div>
 
-    <div class="panel panel-default">
-        <div class="panel-heading">Submission Information</div>
-        <div class="panel-body">-->
+        <div class="panel panel-default">
+            <div class="panel-heading">Submission Information</div>
+            <div class="panel-body">-->
         <div class="row detail-row">
             <label>Submitter's Name</label>
             <div>
@@ -387,6 +387,46 @@
             </div>
         </div>
     </mat-expansion-panel>
+    <mat-expansion-panel [expanded]="false">
+        <mat-expansion-panel-header class='panel-header'>
+            <mat-panel-title>
+                Workflow
+            </mat-panel-title>
+            <mat-panel-description>
+
+            </mat-panel-description>
+        </mat-expansion-panel-header>
+        <div class="row detail-row">
+            <label>Date Submitted</label>
+            <div>
+                {{ event.submittedDate | date: 'MM/dd/yyyy' }}
+            </div>
+        </div>
+        <div class="row detail-row">
+            <label>COMMS Decision</label>
+            <div>
+                {{ getCommsDecision() }}
+            </div>
+        </div>
+        <div class="row detail-row">
+            <label>COMMS Approved / Denied By</label>
+            <div>
+                {{ event.approvedBy }}
+            </div>
+        </div>
+        <div class="row detail-row">
+            <label>COMMS Approved / Denied Date</label>
+            <div>
+                {{ event.approvedDate | date: 'MM/dd/yyyy' }}
+            </div>
+        </div>
+        <div class="row detail-row">
+            <label>COMMS Comments</label>
+            <div>
+                {{ event.commsComment }}
+            </div>
+        </div>
+    </mat-expansion-panel>
 </mat-accordion>
 
 <div class="row" style="padding-bottom: 10px; padding-top: 15px;" *ngIf="!canEdit() && isClosed()">
@@ -397,16 +437,19 @@
         </div>
     </div>
 </div>
-<div class="row" style="padding-bottom: 10px; padding-top: 15px;" *ngIf="canEdit()">
+<div class="row" style="padding-top: 15px;" *ngIf="canEdit()">
     <div class="col-12">
         <label class="control-label" style="vertical-align: bottom;">Guidance</label>
         <!--<tinymce-editor [elementId]="'txtGuidance'" [content]="event.guidanceGiven" (onEditorKeyup)="keyupHandlerFunction($event)" [height]="400"></tinymce-editor>-->
         <textarea class="form-control" rows="12" [(ngModel)]="event.guidanceGiven"></textarea>
     </div>
 </div>
-<div class="row" style="padding-bottom: 20px; display: flex; justify-content: space-between;">
+<div style="padding-bottom: 10px;">&nbsp;</div>
+<div style="display: flex; padding-bottom: 20px; justify-content: space-around;">
     <div *ngIf="canEdit()" class="btn btn-primary" (click)="save()">Save</div>
     <div *ngIf="canClose()" class="btn btn-danger" (click)="showModal()">Close Request</div>
+    <div *ngIf="canApprove()" class="btn btn-success" (click)="showCommsModal(true)">Approve</div>
+    <div *ngIf="canApprove()" class="btn btn-danger" (click)="showCommsModal(false)">Deny</div>
 </div>
 
 <div class="modal fade" id="confirm-close" tabindex="-1" role="dialog" aria-hidden="true">
@@ -431,3 +474,24 @@
             </div>
         </form>
     </div>
+</div>
+
+<div class="modal fade" id="confirm-comms" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog">
+        <form [formGroup]="commsForm" id="commsForm" class="modal-content" (ngSubmit)="approveRequest()">
+            <div class="modal-header modal-header-danger">
+                <div class="modal-title" style="font-size: 1.5em;"><i class="fa fa-exclamation-triangle" style="padding-right: 20px;"></i>{{ isApproving ? 'Approve' : 'Deny' }} Event Request</div>
+            </div>
+            <div class="modal-body">
+                <p *ngIf="isApproving == true">You are about to approve this event request as a COMMS approver. It will be sent to General Counsel for review. Please leave a comment below and click Confirm.</p>
+                <p *ngIf="isApproving == false">You are about to deny this event request as a COMMS approver. It will NOT be sent to General Counsel for review and will be considered Closed. Please leave a comment below and click Confirm.</p>
+                <label for="commsComments" class="control-label" style="vertical-align: bottom;">Comment</label>
+                <textarea id="commsComments" name="commsComments" class="form-control" rows="6" formControlName="commsComments"></textarea>
+            </div>
+            <div class="modal-footer" style="text-align: center;">
+                <button type="submit" mat-flat-button style="background-color: #28a745; color: white; margin-right: 20px;">Confirm</button>
+                <button type="button" mat-flat-button (click)="closeCommsModal()">Cancel</button>
+            </div>
+        </form>
+    </div>
+</div>

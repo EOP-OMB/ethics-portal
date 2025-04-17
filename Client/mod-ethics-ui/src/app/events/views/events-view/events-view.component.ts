@@ -14,7 +14,8 @@ import { SelectItem } from '@shared/models/select-item.interface';
     styleUrls: ['./events-view.component.scss']
 })
 export class EventsViewComponent implements OnInit {
-    openWidget: Widget = new Widget();
+    ogcWidget: Widget = new Widget();
+    commsWidget: Widget = new Widget();
     upcomingWidget: Widget = new Widget();
     assignedWidget: Widget = new Widget();
 
@@ -59,8 +60,12 @@ export class EventsViewComponent implements OnInit {
         
     }
 
-    openClicked(): void {
-        this.table.filterBy("open");
+    ogcClicked(): void {
+        this.table.filterBy("ogc");
+    }
+
+    commsClicked(): void {
+        this.table.filterBy("comms");
     }
 
     upcommingClicked(): void {
@@ -72,10 +77,15 @@ export class EventsViewComponent implements OnInit {
     }
 
     updateEventWidgets(summary: EventRequestSummary): void {
-        this.openWidget.title = summary.openEvents.toString();
-        this.openWidget.text = "Open Events";
-        this.openWidget.actionText = "click to review";
-        this.openWidget.color = 'success';
+        this.commsWidget.title = summary.openCOMMSEvents.toString();
+        this.commsWidget.text = "Awaiting COMMS";
+        this.commsWidget.actionText = "click to review";
+        this.commsWidget.color = 'success';
+
+        this.ogcWidget.title = summary.openOGCEvents.toString();
+        this.ogcWidget.text = "Awaiting OGC";
+        this.ogcWidget.actionText = "click to review";
+        this.ogcWidget.color = 'success';
         
         this.upcomingWidget.title = summary.upcomingEvents.toString();
         this.upcomingWidget.text = "Upcoming Events";

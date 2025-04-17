@@ -20,6 +20,7 @@ export class Guidance extends DtoBase {
     guid: string = "";
     isShared: boolean = false;
     hasAttachments: boolean = false;
+    givenBy: string = "";
 
     // client use only
     employee: Employee = new Employee();

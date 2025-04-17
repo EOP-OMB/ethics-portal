@@ -106,4 +106,22 @@ export class EventRequestService extends ModPromiseServiceBase<EventRequest> {
             .toPromise()
             .catch(this.handleError);
     }
+
+    approveRequest(eventRequestId: number, comment: string) {
+        var url = `${this.url}/${this.endpoint}/approve`;
+
+        return this.http.put(url, { id: eventRequestId, comment: comment})
+            .toPromise()
+            .then(() => { })
+            .catch(this.handleError);
+    }
+
+    denyRequest(eventRequestId: number, comment: string) {
+        var url = `${this.url}/${this.endpoint}/deny`;
+
+        return this.http.put(url, { id: eventRequestId, comment: comment })
+            .toPromise()
+            .then(() => { })
+            .catch(this.handleError);
+    }
 }

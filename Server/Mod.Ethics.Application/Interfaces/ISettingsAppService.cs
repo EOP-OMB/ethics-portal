@@ -2,6 +2,7 @@
 using Mod.Ethics.Domain.Entities;
 using Mod.Framework.Application;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace Mod.Ethics.Application.Services
 {

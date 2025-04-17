@@ -15,7 +15,7 @@
         <div class="guidance-view" fxLayoutAlign="start start">
             <mat-card>
                 <div style="margin-top: 20px;">
-                    <app-guidance-table #dtGuidance key="guidance" [data]="guidance" [canAdd]="canEdit" (addClicked)="addGuidance()" (rowSelect)="onGuidanceSelect($event)" [hiddenCols]="hiddenCols"></app-guidance-table>
+                    <app-guidance-table #dtGuidance key="guidance" [canAdd]="canEdit" [pageSizeOptions]="[15, 30, 45, 60]" (addClicked)="addGuidance()" (rowSelect)="onGuidanceSelect($event)" [hiddenCols]="hiddenCols"></app-guidance-table>
                 </div>
             </mat-card>
         </div>

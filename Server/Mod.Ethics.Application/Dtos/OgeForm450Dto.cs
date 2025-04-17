@@ -28,6 +28,7 @@ namespace Mod.Ethics.Application.Dtos
         public string Grade { get; set; }
         public bool IsSpecialGovernmentEmployee { get; set; }
         public bool HasAssetsOrIncome { get; set; }
+        public bool HasSpousePaidEmployment { get; set; }
         public bool HasLiabilities { get; set; }
         public bool HasOutsidePositions { get; set; }
         public bool HasAgreementsOrArrangements { get; set; }

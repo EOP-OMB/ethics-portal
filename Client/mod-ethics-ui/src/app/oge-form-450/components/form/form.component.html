@@ -153,9 +153,9 @@
                         </div>
                     </div>
                     <div class="col-9 form-box">
-                        An SGE is an executive branch officer or employee who is retained, designated, appointed, or
-                        employed to perform temporary duties either on a full-time or intermittent basis, with or without
-                        compensation, for a period not to exceed 130 days during any consecutive 365-day period.
+                        Non-temporary full-time employees are not SGEs. An SGE is an officer or employee who
+                        performs temporary duties, with or without compensation, for a period of less than 131 days
+                        in any 365 day period.
                     </div>
                 </div>
                 <div class="row">
@@ -175,30 +175,40 @@
                     <div class="row question">
                         <div class="question-text form-box" style="margin-right: auto;">
                             <div class="control-label required">
-                                I. I have reportable assets or sources of income for myself, my spouse, or my dependent children.
-                                <a class="btn hideprint" data-toggle="collapse" data-target="#instructionsI"><i class="fa fa-question-circle"></i></a>
-                                <!--<a id="lnkPartI" (click)="scrollTo('#I')" class="btn" rel="popover" data-placement="top" data-trigger="hover">
-                                    <i class="fa fa-question-circle"></i>
-                                </a>-->
+                                I.a. I have reportable assets or sources of income for myself, my spouse, or my dependent children.
+                                <a class="btn hideprint" data-toggle="collapse" data-target="#instructionsIa"><i class="fa fa-question-circle"></i></a>
                             </div>
                         </div>
                         <div class="yes-no form-box">
-                            <app-radio-button name="rbI" [selectedValue]="true" [prevValue]="compareForm ? compareForm.hasAssetsOrIncome : null" [(ngModel)]="form.hasAssetsOrIncome" [disabled]="inputDisabled">Yes</app-radio-button>
+                            <app-radio-button name="rbIa" [selectedValue]="true" [prevValue]="compareForm ? compareForm.hasAssetsOrIncome : null" [(ngModel)]="form.hasAssetsOrIncome" [disabled]="inputDisabled">Yes</app-radio-button>
                         </div>
                         <div class="yes-no form-box">
-                            <app-radio-button name="rbI" [selectedValue]="false" [prevValue]="compareForm ? compareForm.hasAssetsOrIncome : null" [(ngModel)]="form.hasAssetsOrIncome" [disabled]="inputDisabled">No</app-radio-button>
+                            <app-radio-button name="rbIa" [selectedValue]="false" [prevValue]="compareForm ? compareForm.hasAssetsOrIncome : null" [(ngModel)]="form.hasAssetsOrIncome" [disabled]="inputDisabled">No</app-radio-button>
                         </div>
                     </div>
-                    <div id="instructionsI" class="collapse">
+                    <div id="instructionsIa" class="collapse">
+                    </div>
+                    <div class="row question">
+                        <div class="question-text form-box" style="margin-right: auto;">
+                            <div class="control-label required">
+                                I.b. I have a spouse who has paid employment outside the Federal Government.
+                                <a class="btn hideprint" data-toggle="collapse" data-target="#instructionsIb"><i class="fa fa-question-circle"></i></a>
+                            </div>
+                        </div>
+                        <div class="yes-no form-box">
+                            <app-radio-button name="rbIb" [selectedValue]="true" [prevValue]="compareForm ? compareForm.hasSpousePaidEmployment : null" [(ngModel)]="form.hasSpousePaidEmployment" [disabled]="inputDisabled">Yes</app-radio-button>
+                        </div>
+                        <div class="yes-no form-box">
+                            <app-radio-button name="rbIb" [selectedValue]="false" [prevValue]="compareForm ? compareForm.hasSpousePaidEmployment : null" [(ngModel)]="form.hasSpousePaidEmployment" [disabled]="inputDisabled">No</app-radio-button>
+                        </div>
+                    </div>
+                    <div id="instructionsIb" class="collapse">
                     </div>
                     <div class="row question">
                         <div class="question-text form-box">
                             <div class="control-label required">
                                 II. I have reportable liabilities (debts) for myself, my spouse, or my dependent children.
                                 <a class="btn hideprint" data-toggle="collapse" data-target="#instructionsII"><i class="fa fa-question-circle"></i></a>
-                                <!--<a id="lnkPartII" (click)="scrollTo('#II')" class="btn" rel="popover" data-placement="top" data-trigger="hover">
-                                    <i class="fa fa-question-circle"></i>
-                                </a>-->
                             </div>
                         </div>
                         <div class="yes-no form-box">
@@ -214,9 +224,6 @@
                         <div class="question-text form-box">
                             <div class="control-label required">
                                 III. I have reportable outside positions for myself.
-                                <!--<a id="lnkPartIII" (click)="scrollTo('#III')" class="btn" rel="popover" data-placement="top" data-trigger="hover">
-                                    <i class="fa fa-question-circle"></i>
-                                </a>-->
                                 <a class="btn hideprint" data-toggle="collapse" data-target="#instructionsIII"><i class="fa fa-question-circle"></i></a>
                             </div>
                         </div>
@@ -233,9 +240,6 @@
                         <div class="question-text form-box">
                             <div class="control-label required">
                                 IV. I have reportable agreements or arrangements for myself.
-                                <!--<a id="lnkPartIV" (click)="scrollTo('#IV')" class="btn" rel="popover" data-placement="top" data-trigger="hover">
-                                    <i class="fa fa-question-circle"></i>
-                                </a>-->
                                 <a class="btn hideprint" data-toggle="collapse" data-target="#instructionsIV"><i class="fa fa-question-circle"></i></a>
                             </div>
                         </div>
@@ -254,8 +258,8 @@
                                 <span style="color: red;">NOTE: Statement V is for <u>annual</u> filers only. It does not apply to new entrants and SGEs.</span><br />
                                 V. I have reportable gifts or travel reimbursements for myself, my spouse, or my dependent children.
                                 <!--<a id="lnkPartV" (click)="scrollTo('#V')" class="btn" rel="popover" data-placement="top" data-trigger="hover">
-                                    <i class="fa fa-question-circle"></i>
-                                </a>-->
+                    <i class="fa fa-question-circle"></i>
+                </a>-->
                                 <a class="btn hideprint" data-toggle="collapse" data-target="#instructionsV"><i class="fa fa-question-circle"></i></a>
                             </div>
                         </div>
@@ -270,8 +274,9 @@
                     </div>
                 </div>
                 <div class="row">
-                    Step 3:  If you selected Yes for <u>any</u> statement, you must describe the reportable interests that you have in the corresponding
-                    Part (I, II, III, IV, or V) of the form.
+                    <div style="text-align: left;">
+                        Step 3:  If you selected Yes for&nbsp;<u>any</u>&nbsp;statement, you must describe the reportable interests that you have in the corresponding Part<br /> (I, II, III, IV, or V) of the form.
+                    </div>
                 </div>
                 <div class="row">
                     Step 4:  Sign and date the form.
@@ -362,7 +367,7 @@
         </div>
 
         <!--Part I-->
-        <div id="sectionI" class="section break showprint" [hidden]="!form.hasAssetsOrIncome && !printView && mode != 'COMPARE'">
+        <div id="sectionI" class="section break showprint" [hidden]="!(form.hasAssetsOrIncome || form.hasSpousePaidEmployment) && !printView && mode != 'COMPARE'">
             <app-print-page-header [employeesName]="form.employeesName" [settings]="settings" class="showprint" hidden></app-print-page-header>
             <div class="row example-row">
                 <h3 id="I">
@@ -423,6 +428,10 @@
                         <div class="col-5 form-box-sm">
                             <ul>
                                 <li>
+                                    Diversified mutual funds, such as ABC Equity
+                                    Value Fund or XYZ Large Capital Fund
+                                </li>
+                                <li>
                                     Federal Government retirement benefits
                                 </li>
                                 <li>
@@ -443,21 +452,18 @@
                                     Your personal residence, unless you rent it out
                                 </li>
                                 <li>
-                                    Diversified mutual funds, such as ABC Equity
-                                    Value Fund or XYZ Large Capital Fund
+                                    U.S. Government Treasury bonds, bills, notes, and
+                                    savings bonds
                                 </li>
                                 <li>
                                     Diversified funds within an employee benefit plan
-                                </li>
-                                <li>
-                                    U.S. Government Treasury bonds, bills, notes, and
-                                    savings bonds
                                 </li>
                                 <li>
                                     Money owed to you, your spouse, or dependent
                                     child by a spouse, parent, sibling, or child
                                 </li>
                             </ul>
+                            <p>Do not report account or Social Security numbers or names of family members</p>
                         </div>
                     </div>
                     <div class="row">
@@ -473,21 +479,21 @@
                             <ul>
                                 <li>
                                     <u>For yourself</u>: (1) all sources of salary, fees, commissions, and
-                                    other earned income greater than $1000, (2) honoraria greater
-                                    than $1000, and (3) other non-investment income such as
-                                    scholarships, prizes, and gambling income greater than $1000
+                                    other earned income greater than $1,000, (2) honoraria greater
+                                    than $1,000, and (3) other non-investment income such as
+                                    scholarships, prizes, and gambling income greater than $1,000
                                 </li>
                                 <li>
                                     <u>For your spouse</u>: (1) all sources of salary, fees, commissions,
                                     and other earned income greater than $1,000, and (2)
-                                    honoraria greater than $1000
+                                    honoraria greater than $1,000
                                 </li>
                             </ul>
                         </div>
                         <div class="col-5 form-box-sm">
                             <ul>
                                 <li>
-                                    Dependent child’s earned income
+                                    Dependent child’s earned income (e.g. wages, fees)
                                 </li>
                                 <li>
                                     Veterans’ benefits
@@ -501,31 +507,35 @@
                             </ul>
                         </div>
                     </div>
-                </div>
-            </div>
-            <div class="row">
-                <b>Important Definitions</b>
-            </div>
-            <div class="outer-form-box">
-                <div class="row">
                     <div class="col-12 form-box">
-                        <b>Diversified Mutual Fund</b> – A mutual fund that does not have a stated policy of concentrating its investments in one industry,
-                        business, or single country other than the United States.
-                    </div>
-                    <div class="col-12 form-box">
-                        <b>Sector Mutual Fund</b> – A mutual fund that concentrates its investments in an industry, business, single country other than
-                        the United States, or bonds of a single state within the United States.
-                    </div>
-                    <div class="col-12 form-box">
-                        <b>Diversified Fund within an Employee Benefit Plan</b> – An employee benefit plan fund that has a written policy of varying
-                        investments without concentration in one industry, business, or single country other than the United States.
-                    </div>
-                    <div class="col-12 form-box">
-                        <b>Dependent Child</b> – A son, daughter, stepson or stepdaughter who is either unmarried and under age 21 and living in the
+                        <b>Dependent Child</b> – A son, daughter, stepson, or stepdaughter who is either unmarried, under age 21, and living in the
                         filer’s house, or considered dependent under the U.S. tax code.
                     </div>
                 </div>
             </div>
+            <!--<div class="row">
+        <b>Important Definitions</b>
+    </div>
+    <div class="outer-form-box">
+        <div class="row">
+            <div class="col-12 form-box">
+                <b>Diversified Mutual Fund</b> – A mutual fund that does not have a stated policy of concentrating its investments in one industry,
+                business, or single country other than the United States.
+            </div>
+            <div class="col-12 form-box">
+                <b>Sector Mutual Fund</b> – A mutual fund that concentrates its investments in an industry, business, single country other than
+                the United States, or bonds of a single state within the United States.
+            </div>
+            <div class="col-12 form-box">
+                <b>Diversified Fund within an Employee Benefit Plan</b> – An employee benefit plan fund that has a written policy of varying
+                investments without concentration in one industry, business, or single country other than the United States.
+            </div>
+            <div class="col-12 form-box">
+                <b>Dependent Child</b> – A son, daughter, stepson or stepdaughter who is either unmarried and under age 21 and living in the
+                filer’s house, or considered dependent under the U.S. tax code.
+            </div>
+        </div>
+    </div>-->
             <div class="row example-row">
                 <div class="example-row">
                     <b>Reportable Information</b>
@@ -538,12 +548,12 @@
             <div class="outer-form-box">
                 <div class="information">
                     <div class="form-box">
-                        <b>Specific stock, bond, sector mutual fund, type/location of real estate, etc.</b> (Indicate the full name of each
-                        specific asset or investment. You may add the ticker symbol to the full name.)
+                        <b>Report the full name of each individual asset,</b> such as a stock, bond, or sector mutual fund. (You may add the
+                        ticker symbol to the asset name.) This includes any asset that is an underlying holding of a trust, retirement, or
+                        investment account that meets the reporting requirement. Report the type and location of any investment real estate.
                         <br />
-                        <b>Name of Employer or Business; Source of Fees, Commissions, or Honoraria</b> (Include brief description.)
-                        You may distinguish any entry for a family member by preceding it with S for spouse, DC for dependent child,
-                        or J for jointly held.
+                        <b>Report name of employer or business, source of fees, commissions, or honoraria.</b> (Include a brief description.)
+                        You may distinguish any entry for a family member by preceding it with (S) for spouse or (DC) for dependent child.
                     </div>
                     <div class="yes-no form-box">
                         <b>No longer held</b>
@@ -595,7 +605,6 @@
                                     If you are an annual filer, liabilities that
                                     exceeded $10,000 during the reporting
                                     period
-
                                 </li>
                             </ul>
                         </div>
@@ -682,9 +691,10 @@
                                     consultant of any of the following:
                                     <ul>
                                         <li>Corporation, partnership, trust, or other business entity</li>
+                                        <li>Trust</li>
                                         <li>Non-profit or volunteer organization</li>
                                         <li>Educational institution</li>
-                                        <li>State or Local Government</li>
+                                        <li>State or local Government</li>
                                     </ul>
                                 </li>
                             </ul>
